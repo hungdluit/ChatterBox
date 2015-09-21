@@ -39,6 +39,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\FirstPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -54,10 +58,14 @@
     <Compile Include="Mvvm\CompositeViewModel.cs" />
     <Compile Include="Mvvm\Utils\ActionCommand.cs" />
     <Compile Include="Mvvm\Utils\BoolToVisConverter.cs" />
+    <Compile Include="Mvvm\ViewModels\FirstPanelViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\SettingsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\ChatterBoxMainView.xaml.cs">
       <DependentUpon>ChatterBoxMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FirstPanelView.xaml.cs">
+      <DependentUpon>FirstPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>

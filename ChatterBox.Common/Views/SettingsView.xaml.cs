@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ChatterBox.Common.Views
 {
-    public sealed partial class SettingsView : Page
+    internal sealed partial class SettingsView : Page
     {
         public SettingsView()
         {

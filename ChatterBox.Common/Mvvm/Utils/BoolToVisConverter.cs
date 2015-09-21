@@ -10,7 +10,7 @@ namespace ChatterBox.Common.Mvvm.Utils
     /// Class provides functionality to convert from boolean to Visibility.
     /// Implements the IValueConverter interface.
     /// </summary>
-    public sealed class BoolToVisConverter : IValueConverter
+    internal class BoolToVisConverter : IValueConverter
     {
         /// <summary>
         /// Converts a boolean to it's negated value.

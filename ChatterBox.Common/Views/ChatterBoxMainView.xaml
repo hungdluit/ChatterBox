@@ -15,41 +15,9 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <Grid Grid.Row="0"
-              Visibility="{Binding IsLeftPanelVisible, Converter={StaticResource BoolToVisConverter}}"
-              Name="LeftPanelGrid">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ListBox Grid.Row="0"
-                     Name="PeersList"
-                     HorizontalAlignment="Stretch"
-                     MinWidth="300">
-            </ListBox>
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal"                        
-                        Name="BottomBarStackPanel">
-                <Button Name="CallButton"
-                        Content="&#xE13A;"
-                        FontFamily="Segoe UI Symbol"
-                        Margin="5"
-                        Command="{Binding ConnectToPeerCommand}" />
-                <Button Name="SettingsButton"
-                        Content="&#xE115;"
-                        FontFamily="Segoe UI Symbol"
-                        Margin="5"
-                        Command="{Binding SettingsButtonCommand}"/>
-            </StackPanel>
-        </Grid>
+        </Grid.ColumnDefinitions>        
         <Frame Name="NavigationFrame"               
-               Grid.Column="1">
-            <Page>
-                <TextBlock>Frame</TextBlock>
-            </Page>
+               Grid.Column="1">            
         </Frame>
     </Grid>
-
 </UserControl>

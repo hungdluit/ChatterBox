@@ -20,51 +20,19 @@ namespace ChatterBox.Common.Mvvm
             : base(uiDispatcher)
         {
             _frame = frame;
-            _frame.Navigated += _frame_Navigated;
-            IsLeftPanelVisible = true;
-            SettingsButtonCommand = new ActionCommand(SettingsButtonExecute, SettingsButtonCanExecute);
-            _frame.Navigate(typeof(Page));
+            _frame.Navigated += _frame_Navigated;            
+            _frame.Navigate(typeof(FirstPanelView), frame);
         }
 
         private void _frame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (e.NavigationMode == NavigationMode.Back &&
-                _frame.BackStackDepth == 0)
-            {
-                IsLeftPanelVisible = true;
-            }
         }        
 
         #region Binding Properties
 
-        private bool _isLeftPanelVisible;
-        public bool IsLeftPanelVisible
-        {
-            get { return _isLeftPanelVisible; }
-            set { SetProperty(ref _isLeftPanelVisible, value); }
-        }
-
         #endregion
 
         #region Commands
-
-        private ICommand _settingsButtonCommand;
-        public ICommand SettingsButtonCommand
-        {
-            get { return _settingsButtonCommand; }
-            set { SetProperty(ref _settingsButtonCommand, value); }
-        }
-
-        private void SettingsButtonExecute(object obj)
-        {
-            IsLeftPanelVisible = false;
-            _frame.Navigate(typeof(SettingsView), _frame);
-        }
-
-        private bool SettingsButtonCanExecute(object obj)
-        {
-            return true;
-        }
 
         #endregion
     }
