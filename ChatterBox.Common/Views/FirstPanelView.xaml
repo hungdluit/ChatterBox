@@ -5,11 +5,12 @@
     xmlns:local="using:ChatterBox.Common.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dvm="using:ChatterBox.Common.Mvvm.DesignViewModels"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid Grid.Row="0"              
-              Name="LeftPanelGrid">
+              Name="FirstPanelGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -17,6 +18,7 @@
             <ListBox Grid.Row="0"
                      Name="PeersList"
                      HorizontalAlignment="Stretch"
+                     ItemsSource="{Binding Peers}"
                      MinWidth="300">
             </ListBox>
             <StackPanel Grid.Row="1"
@@ -26,7 +28,7 @@
                         Content="&#xE13A;"
                         FontFamily="Segoe UI Symbol"
                         Margin="5"
-                        Command="{Binding ConnectToPeerCommand}" />
+                        Command="{Binding CallButtonCommand}" />
                 <Button Name="SettingsButton"
                         Content="&#xE115;"
                         FontFamily="Segoe UI Symbol"

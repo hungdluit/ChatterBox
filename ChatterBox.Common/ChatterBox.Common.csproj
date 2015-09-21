@@ -35,6 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <Page Include="Views\CallView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ChatterBoxMainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -56,11 +60,17 @@
     <Compile Include="Mvvm\Base\BindableBase.cs" />
     <Compile Include="Mvvm\Base\DispatcherBindableBase.cs" />
     <Compile Include="Mvvm\CompositeViewModel.cs" />
+    <Compile Include="Mvvm\DesignViewModels\FirstPanelDesignViewModel.cs" />
     <Compile Include="Mvvm\Utils\ActionCommand.cs" />
     <Compile Include="Mvvm\Utils\BoolToVisConverter.cs" />
+    <Compile Include="Mvvm\ViewModels\CallViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\FirstPanelViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\PeerViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\SettingsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\CallView.xaml.cs">
+      <DependentUpon>CallView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatterBoxMainView.xaml.cs">
       <DependentUpon>ChatterBoxMainView.xaml</DependentUpon>
     </Compile>
@@ -71,9 +81,7 @@
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mvvm\DesignViewModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

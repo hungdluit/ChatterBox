@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Common.Mvvm.Base
 {
@@ -14,13 +15,16 @@ namespace ChatterBox.Common.Mvvm.Base
         // The UI dispatcher
         private readonly CoreDispatcher _uiDispatcher;
 
+        protected readonly Frame Frame;
+
         /// <summary>
         /// Creates a DispatcherBindableBase instance.
         /// </summary>
         /// <param name="uiDispatcher">Core event message dispatcher.</param>
-        protected DispatcherBindableBase(CoreDispatcher uiDispatcher)
+        protected DispatcherBindableBase(CoreDispatcher uiDispatcher, Frame frame)
         {
-            _uiDispatcher = uiDispatcher;            
+            _uiDispatcher = uiDispatcher;
+            Frame = frame;
         }
 
         /// <summary>

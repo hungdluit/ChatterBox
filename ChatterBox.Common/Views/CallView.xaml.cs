@@ -21,9 +21,9 @@ namespace ChatterBox.Common.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    internal sealed partial class FirstPanelView : Page
+    internal sealed partial class CallView : Page
     {
-        public FirstPanelView()
+        public CallView()
         {
             this.InitializeComponent();
         }
@@ -31,7 +31,7 @@ namespace ChatterBox.Common.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            DataContext = new FirstPanelViewModel(Dispatcher, e.Parameter as Frame);
+            DataContext = new CallViewModel(Dispatcher, e.Parameter as Frame);
         }
     }
 }
