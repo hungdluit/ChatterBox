@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace ChatterBox.Common.Mvvm.Base
 {
@@ -19,7 +20,7 @@ namespace ChatterBox.Common.Mvvm.Base
         /// <param name="uiDispatcher">Core event message dispatcher.</param>
         protected DispatcherBindableBase(CoreDispatcher uiDispatcher)
         {
-            _uiDispatcher = uiDispatcher;
+            _uiDispatcher = uiDispatcher;            
         }
 
         /// <summary>

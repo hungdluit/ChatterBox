@@ -35,6 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <Page Include="Views\ChatterBoxMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -48,12 +52,19 @@
     <Compile Include="Mvvm\Base\BindableBase.cs" />
     <Compile Include="Mvvm\Base\DispatcherBindableBase.cs" />
     <Compile Include="Mvvm\CompositeViewModel.cs" />
+    <Compile Include="Mvvm\Utils\ActionCommand.cs" />
     <Compile Include="Mvvm\Utils\BoolToVisConverter.cs" />
     <Compile Include="Mvvm\ViewModels\SettingsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\ChatterBoxMainView.xaml.cs">
+      <DependentUpon>ChatterBoxMainView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mvvm\DesignViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
