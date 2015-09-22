@@ -7,14 +7,14 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="ceac641a-2403-4375-8be8-2e83688a0d2f"
+    Name="4f7ed8bf-6259-4e99-b2bd-894a32f8a963"
     Publisher="CN=GodAdmin"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="ceac641a-2403-4375-8be8-2e83688a0d2f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="4f7ed8bf-6259-4e99-b2bd-894a32f8a963" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>ChatterBox.Win10</DisplayName>
+    <DisplayName>ChatterBox.Client.Universal</DisplayName>
     <PublisherDisplayName>GodAdmin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -30,12 +30,12 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="ChatterBox.Win10.App">
+      EntryPoint="ChatterBox.Client.Universal.App">
       <uap:VisualElements
-        DisplayName="ChatterBox.Win10"
+        DisplayName="ChatterBox.Client.Universal"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="ChatterBox.Win10"
+        Description="ChatterBox.Client.Universal"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace ChatterBox.Win10
+namespace ChatterBox.Client.Universal
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -46,7 +46,7 @@ namespace ChatterBox.Win10
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                this.DebugSettings.EnableFrameRateCounter = false;
+                // this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
 

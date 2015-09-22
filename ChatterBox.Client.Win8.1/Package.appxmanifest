@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
 
-  <Identity Name="53791647-810e-4a68-96a7-2ec278f89b94"
+  <Identity Name="d731b6b1-4b4a-4121-8cb2-75f00bc0fa60"
             Publisher="CN=GodAdmin"
             Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>ChatterBox.Win8</DisplayName>
+    <DisplayName>ChatterBox.Client.Win8.1</DisplayName>
     <PublisherDisplayName>GodAdmin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -23,12 +23,12 @@
   <Applications>
     <Application Id="App"
         Executable="$targetnametoken$.exe"
-        EntryPoint="ChatterBox.Win8.App">
+        EntryPoint="ChatterBox.Client.Win8._1.App">
         <m2:VisualElements
-            DisplayName="ChatterBox.Win8"
+            DisplayName="ChatterBox.Client.Win8.1"
             Square150x150Logo="Assets\Logo.png"
             Square30x30Logo="Assets\SmallLogo.png"
-            Description="ChatterBox.Win8"
+            Description="ChatterBox.Client.Win8.1"
             ForegroundText="light"
             BackgroundColor="#464646">
             <m2:SplashScreen Image="Assets\SplashScreen.png" />

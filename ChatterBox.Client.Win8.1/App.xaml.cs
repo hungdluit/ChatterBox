@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
-namespace ChatterBox.Win8
+namespace ChatterBox.Client.Win8._1
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -45,7 +45,7 @@ namespace ChatterBox.Win8
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                this.DebugSettings.EnableFrameRateCounter = false;
+                // this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
 
