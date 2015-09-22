@@ -1,4 +1,5 @@
-﻿using ChatterBox.Common.Mvvm.ViewModels;
+﻿using ChatterBox.Common.Mvvm.Utils;
+using ChatterBox.Common.Mvvm.ViewModels;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -14,7 +15,7 @@ namespace ChatterBox.Common.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            DataContext = new SettingsViewModel(Dispatcher, e.Parameter as Frame);
+            DataContext = new SettingsViewModel(Dispatcher, e.Parameter as NavigationService);
         }
     }
 }

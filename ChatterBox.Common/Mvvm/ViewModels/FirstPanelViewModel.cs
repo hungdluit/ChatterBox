@@ -15,7 +15,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
 {
     internal class FirstPanelViewModel : DispatcherBindableBase
     {
-        public FirstPanelViewModel(CoreDispatcher uiDispatcher, Frame frame) :
+        public FirstPanelViewModel(CoreDispatcher uiDispatcher, NavigationService frame) :
             base(uiDispatcher, frame)
         {
             SettingsButtonCommand = new ActionCommand(SettingsButtonExecute, SettingsButtonCanExecute);
@@ -47,7 +47,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
         }
         private void SettingsButtonExecute(object obj)
         {
-            Frame.Navigate(typeof(SettingsView), Frame);
+            NavigationService.NavigateTo(typeof(SettingsView));
         }
         private bool SettingsButtonCanExecute(object obj)
         {
@@ -63,7 +63,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
 
         private void CallButtonExecute(object obj)
         {
-            Frame.Navigate(typeof(CallView), Frame);
+            NavigationService.NavigateTo(typeof(CallView));
         }
 
         private bool CallButtonCanExecute(object obj)

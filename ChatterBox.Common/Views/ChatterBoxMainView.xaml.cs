@@ -1,4 +1,5 @@
 ﻿using ChatterBox.Common.Mvvm;
+using ChatterBox.Common.Mvvm.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,10 +21,25 @@ namespace ChatterBox.Common.Views
 {
     public sealed partial class ChatterBoxMainView : UserControl
     {
+        private NavigationService _navigationService;
+
         public ChatterBoxMainView()
         {
             this.InitializeComponent();
-            DataContext = new CompositeViewModel(Dispatcher, NavigationFrame);
+            _navigationService = new NavigationService(LeftNavigationFrame, RightNavigationFrame);
+            DataContext = new CompositeViewModel(Dispatcher, _navigationService);
+            RightNavigationFrame.Navigated += RightNavigationFrame_Navigated;
+            this.Loaded += ChatterBoxMainView_Loaded;
+        }
+
+        private void RightNavigationFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            
+        }
+
+        private void ChatterBoxMainView_Loaded(object sender, RoutedEventArgs e)
+        {
+            _navigationService.NavigateTo(typeof(FirstPanelView));
         }
     }
 }

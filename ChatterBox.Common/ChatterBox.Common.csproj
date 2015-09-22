@@ -63,6 +63,8 @@
     <Compile Include="Mvvm\DesignViewModels\FirstPanelDesignViewModel.cs" />
     <Compile Include="Mvvm\Utils\ActionCommand.cs" />
     <Compile Include="Mvvm\Utils\BoolToVisConverter.cs" />
+    <Compile Include="Mvvm\Utils\NavigationService.cs" />
+    <Compile Include="Mvvm\Utils\ScreenUtils.cs" />
     <Compile Include="Mvvm\ViewModels\CallViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\FirstPanelViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\PeerViewModel.cs" />

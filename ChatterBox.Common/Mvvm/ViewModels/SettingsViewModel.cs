@@ -11,7 +11,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
 {
     internal class SettingsViewModel : DispatcherBindableBase
     {
-        public SettingsViewModel(CoreDispatcher uiDispatcher, Frame frame) :
+        public SettingsViewModel(CoreDispatcher uiDispatcher, NavigationService frame) :
             base(uiDispatcher, frame)
         {
             BackButtonCommand = new ActionCommand(BackButtonExecute);
@@ -26,10 +26,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
 
         private void BackButtonExecute(object obj)
         {
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
+            NavigationService.NavigateBack();
         }
     }
 }

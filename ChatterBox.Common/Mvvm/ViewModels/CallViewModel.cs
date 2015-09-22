@@ -13,7 +13,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
 {
     internal class CallViewModel : DispatcherBindableBase
     {        
-        public CallViewModel(CoreDispatcher uiDispatcher, Frame frame) :
+        public CallViewModel(CoreDispatcher uiDispatcher, NavigationService frame) :
             base(uiDispatcher, frame)
         {
             CloseCallButtonCommand = new ActionCommand(CloseCallButtonExecute);
@@ -28,10 +28,7 @@ namespace ChatterBox.Common.Mvvm.ViewModels
 
         private void CloseCallButtonExecute(object obj)
         {
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
+            NavigationService.NavigateBack();
         }
     }
 }

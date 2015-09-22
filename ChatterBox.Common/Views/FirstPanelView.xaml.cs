@@ -1,4 +1,5 @@
-﻿using ChatterBox.Common.Mvvm.ViewModels;
+﻿using ChatterBox.Common.Mvvm.Utils;
+using ChatterBox.Common.Mvvm.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace ChatterBox.Common.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            DataContext = new FirstPanelViewModel(Dispatcher, e.Parameter as Frame);
+            DataContext = new FirstPanelViewModel(Dispatcher, e.Parameter as NavigationService);
         }
     }
 }

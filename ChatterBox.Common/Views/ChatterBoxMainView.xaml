@@ -13,11 +13,14 @@
     <Grid Name="MainGrid">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>        
-        <Frame Name="NavigationFrame"               
-               Grid.Column="1">            
+            <ColumnDefinition Width="Auto" x:Name="Column1" />
+            <ColumnDefinition Width="*" x:Name="Column2" />
+        </Grid.ColumnDefinitions>
+        <Frame Name="LeftNavigationFrame"
+               Grid.Column="0" >
+        </Frame>
+        <Frame Name="RightNavigationFrame"
+               Grid.Column="1">
         </Frame>
     </Grid>
 </UserControl>

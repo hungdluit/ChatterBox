@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChatterBox.Common.Mvvm.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Core;
@@ -15,16 +16,16 @@ namespace ChatterBox.Common.Mvvm.Base
         // The UI dispatcher
         private readonly CoreDispatcher _uiDispatcher;
 
-        protected readonly Frame Frame;
+        protected readonly NavigationService NavigationService;
 
         /// <summary>
         /// Creates a DispatcherBindableBase instance.
         /// </summary>
         /// <param name="uiDispatcher">Core event message dispatcher.</param>
-        protected DispatcherBindableBase(CoreDispatcher uiDispatcher, Frame frame)
+        protected DispatcherBindableBase(CoreDispatcher uiDispatcher, NavigationService navigationService)
         {
             _uiDispatcher = uiDispatcher;
-            Frame = frame;
+            NavigationService = navigationService;
         }
 
         /// <summary>

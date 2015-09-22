@@ -14,16 +14,10 @@ namespace ChatterBox.Common.Mvvm
 {
     internal class CompositeViewModel : DispatcherBindableBase
     {
-        public CompositeViewModel(CoreDispatcher uiDispatcher, Frame frame)
-            : base(uiDispatcher, frame)
+        public CompositeViewModel(CoreDispatcher uiDispatcher, NavigationService navigationService)
+            : base(uiDispatcher, navigationService)
         {
-            Frame.Navigated += _frame_Navigated;            
-            Frame.Navigate(typeof(FirstPanelView), frame);
-        }
-
-        private void _frame_Navigated(object sender, NavigationEventArgs e)
-        {
-        }        
+        }     
 
         #region Binding Properties
 
