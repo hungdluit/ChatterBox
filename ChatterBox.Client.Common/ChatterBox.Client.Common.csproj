@@ -53,18 +53,19 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mvvm\Base\BindableBase.cs" />
-    <Compile Include="Mvvm\Base\DispatcherBindableBase.cs" />
-    <Compile Include="Mvvm\CompositeViewModel.cs" />
-    <Compile Include="Mvvm\DesignViewModels\FirstPanelDesignViewModel.cs" />
-    <Compile Include="Mvvm\Utils\ActionCommand.cs" />
-    <Compile Include="Mvvm\Utils\BoolToVisConverter.cs" />
-    <Compile Include="Mvvm\Utils\NavigationService.cs" />
-    <Compile Include="Mvvm\Utils\ScreenUtils.cs" />
-    <Compile Include="Mvvm\ViewModels\CallViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\FirstPanelViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\PeerViewModel.cs" />
-    <Compile Include="Mvvm\ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\NegatedBoolConverter.cs" />
+    <Compile Include="MVVM\BindableBase.cs" />
+    <Compile Include="MVVM\DelegateCommand.cs" />
+    <Compile Include="MVVM\DispatcherBindableBase.cs" />
+    <Compile Include="MVVM\CompositeViewModel.cs" />
+    <Compile Include="MVVM\Utils\ActionCommand.cs" />
+    <Compile Include="MVVM\Utils\NavigationService.cs" />
+    <Compile Include="MVVM\Utils\ScreenUtils.cs" />
+    <Compile Include="ViewModels\CallViewModel.cs" />
+    <Compile Include="ViewModels\FirstPanelViewModel.cs" />
+    <Compile Include="ViewModels\PeerViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\CallView.xaml.cs">
       <DependentUpon>CallView.xaml</DependentUpon>

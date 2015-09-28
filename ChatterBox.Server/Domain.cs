@@ -91,17 +91,11 @@ namespace ChatterBox.Server
         }
         private void RegisteredClient_OnGetPeerList(RegisteredClient sender, IMessage message)
         {
-            var peers = GetPeers(sender);
-            var peerList = new PeerList
+            sender.OnPeerList(new PeerList
             {
-                ReplyFor = message.Id
-            };
-            foreach (var registeredClient in peers)
-            {
-                peerList.Peers.Add(GetClientInformation(registeredClient));
-            }
-
-            sender.OnPeerList(peerList);
+                ReplyFor = message.Id,
+                Peers = GetPeers(sender).Select(GetClientInformation).ToArray()
+            });
         }
 
 

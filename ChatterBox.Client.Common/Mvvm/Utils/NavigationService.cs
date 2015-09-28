@@ -4,12 +4,12 @@ using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Common.Mvvm.Utils
 {
-    internal class NavigationService
+    public sealed class NavigationService
     {
-        private Frame _leftFrame;
-        private Frame _rightFrame;
-        private string _rigthFrameEmptyState;
-        private ScreenUtils _screenUtils;
+        private readonly Frame _leftFrame;
+        private readonly Frame _rightFrame;
+        private readonly string _rigthFrameEmptyState;
+        private readonly ScreenUtils _screenUtils;
 
         public NavigationService(Frame leftFrame, Frame rightFrame)
         {

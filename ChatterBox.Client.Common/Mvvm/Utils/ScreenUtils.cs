@@ -48,10 +48,7 @@ namespace ChatterBox.Client.Common.Mvvm.Utils
             {
                 CurrentState = AppState.OverlayState;
             }
-            if (StateChanged != null)
-            {
-                StateChanged(CurrentState);
-            }
+            StateChanged?.Invoke(CurrentState);
         }
     }
 }

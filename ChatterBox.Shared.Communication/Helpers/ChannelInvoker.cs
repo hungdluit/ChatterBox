@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using ChatterBox.Shared.Communication.Serialization;
 
 namespace ChatterBox.Shared.Communication.Helpers
 {
-    public sealed class ChannelInvoker<T>
+    internal sealed class ChannelInvoker<T>
     {
 
         private T Handler { get; }
@@ -20,9 +21,9 @@ namespace ChatterBox.Shared.Communication.Helpers
             {
                 var methodName = !request.Contains(" ")
                     ? request
-                    : request.Substring(0, request.IndexOf(" ", StringComparison.InvariantCulture));
+                    : request.Substring(0, request.IndexOf(" ", StringComparison.CurrentCultureIgnoreCase));
 
-                var method = typeof(T).GetMethod(methodName);
+                var method = typeof(T).GetRuntimeMethods().Single(s => s.Name == methodName);
                 var parameters = method.GetParameters();
 
                 object argument = null;
@@ -30,7 +31,7 @@ namespace ChatterBox.Shared.Communication.Helpers
                 if (parameters.Any())
                 {
                     var serializedParameter =
-                        request.Substring(request.IndexOf(" ", StringComparison.InvariantCulture) + 1);
+                        request.Substring(request.IndexOf(" ", StringComparison.CurrentCultureIgnoreCase) + 1);
                     argument = JsonConvert.Deserialize(serializedParameter, parameters.Single().ParameterType);
                 }
 

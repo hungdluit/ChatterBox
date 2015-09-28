@@ -6,7 +6,7 @@ namespace ChatterBox.Shared.Communication.Messages.Standard
     public sealed class OkReply : IMessageReply
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public DateTime SentDateTimeUtc { get; set; }
+        public DateTimeOffset SentDateTimeUtc { get; set; }
         public Guid ReplyFor { get; set; }
 
         public static OkReply For(IMessage message)
@@ -14,14 +14,6 @@ namespace ChatterBox.Shared.Communication.Messages.Standard
             return new OkReply
             {
                 ReplyFor = message.Id
-            };
-        }
-
-        public static OkReply For(Guid id)
-        {
-            return new OkReply
-            {
-                ReplyFor = id
             };
         }
     }

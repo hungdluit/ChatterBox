@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="ChatterBox.Client.Presentation.Shared.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
+    xmlns:views="using:ChatterBox.Client.Presentation.Shared.Views"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInvertedConverter" Inverted="True" />
+        <converters:NegatedBoolConverter x:Key="NegatedBoolConverter" />
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <views:RegistrationView DataContext="{Binding RegistrationViewModel}"  Visibility="{Binding IsRegistrationCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+    </Grid>
+</Page>

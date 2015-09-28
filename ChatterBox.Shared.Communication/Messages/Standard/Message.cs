@@ -6,6 +6,6 @@ namespace ChatterBox.Shared.Communication.Messages.Standard
     public sealed class Message:IMessage
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public DateTime SentDateTimeUtc { get; set; }
+        public DateTimeOffset SentDateTimeUtc { get; set; }
     }
 }

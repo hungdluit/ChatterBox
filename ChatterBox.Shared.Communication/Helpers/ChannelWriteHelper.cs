@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using ChatterBox.Shared.Communication.Messages.Interfaces;
@@ -6,7 +8,7 @@ using ChatterBox.Shared.Communication.Serialization;
 
 namespace ChatterBox.Shared.Communication.Helpers
 {
-    public sealed class ChannelWriteHelper<T>
+    internal sealed class ChannelWriteHelper<T>
     {
         public static string FormatOutput(object argument = null, [CallerMemberName]string method = null)
         {
@@ -18,8 +20,7 @@ namespace ChatterBox.Shared.Communication.Helpers
 
 
             if (method == null) return null;
-
-            var methodDefinition = typeof(T).GetMethod(method);
+            var methodDefinition = typeof(T).GetRuntimeMethods().Single(s => s.Name == method);
             if (methodDefinition == null) return null;
 
             var messageBuilder = new StringBuilder();

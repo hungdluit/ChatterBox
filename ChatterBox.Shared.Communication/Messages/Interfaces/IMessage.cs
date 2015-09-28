@@ -6,6 +6,6 @@ namespace ChatterBox.Shared.Communication.Messages.Interfaces
     {
         Guid Id { get; set; }
 
-        DateTime SentDateTimeUtc { get; set; }
+        DateTimeOffset SentDateTimeUtc { get; set; }
     }
 }

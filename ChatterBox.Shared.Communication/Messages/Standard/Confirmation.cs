@@ -8,20 +8,11 @@ namespace ChatterBox.Shared.Communication.Messages.Standard
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid ConfirmationFor { get; set; }
 
-
         public static Confirmation For(IMessage message)
         {
             return new Confirmation
             {
                 ConfirmationFor = message.Id
-            };
-        }
-
-        public static Confirmation For(Guid id)
-        {
-            return new Confirmation
-            {
-                ConfirmationFor = id
             };
         }
     }
