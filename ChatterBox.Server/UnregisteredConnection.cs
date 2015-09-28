@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using ChatterBox.Shared.Communication.Contracts;
 using ChatterBox.Shared.Communication.Helpers;
+using ChatterBox.Shared.Communication.Messages.Peers;
 using ChatterBox.Shared.Communication.Messages.Registration;
 using ChatterBox.Shared.Communication.Messages.Standard;
 using Common.Logging;
@@ -39,7 +40,7 @@ namespace ChatterBox.Server
 
 
         public event OnRegisterHandler OnRegister;
-        public delegate void OnRegisterHandler(UnregisteredConnection sender, RegistrationMessage message);
+        public delegate void OnRegisterHandler(UnregisteredConnection sender, Registration message);
 
 
         public override string ToString()
@@ -47,7 +48,7 @@ namespace ChatterBox.Server
             return $"{nameof(UnregisteredConnection)}[{Id}]";
         }
 
-        public void Register(RegistrationMessage message)
+        public void Register(Registration message)
         {
             ServerConfirmation(Confirmation.For(message));
             OnRegister?.Invoke(this, message);
@@ -80,7 +81,17 @@ namespace ChatterBox.Server
         {
         }
 
-        public void RegistrationConfirmation(OkReply reply)
+        public void OnPeerPresence(PeerInformation peer)
+        {
+            
+        }
+
+        public void OnPeerList(PeerList peerList)
+        {
+            
+        }
+
+        public void OnRegistrationConfirmation(OkReply reply)
         {
         }
 
@@ -99,6 +110,10 @@ namespace ChatterBox.Server
                 AutoFlush = true
             };
             writer.WriteLine(message);
+        }
+
+        public void GetPeerList(Message message)
+        {
         }
     }
 }

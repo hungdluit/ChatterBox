@@ -1,6 +1,10 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using ChatterBox.Shared.Communication.Messages.Interfaces;
+using ChatterBox.Shared.Communication.Messages.Peers;
 using ChatterBox.Shared.Communication.Messages.Registration;
 using Common.Logging;
 
@@ -14,7 +18,7 @@ namespace ChatterBox.Server
         public ConcurrentDictionary<string, RegisteredClient> Clients { get; } = new ConcurrentDictionary<string, RegisteredClient>();
 
 
-        public bool HandleRegistration(UnregisteredConnection unregisteredConnection, RegistrationMessage message)
+        public bool HandleRegistration(UnregisteredConnection unregisteredConnection, Registration message)
         {
             Logger.Info($"Handling the registration of connection {unregisteredConnection}");
             RegisteredClient registeredClient;
@@ -39,6 +43,10 @@ namespace ChatterBox.Server
                     Name = message.Name,
                     PushToken = message.PushToken,
                 };
+                registeredClient.OnConnected += RegisteredClient_OnConnected;
+                registeredClient.OnDisconnected += RegisteredClient_OnDisconnected;
+                registeredClient.OnGetPeerList += RegisteredClient_OnGetPeerList;
+
                 if (Clients.TryAdd(registeredClient.UserId, registeredClient))
                 {
                     Logger.Info($"Registered new client. {registeredClient}");
@@ -63,5 +71,54 @@ namespace ChatterBox.Server
             }
 
         }
+
+
+        private void RegisteredClient_OnConnected(RegisteredClient sender)
+        {
+            var peers = GetPeers(sender);
+            foreach (var registeredClient in peers)
+            {
+                registeredClient.OnPeerPresence(GetClientInformation(sender));
+            }
+        }
+        private void RegisteredClient_OnDisconnected(RegisteredClient sender)
+        {
+            var peers = GetPeers(sender);
+            foreach (var registeredClient in peers)
+            {
+                registeredClient.OnPeerPresence(GetClientInformation(sender));
+            }
+        }
+        private void RegisteredClient_OnGetPeerList(RegisteredClient sender, IMessage message)
+        {
+            var peers = GetPeers(sender);
+            var peerList = new PeerList
+            {
+                ReplyFor = message.Id
+            };
+            foreach (var registeredClient in peers)
+            {
+                peerList.Peers.Add(GetClientInformation(registeredClient));
+            }
+
+            sender.OnPeerList(peerList);
+        }
+
+
+        private List<RegisteredClient> GetPeers(RegisteredClient sender)
+        {
+            return Clients.Where(s => s.Key != sender.UserId).Select(s => s.Value).ToList();
+        }
+        private PeerInformation GetClientInformation(RegisteredClient registeredClient)
+        {
+            return new PeerInformation
+            {
+                UserId = registeredClient.UserId,
+                Name = registeredClient.Name,
+                IsOnline = registeredClient.IsOnline,
+                SentDateTimeUtc = DateTime.UtcNow
+            };
+        }
+
     }
 }

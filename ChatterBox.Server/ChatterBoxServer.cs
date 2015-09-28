@@ -78,7 +78,7 @@ namespace ChatterBox.Server
             });
         }
 
-        private void UnregisteredConnection_OnRegister(UnregisteredConnection sender, RegistrationMessage message)
+        private void UnregisteredConnection_OnRegister(UnregisteredConnection sender, Registration message)
         {
             var domain = GetOrAddDomain(message.Domain);
             UnregisteredConnection connection;

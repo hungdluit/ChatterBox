@@ -66,6 +66,7 @@
     <Compile Include="Domain.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegisteredClientMessageQueueItem.cs" />
     <Compile Include="UnregisteredConnection.cs" />
   </ItemGroup>
   <ItemGroup>

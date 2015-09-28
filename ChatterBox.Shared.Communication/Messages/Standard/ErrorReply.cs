@@ -6,6 +6,7 @@ namespace ChatterBox.Shared.Communication.Messages.Standard
     public sealed class ErrorReply : IMessageReply
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+        public DateTime SentDateTimeUtc { get; set; }
         public Guid ReplyFor { get; set; }
 
         public string ErrorMessage { get; set; }

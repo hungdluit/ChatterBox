@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ChatterBox.Shared.Communication.Contracts;
 using ChatterBox.Shared.Communication.Helpers;
 using ChatterBox.Shared.Communication.Messages.Interfaces;
+using ChatterBox.Shared.Communication.Messages.Peers;
 using ChatterBox.Shared.Communication.Messages.Registration;
 using ChatterBox.Shared.Communication.Messages.Standard;
 using Common.Logging;
@@ -24,8 +25,9 @@ namespace ChatterBox.Server
 
         private ChannelInvoker<IClientChannel> ClientReadProxy { get; }
         private TcpClient ActiveConnection { get; set; }
-        private ConcurrentQueue<MessageQueueItem> MessageQueue { get; } = new ConcurrentQueue<MessageQueueItem>();
+        private ConcurrentQueue<RegisteredClientMessageQueueItem> MessageQueue { get; set; } = new ConcurrentQueue<RegisteredClientMessageQueueItem>();
         private ConcurrentQueue<string> WriteQueue { get; set; } = new ConcurrentQueue<string>();
+        public bool IsOnline { get; private set; }
 
 
         public RegisteredClient()
@@ -36,41 +38,61 @@ namespace ChatterBox.Server
 
 
 
-        public void SetActiveConnection(UnregisteredConnection connection, RegistrationMessage message)
+        public void SetActiveConnection(UnregisteredConnection connection, Registration message)
         {
             Logger.Debug("Handling new TCP connection.");
             ActiveConnection = connection.TcpClient;
-            WriteQueue = new ConcurrentQueue<string>();
-            RegistrationConfirmation(OkReply.For(message));
+            OnRegistrationConfirmation(OkReply.For(message));
+            ResetQueues();
             StartReading();
             StartWriting();
             StartMessageQueueProcessing();
+            IsOnline = true;
+            OnConnected?.Invoke(this);
         }
+
+        private void ResetQueues()
+        {
+            WriteQueue = new ConcurrentQueue<string>();
+            var queuedMessages = MessageQueue.OrderBy(s => s.Message.SentDateTimeUtc).ToList();
+            MessageQueue = new ConcurrentQueue<RegisteredClientMessageQueueItem>();
+
+            var confirmationMessage = queuedMessages.Last(s => s.Method == nameof(OnRegistrationConfirmation));
+            queuedMessages.RemoveAll(s => s.Method == nameof(OnRegistrationConfirmation));
+            queuedMessages.Insert(0, confirmationMessage);
+
+            foreach (var queuedMessage in queuedMessages)
+            {
+                queuedMessage.IsSent = false;
+                queuedMessage.IsDelivered = false;
+                MessageQueue.Enqueue(queuedMessage);
+            }
+
+        }
+
         private void StartReading()
         {
             Task.Run(async () =>
             {
                 try
                 {
-                    using (var reader = new StreamReader(ActiveConnection.GetStream()))
+                    var reader = new StreamReader(ActiveConnection.GetStream());
+                    while (true)
                     {
-                        while (true)
+                        var message = await reader.ReadLineAsync();
+                        if (message == null) break;
+                        Logger.Trace($"Received: {message}");
+                        if (!ClientReadProxy.ProcessRequest(message))
                         {
-                            var message = await reader.ReadLineAsync();
-                            if (message == null) break;
-                            Logger.Trace($"Received: {message}");
-                            if (!ClientReadProxy.ProcessRequest(message))
-                            {
-                                ServerReceivedInvalidMessage(InvalidMessage.For(message));
-                            }
+                            ServerReceivedInvalidMessage(InvalidMessage.For(message));
                         }
                     }
 
                 }
                 catch (Exception exception)
                 {
-                    Logger.Warn($"Disconnected. Reason: {exception.Message}");
-                    OnDisconnected();
+                    Logger.Warn($"[READ] Disconnected. Reason: {exception.Message}");
+                    OnTcpClientDisconnected();
                 }
             });
         }
@@ -80,30 +102,28 @@ namespace ChatterBox.Server
             {
                 try
                 {
-                    using (var writer = new StreamWriter(ActiveConnection.GetStream())
+                    var writer = new StreamWriter(ActiveConnection.GetStream())
                     {
                         AutoFlush = true
-                    })
+                    };
+                    while (IsOnline)
                     {
-                        while (true)
+                        while (!WriteQueue.IsEmpty)
                         {
-                            while (!WriteQueue.IsEmpty)
-                            {
-                                string message;
-                                if (!WriteQueue.TryDequeue(out message)) continue;
+                            string message;
+                            if (!WriteQueue.TryDequeue(out message)) continue;
 
-                                Logger.Trace($"Sent: {message}");
-                                await writer.WriteLineAsync(message);
-                            }
-                            await Task.Delay(100);
+                            Logger.Debug($"Sent: {message}");
+                            await writer.WriteLineAsync(message);
                         }
+                        await Task.Delay(100);
                     }
 
                 }
                 catch (Exception exception)
                 {
-                    Logger.Warn($"Disconnected. Reason: {exception.Message}");
-                    OnDisconnected();
+                    Logger.Warn($"[WRITE] Disconnected. Reason: {exception.Message}");
+                    OnTcpClientDisconnected();
                 }
             });
         }
@@ -113,10 +133,9 @@ namespace ChatterBox.Server
             {
                 while (true)
                 {
-                    if (MessageQueue.IsEmpty) continue;
-                    while (true)
+                    while (!MessageQueue.IsEmpty)
                     {
-                        MessageQueueItem item;
+                        RegisteredClientMessageQueueItem item;
                         if (!MessageQueue.TryPeek(out item)) break;
 
                         if (!item.IsSent)
@@ -139,7 +158,7 @@ namespace ChatterBox.Server
 
 
 
-        public void Register(RegistrationMessage message)
+        public void Register(Registration message)
         {
         }
 
@@ -174,41 +193,60 @@ namespace ChatterBox.Server
             if (ActiveConnection == null) return;
             WriteQueue.Enqueue(ChannelWriteHelper<IServerChannel>.FormatOutput());
         }
-        
-        public void RegistrationConfirmation(OkReply reply)
+
+        public void OnPeerPresence(PeerInformation peer)
+        {
+            Enqueue(peer);
+        }
+
+        public void OnPeerList(PeerList peerList)
+        {
+            Enqueue(peerList);
+        }
+
+        public void OnRegistrationConfirmation(OkReply reply)
         {
             Enqueue(reply);
         }
-        
 
 
 
-        private void Enqueue(IMessage message, [CallerMemberName]string method = null)
+
+        private void Enqueue(IMessage message, [CallerMemberName] string method = null)
         {
             var serializedString = ChannelWriteHelper<IServerChannel>.FormatOutput(message, method);
-            MessageQueue.Enqueue(new MessageQueueItem
+            var queueItem = new RegisteredClientMessageQueueItem
             {
                 SerializedMessage = serializedString,
-                Message = message
-            });
+                Message = message,
+                Method = method
+            };
+            MessageQueue.Enqueue(queueItem);
         }
-        private void OnDisconnected()
+
+        private void OnTcpClientDisconnected()
         {
             ActiveConnection = null;
+            if (!IsOnline) return;
+            IsOnline = false;
+            OnDisconnected?.Invoke(this);
         }
         public override string ToString()
         {
             return $"Client[{Domain}/{UserId}/{Name}]";
         }
 
-        private class MessageQueueItem
+        public void GetPeerList(Message message)
         {
-            public string SerializedMessage { get; set; }
-
-            public IMessage Message { get; set; }
-
-            public bool IsDelivered { get; set; }
-            public bool IsSent { get; set; }
+            OnGetPeerList?.Invoke(this, message);
         }
+
+        public event OnRegisteredClientEventHandler OnConnected;
+        public event OnRegisteredClientEventHandler OnDisconnected;
+        public event OnRegisteredClientMessageEventHandler OnGetPeerList;
+        public delegate void OnRegisteredClientMessageEventHandler(RegisteredClient sender, IMessage message);
+        public delegate void OnRegisteredClientEventHandler(RegisteredClient sender);
+
+
     }
 }

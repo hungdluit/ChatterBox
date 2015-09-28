@@ -6,9 +6,11 @@ namespace ChatterBox.Shared.Communication.Contracts
 {
     public interface IClientChannel
     {
-        void Register(RegistrationMessage message);
+        void Register(Registration message);
         void ClientConfirmation(Confirmation confirmation);
-        void ClientHeartBeat();
+        void GetPeerList(Message message);
 
+
+        void ClientHeartBeat();
     }
 }

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using ChatterBox.Shared.Communication.Contracts;
 using ChatterBox.Shared.Communication.Helpers;
+using ChatterBox.Shared.Communication.Messages.Peers;
 using ChatterBox.Shared.Communication.Messages.Registration;
 using ChatterBox.Shared.Communication.Messages.Standard;
 using Common.Logging;
@@ -93,7 +94,7 @@ namespace ChatterBox.Client.Console
 
 
 
-        public void Register(RegistrationMessage request)
+        public void Register(Registration request)
         {
             WriteQueue.Enqueue(ChannelWriteHelper<IClientChannel>.FormatOutput(request));
         }
@@ -103,10 +104,17 @@ namespace ChatterBox.Client.Console
             WriteQueue.Enqueue(ChannelWriteHelper<IClientChannel>.FormatOutput(confirmation));
         }
 
+        public void GetPeerList(Message message)
+        {
+            WriteQueue.Enqueue(ChannelWriteHelper<IClientChannel>.FormatOutput(message));
+        }
+
         public void ClientHeartBeat()
         {
             
         }
+
+       
 
 
         public void ServerConfirmation(Confirmation confirmation)
@@ -123,7 +131,23 @@ namespace ChatterBox.Client.Console
             Logger.Error($"Server signaled error for message {reply.ReplyFor} with message {reply.ErrorMessage}");
         }
 
-        public void RegistrationConfirmation(OkReply reply)
+        public void OnPeerPresence(PeerInformation peer)
+        {
+            ClientConfirmation(Confirmation.For(peer));
+            GetPeerList(new Message());
+        }
+
+        public void OnPeerList(PeerList peerList)
+        {
+            ClientConfirmation(Confirmation.For(peerList));
+            foreach (var peer in peerList.Peers)
+            {
+                Logger.Trace($"{peer.Name} - {(peer.IsOnline ? "Online" : "Offline")}");
+            }
+        }
+
+
+        public void OnRegistrationConfirmation(OkReply reply)
         {
             ClientConfirmation(Confirmation.For(reply));
         }

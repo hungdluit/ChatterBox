@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
+using ChatterBox.Shared.Communication.Messages.Interfaces;
 using ChatterBox.Shared.Communication.Serialization;
 
 namespace ChatterBox.Shared.Communication.Helpers
@@ -8,6 +10,13 @@ namespace ChatterBox.Shared.Communication.Helpers
     {
         public static string FormatOutput(object argument = null, [CallerMemberName]string method = null)
         {
+            var message = argument as IMessage;
+            if (message != null)
+            {
+                message.SentDateTimeUtc=DateTime.UtcNow;
+            }
+
+
             if (method == null) return null;
 
             var methodDefinition = typeof(T).GetMethod(method);

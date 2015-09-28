@@ -1,4 +1,5 @@
-﻿using ChatterBox.Shared.Communication.Messages.Standard;
+﻿using ChatterBox.Shared.Communication.Messages.Peers;
+using ChatterBox.Shared.Communication.Messages.Standard;
 
 namespace ChatterBox.Shared.Communication.Contracts
 {
@@ -9,7 +10,11 @@ namespace ChatterBox.Shared.Communication.Contracts
         void ServerError(ErrorReply reply);
         void ServerHeartBeat();
 
+        void OnPeerPresence(PeerInformation peer);
 
-        void RegistrationConfirmation(OkReply reply);
+        void OnPeerList(PeerList peerList);
+
+
+        void OnRegistrationConfirmation(OkReply reply);
     }
 }
