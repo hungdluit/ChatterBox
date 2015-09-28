@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using ChatterBox.Shared.Communication.Contracts;
-using ChatterBox.Shared.Communication.Helpers;
-using ChatterBox.Shared.Communication.Messages.Peers;
-using ChatterBox.Shared.Communication.Messages.Registration;
-using ChatterBox.Shared.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Contracts;
+using ChatterBox.Common.Communication.Helpers;
+using ChatterBox.Common.Communication.Messages.Peers;
+using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Standard;
 using Common.Logging;
 
 namespace ChatterBox.Server
@@ -17,6 +18,7 @@ namespace ChatterBox.Server
         public Guid Id { get; } = Guid.NewGuid();
 
         public TcpClient TcpClient { get; set; }
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IServerChannel));
 
         public UnregisteredConnection(TcpClient tcpClient)
         {
@@ -28,7 +30,7 @@ namespace ChatterBox.Server
             Task.Run(async () =>
             {
                 var reader = new StreamReader(TcpClient.GetStream());
-                var clientChannelProxy = new ChannelInvoker<IClientChannel>(this);
+                var clientChannelProxy = new ChannelInvoker(this);
                 var message = await reader.ReadLineAsync();
                 if (!clientChannelProxy.ProcessRequest(message))
                 {
@@ -56,7 +58,7 @@ namespace ChatterBox.Server
 
         public void ClientConfirmation(Confirmation confirmation)
         {
-            
+
         }
 
         public void ClientHeartBeat()
@@ -66,15 +68,13 @@ namespace ChatterBox.Server
 
         public void ServerConfirmation(Confirmation confirmation)
         {
-            var message = ChannelWriteHelper<IServerChannel>.FormatOutput(confirmation);
-            Write(message);
+            Write(confirmation);
 
         }
 
         public void ServerReceivedInvalidMessage(InvalidMessage reply)
         {
-            var message = ChannelWriteHelper<IServerChannel>.FormatOutput(reply);
-            Write(message);
+            Write(reply);
         }
 
         public void ServerError(ErrorReply reply)
@@ -83,12 +83,12 @@ namespace ChatterBox.Server
 
         public void OnPeerPresence(PeerInformation peer)
         {
-            
+
         }
 
         public void OnPeerList(PeerList peerList)
         {
-            
+
         }
 
         public void OnRegistrationConfirmation(OkReply reply)
@@ -103,8 +103,9 @@ namespace ChatterBox.Server
         {
         }
 
-        private void Write(string message)
+        private void Write(object arg = null, [CallerMemberName] string method = null)
         {
+            var message = ChannelWriteHelper.FormatOutput(arg, method);
             var writer = new StreamWriter(TcpClient.GetStream())
             {
                 AutoFlush = true

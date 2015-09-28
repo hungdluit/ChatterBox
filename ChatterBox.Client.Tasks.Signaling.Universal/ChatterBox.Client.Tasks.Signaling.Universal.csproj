@@ -116,9 +116,12 @@
       <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
       <Name>ChatterBox.Client.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
+      <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
+      <Name>ChatterBox.Common.Communication</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\ChatterBox.Client.Signaling.Shared\ChatterBox.Client.Signaling.Shared.projitems" Label="Shared" />
-  <Import Project="..\ChatterBox.Shared.Communication\ChatterBox.Shared.Communication.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

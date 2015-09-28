@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Timers;
-using ChatterBox.Shared.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Registration;
 using Common.Logging;
 
 namespace ChatterBox.Server

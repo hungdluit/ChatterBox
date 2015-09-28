@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CA0C8677-1A3C-4418-997D-1BB450EAA6D0}</ProjectGuid>
+    <ProjectGuid>{5EE2034E-0977-42B0-8F9D-5F65BDACCFF4}</ProjectGuid>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChatterBox.Client.Tasks.Signaling.Win8._1</RootNamespace>
-    <AssemblyName>ChatterBox.Client.Tasks.Signaling.Win8.1</AssemblyName>
+    <RootNamespace>ChatterBox.Common.Communication</RootNamespace>
+    <AssemblyName>ChatterBox.Common.Communication</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,18 +34,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
     <TargetPlatform Include="Windows, Version=8.1" />
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
-      <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
-      <Name>ChatterBox.Common.Communication</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

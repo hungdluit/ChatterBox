@@ -2,12 +2,13 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using ChatterBox.Shared.Communication.Contracts;
-using ChatterBox.Shared.Communication.Helpers;
-using ChatterBox.Shared.Communication.Messages.Peers;
-using ChatterBox.Shared.Communication.Messages.Registration;
-using ChatterBox.Shared.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Contracts;
+using ChatterBox.Common.Communication.Helpers;
+using ChatterBox.Common.Communication.Messages.Peers;
+using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Standard;
 using Common.Logging;
 
 namespace ChatterBox.Client.Console
@@ -18,7 +19,8 @@ namespace ChatterBox.Client.Console
         public string Label { get; set; }
 
         private ILog Logger => LogManager.GetLogger(string.IsNullOrWhiteSpace(Label) ? nameof(ChatterBoxClient) : Label);
-        private ChannelInvoker<IServerChannel> ServerReadProxy { get; }
+        private ChannelInvoker ServerReadProxy { get; }
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
         private ConcurrentQueue<string> WriteQueue { get; } = new ConcurrentQueue<string>();
         private TcpClient TcpClient { get; } = new TcpClient();
         private StreamReader _reader;
@@ -29,7 +31,7 @@ namespace ChatterBox.Client.Console
 
         public ChatterBoxClient()
         {
-            ServerReadProxy = new ChannelInvoker<IServerChannel>(this);
+            ServerReadProxy = new ChannelInvoker(this);
         }
 
 
@@ -60,7 +62,7 @@ namespace ChatterBox.Client.Console
                 }
                 catch (Exception exception)
                 {
-                    Logger.Warn("Disconnected during socket read operation due to exception",exception);
+                    Logger.Warn("Disconnected during socket read operation due to exception", exception);
                 }
             });
         }
@@ -85,7 +87,7 @@ namespace ChatterBox.Client.Console
                 }
                 catch (Exception exception)
                 {
-                    Logger.Warn("Disconnected during socket WRITE operation due to exception", exception); 
+                    Logger.Warn("Disconnected during socket WRITE operation due to exception", exception);
                 }
 
             });
@@ -96,25 +98,30 @@ namespace ChatterBox.Client.Console
 
         public void Register(Registration request)
         {
-            WriteQueue.Enqueue(ChannelWriteHelper<IClientChannel>.FormatOutput(request));
+            SendToServer(request);
+        }
+
+        private void SendToServer(object arg = null, [CallerMemberName]string method = null)
+        {
+            WriteQueue.Enqueue(ChannelWriteHelper.FormatOutput(arg, method));
         }
 
         public void ClientConfirmation(Confirmation confirmation)
         {
-            WriteQueue.Enqueue(ChannelWriteHelper<IClientChannel>.FormatOutput(confirmation));
+            SendToServer(confirmation);
         }
 
         public void GetPeerList(Message message)
         {
-            WriteQueue.Enqueue(ChannelWriteHelper<IClientChannel>.FormatOutput(message));
+            SendToServer(message);
         }
 
         public void ClientHeartBeat()
         {
-            
+
         }
 
-       
+
 
 
         public void ServerConfirmation(Confirmation confirmation)
@@ -152,11 +159,11 @@ namespace ChatterBox.Client.Console
             ClientConfirmation(Confirmation.For(reply));
         }
 
-       
+
 
         public void ServerHeartBeat()
         {
-            
+
         }
     }
 }

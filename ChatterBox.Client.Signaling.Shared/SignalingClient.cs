@@ -3,23 +3,25 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
-using ChatterBox.Shared.Communication.Contracts;
-using ChatterBox.Shared.Communication.Helpers;
-using ChatterBox.Shared.Communication.Messages.Peers;
-using ChatterBox.Shared.Communication.Messages.Registration;
-using ChatterBox.Shared.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Contracts;
+using ChatterBox.Common.Communication.Helpers;
+using ChatterBox.Common.Communication.Messages.Peers;
+using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Standard;
 
 namespace ChatterBox.Client.Signaling
 {
     public sealed class ChatterBoxClient : IClientChannel, IServerChannel
     {
         private readonly ISignalingSocketService _signalingSocketService;
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
 
-        private ChannelInvoker<IServerChannel> ServerReadProxy { get; }
+        private ChannelInvoker ServerReadProxy { get; }
 
 
 
@@ -27,25 +29,25 @@ namespace ChatterBox.Client.Signaling
         public ChatterBoxClient(ISignalingSocketService signalingSocketService)
         {
             _signalingSocketService = signalingSocketService;
-            ServerReadProxy = new ChannelInvoker<IServerChannel>(this);
+            ServerReadProxy = new ChannelInvoker(this);
         }
 
 
         public async void Register(Registration message)
         {
-            await SendToServer(ChannelWriteHelper<IClientChannel>.FormatOutput(message));
+            await SendToServer(message);
         }
 
         public async void ClientConfirmation(Confirmation confirmation)
         {
-            await SendToServer(ChannelWriteHelper<IClientChannel>.FormatOutput(confirmation));
+            await SendToServer(confirmation);
         }
 
 
 
         public async void GetPeerList(Message message)
         {
-            await SendToServer(ChannelWriteHelper<IClientChannel>.FormatOutput(message));
+            await SendToServer(message);
         }
 
         public void ClientHeartBeat()
@@ -100,8 +102,9 @@ namespace ChatterBox.Client.Signaling
 
 
 
-        private async Task SendToServer(string message)
+        private async Task SendToServer(object arg=null, [CallerMemberName]string method=null)
         {
+            var message = ChannelWriteHelper.FormatOutput(arg, method);
             var socket = _signalingSocketService.GetSocket();
             if (socket != null)
             {

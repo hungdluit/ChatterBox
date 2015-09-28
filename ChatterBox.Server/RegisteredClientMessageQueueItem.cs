@@ -1,4 +1,4 @@
-using ChatterBox.Shared.Communication.Messages.Interfaces;
+using ChatterBox.Common.Communication.Messages.Interfaces;
 
 namespace ChatterBox.Server
 {

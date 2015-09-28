@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChatterBox.Shared.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Registration;
 
 namespace ChatterBox.Client.Console
 {

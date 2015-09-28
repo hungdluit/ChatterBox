@@ -5,12 +5,12 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using ChatterBox.Shared.Communication.Contracts;
-using ChatterBox.Shared.Communication.Helpers;
-using ChatterBox.Shared.Communication.Messages.Interfaces;
-using ChatterBox.Shared.Communication.Messages.Peers;
-using ChatterBox.Shared.Communication.Messages.Registration;
-using ChatterBox.Shared.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Contracts;
+using ChatterBox.Common.Communication.Helpers;
+using ChatterBox.Common.Communication.Messages.Interfaces;
+using ChatterBox.Common.Communication.Messages.Peers;
+using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Standard;
 using Common.Logging;
 
 namespace ChatterBox.Server
@@ -23,7 +23,10 @@ namespace ChatterBox.Server
         public string Domain { get; set; }
         public string PushToken { get; set; }
 
-        private ChannelInvoker<IClientChannel> ClientReadProxy { get; }
+        private ChannelInvoker ClientReadProxy { get; }
+
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IServerChannel));
+
         private TcpClient ActiveConnection { get; set; }
         private ConcurrentQueue<RegisteredClientMessageQueueItem> MessageQueue { get; set; } = new ConcurrentQueue<RegisteredClientMessageQueueItem>();
         private ConcurrentQueue<string> WriteQueue { get; set; } = new ConcurrentQueue<string>();
@@ -32,7 +35,7 @@ namespace ChatterBox.Server
 
         public RegisteredClient()
         {
-            ClientReadProxy = new ChannelInvoker<IClientChannel>(this);
+            ClientReadProxy = new ChannelInvoker(this);
         }
 
 
@@ -178,43 +181,43 @@ namespace ChatterBox.Server
 
         public void ServerConfirmation(Confirmation confirmation)
         {
-            WriteQueue.Enqueue(ChannelWriteHelper<IServerChannel>.FormatOutput(confirmation));
+            EnqueueOutput(confirmation);
         }
         public void ServerReceivedInvalidMessage(InvalidMessage reply)
         {
-            WriteQueue.Enqueue(ChannelWriteHelper<IServerChannel>.FormatOutput(reply));
+            EnqueueOutput(reply);
         }
         public void ServerError(ErrorReply reply)
         {
-            Enqueue(reply);
+            EnqueueMessage(reply);
         }
         public void ServerHeartBeat()
         {
             if (ActiveConnection == null) return;
-            WriteQueue.Enqueue(ChannelWriteHelper<IServerChannel>.FormatOutput());
+            EnqueueOutput();
         }
 
         public void OnPeerPresence(PeerInformation peer)
         {
-            Enqueue(peer);
+            EnqueueMessage(peer);
         }
 
         public void OnPeerList(PeerList peerList)
         {
-            Enqueue(peerList);
+            EnqueueMessage(peerList);
         }
 
         public void OnRegistrationConfirmation(OkReply reply)
         {
-            Enqueue(reply);
+            EnqueueMessage(reply);
         }
 
 
 
 
-        private void Enqueue(IMessage message, [CallerMemberName] string method = null)
+        private void EnqueueMessage(IMessage message, [CallerMemberName] string method = null)
         {
-            var serializedString = ChannelWriteHelper<IServerChannel>.FormatOutput(message, method);
+            var serializedString = ChannelWriteHelper.FormatOutput(message, method);
             var queueItem = new RegisteredClientMessageQueueItem
             {
                 SerializedMessage = serializedString,
@@ -222,6 +225,11 @@ namespace ChatterBox.Server
                 Method = method
             };
             MessageQueue.Enqueue(queueItem);
+        }
+
+        private void EnqueueOutput(object message = null, [CallerMemberName] string method = null)
+        {
+            WriteQueue.Enqueue(ChannelWriteHelper.FormatOutput(message, method));
         }
 
         private void OnTcpClientDisconnected()

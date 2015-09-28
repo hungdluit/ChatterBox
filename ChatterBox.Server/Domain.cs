@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using ChatterBox.Shared.Communication.Messages.Interfaces;
-using ChatterBox.Shared.Communication.Messages.Peers;
-using ChatterBox.Shared.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Interfaces;
+using ChatterBox.Common.Communication.Messages.Peers;
+using ChatterBox.Common.Communication.Messages.Registration;
 using Common.Logging;
 
 namespace ChatterBox.Server
