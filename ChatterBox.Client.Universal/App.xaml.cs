@@ -8,6 +8,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
+using ChatterBox.Client.Signaling;
+using ChatterBox.Client.Tasks.Signaling.Universal;
+using ChatterBox.Client.Universal.Helpers;
 using Microsoft.ApplicationInsights;
 
 namespace ChatterBox.Client.Universal

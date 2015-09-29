@@ -24,7 +24,6 @@ namespace ChatterBox.Server
         public string PushToken { get; set; }
 
         private ChannelInvoker ClientReadProxy { get; }
-
         private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IServerChannel));
 
         private TcpClient ActiveConnection { get; set; }

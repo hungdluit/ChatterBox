@@ -6,6 +6,6 @@ namespace ChatterBox.Client.Signaling
     {
         bool Connect(string hostname, int port);
         StreamSocket GetSocket();
-        void HandleSocket(StreamSocket socket);
+        void HandoffSocket(StreamSocket socket);
     }
 }

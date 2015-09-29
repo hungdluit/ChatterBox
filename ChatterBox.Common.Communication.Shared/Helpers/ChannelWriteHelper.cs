@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using ChatterBox.Common.Communication.Messages.Interfaces;
 using ChatterBox.Common.Communication.Serialization;

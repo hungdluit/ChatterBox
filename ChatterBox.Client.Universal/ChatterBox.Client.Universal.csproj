@@ -99,7 +99,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\SignalingTaskHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -127,6 +129,18 @@
     <ProjectReference Include="..\ChatterBox.Client.Settings\ChatterBox.Client.Settings.csproj">
       <Project>{EB86884C-1E6E-4E5E-ADE9-1A4EBF44F5ED}</Project>
       <Name>ChatterBox.Client.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj">
+      <Project>{A286773B-AC8E-4990-ABDF-4017CC9FF29D}</Project>
+      <Name>ChatterBox.Client.Signaling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Tasks.Signaling.Universal\ChatterBox.Client.Tasks.Signaling.Universal.csproj">
+      <Project>{efafa5ba-4640-4474-a4e7-12cc44750ce9}</Project>
+      <Name>ChatterBox.Client.Tasks.Signaling.Universal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
+      <Project>{5EE2034E-0977-42B0-8F9D-5F65BDACCFF4}</Project>
+      <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems" Label="Shared" />

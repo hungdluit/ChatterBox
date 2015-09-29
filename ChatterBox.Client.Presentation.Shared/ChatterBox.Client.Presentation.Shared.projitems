@@ -17,7 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ActionCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ScreenUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RegistrationViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>

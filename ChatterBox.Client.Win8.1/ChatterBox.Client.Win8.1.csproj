@@ -140,6 +140,10 @@
       <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
       <Name>ChatterBox.Client.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj">
+      <Project>{a286773b-ac8e-4990-abdf-4017cc9ff29d}</Project>
+      <Name>ChatterBox.Client.Signaling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Tasks.Signaling.Win8.1\ChatterBox.Client.Tasks.Signaling.Win8.1.csproj">
       <Project>{ca0c8677-1a3c-4418-997d-1bb450eaa6d0}</Project>
       <Name>ChatterBox.Client.Tasks.Signaling.Win8.1</Name>

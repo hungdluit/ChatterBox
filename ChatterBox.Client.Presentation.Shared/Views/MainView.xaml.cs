@@ -17,7 +17,7 @@ namespace ChatterBox.Client.Presentation.Shared.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var viewModel = (MainViewModel)e.Parameter;
+            var viewModel = (MainViewModelBase)e.Parameter;
             DataContext = viewModel;
             viewModel.OnNavigatedTo();
         }

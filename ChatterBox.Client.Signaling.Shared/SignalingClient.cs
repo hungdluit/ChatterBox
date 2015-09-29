@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Networking.Sockets;
+using Windows.Storage;
 using Windows.Storage.Streams;
+using ChatterBox.Client.Settings;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
@@ -16,20 +13,17 @@ using ChatterBox.Common.Communication.Messages.Standard;
 
 namespace ChatterBox.Client.Signaling
 {
-    public sealed class ChatterBoxClient : IClientChannel, IServerChannel
+    public sealed class SignalingClient : IClientChannel, IServerChannel
     {
         private readonly ISignalingSocketService _signalingSocketService;
-        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
-
-        private ChannelInvoker ServerReadProxy { get; }
-
+        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
+        private ChannelInvoker ServerChannelInvoker { get; }
 
 
-
-        public ChatterBoxClient(ISignalingSocketService signalingSocketService)
+        public SignalingClient(ISignalingSocketService signalingSocketService)
         {
             _signalingSocketService = signalingSocketService;
-            ServerReadProxy = new ChannelInvoker(this);
+            ServerChannelInvoker = new ChannelInvoker(this);
         }
 
 
@@ -104,7 +98,7 @@ namespace ChatterBox.Client.Signaling
 
         private async Task SendToServer(object arg=null, [CallerMemberName]string method=null)
         {
-            var message = ChannelWriteHelper.FormatOutput(arg, method);
+            var message = ClientChannelWriteHelper.FormatOutput(arg, method);
             var socket = _signalingSocketService.GetSocket();
             if (socket != null)
             {
@@ -115,7 +109,90 @@ namespace ChatterBox.Client.Signaling
                     await writer.StoreAsync();
                     await writer.FlushAsync();
                 }
-                _signalingSocketService.HandleSocket(socket);
+                _signalingSocketService.HandoffSocket(socket);
+            }
+        }
+
+        public async void RegisterUsingSettings()
+        {
+            var bufferFile = await GetCommunicationBufferFile();
+            await bufferFile.DeleteAsync();
+
+            Register(new Registration
+            {
+                Name = RegistrationSettings.Name,
+                Domain = RegistrationSettings.Domain,
+                PushToken = RegistrationSettings.Name,
+                UserId = RegistrationSettings.UserId,
+            });
+        }
+
+
+        public async void Read()
+        {
+
+            try
+            {
+                var socket = _signalingSocketService.GetSocket();
+                string request;
+                using (var reader = new DataReader(socket.InputStream)
+                {
+                    InputStreamOptions = InputStreamOptions.Partial
+                })
+                {
+                    await reader.LoadAsync(8192);
+                    request = reader.ReadString(reader.UnconsumedBufferLength);
+                    _signalingSocketService.HandoffSocket(socket);
+                }
+
+
+                var bufferFile = await GetCommunicationBufferFile();
+                FileIO.AppendTextAsync(bufferFile, request).AsTask().Wait();
+                var requests = (await FileIO.ReadLinesAsync(bufferFile)).ToList();
+
+                if (requests.Count == 1)
+                {
+                    var invoked = ServerChannelInvoker.ProcessRequest(requests.Single());
+                    if (invoked)
+                    {
+                        await bufferFile.DeleteAsync();
+                    }
+                }
+                else
+                {
+                    for (var i = 0; i < requests.Count; i++)
+                    {
+                        var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
+                        if (i != requests.Count - 1) continue;
+                        //If the last message failed the invocation, leave it in the buffer file (it might be a partial message)
+                        await bufferFile.DeleteAsync();
+                        if (invoked) continue;
+                        bufferFile = await GetCommunicationBufferFile();
+                        await FileIO.AppendTextAsync(bufferFile, requests[i]);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                
+            }
+        }
+
+        
+
+
+
+        private async Task<StorageFile> GetCommunicationBufferFile()
+        {
+            try
+            {
+                return await
+                    ApplicationData.Current.LocalFolder.CreateFileAsync("CommunicationBufferFile",
+                        CreationCollisionOption.OpenIfExists);
+            }
+            catch (Exception exception)
+            {
+                return null;
             }
         }
     }

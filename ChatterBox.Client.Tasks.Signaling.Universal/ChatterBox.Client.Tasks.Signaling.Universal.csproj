@@ -108,20 +108,25 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundTaskDeferralWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalingSocketService.cs" />
+    <Compile Include="SignalingTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChatterBox.Client.Settings\ChatterBox.Client.Settings.csproj">
       <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
       <Name>ChatterBox.Client.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj">
+      <Project>{a286773b-ac8e-4990-abdf-4017cc9ff29d}</Project>
+      <Name>ChatterBox.Client.Signaling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
       <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\ChatterBox.Client.Signaling.Shared\ChatterBox.Client.Signaling.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
