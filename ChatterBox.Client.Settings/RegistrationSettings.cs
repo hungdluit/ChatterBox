@@ -5,6 +5,7 @@ namespace ChatterBox.Client.Settings
 {
     public static class RegistrationSettings
     {
+
         public static string UserId
         {
             get

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Settings;
+using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
@@ -44,9 +45,9 @@ namespace ChatterBox.Client.Signaling
             await SendToServer(message);
         }
 
-        public void ClientHeartBeat()
+        public async void ClientHeartBeat()
         {
-
+            await SendToServer();
         }
 
 
@@ -75,9 +76,14 @@ namespace ChatterBox.Client.Signaling
         public void OnPeerList(PeerList peerList)
         {
             ClientConfirmation(Confirmation.For(peerList));
-            foreach (var peer in peerList.Peers)
+            foreach (var peerStatus in peerList.Peers.Select(peer => new Contact
             {
-
+                UserId = peer.UserId,
+                Name = peer.Name,
+                IsOnline = peer.IsOnline
+            }))
+            {
+                ContactService.AddOrUpdate(peerStatus);
             }
         }
 
@@ -85,13 +91,13 @@ namespace ChatterBox.Client.Signaling
         public void OnRegistrationConfirmation(OkReply reply)
         {
             ClientConfirmation(Confirmation.For(reply));
+            GetPeerList(new Message());
         }
 
 
 
         public void ServerHeartBeat()
         {
-
         }
 
 
@@ -194,6 +200,32 @@ namespace ChatterBox.Client.Signaling
             {
                 return null;
             }
+        }
+
+        public bool CheckConnection()
+        {
+            var socket = _signalingSocketService.GetSocket();
+            if (socket == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                ClientHeartBeat();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Connect()
+        {
+            ContactService.Reset();
+            return _signalingSocketService.Connect(SignalingSettings.SignalingServerHost,
+                int.Parse(SignalingSettings.SignalingServerPort));
         }
     }
 }

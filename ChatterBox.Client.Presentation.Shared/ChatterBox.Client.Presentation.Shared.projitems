@@ -11,27 +11,36 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NegatedBoolConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ContactModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\BindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DispatcherBindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ActionCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ScreenUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ContactsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModelBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RegistrationViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ContactsView.xaml.cs">
+      <DependentUpon>ContactsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\RegistrationView.xaml.cs">
-      <DependentUpon>RegistrationView.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\WelcomeView.xaml.cs">
+      <DependentUpon>WelcomeView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ContactsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\RegistrationView.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\WelcomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

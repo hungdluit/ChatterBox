@@ -5,19 +5,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public abstract class MainViewModelBase : DispatcherBindableBase
     {
-        private bool _isRegistrationCompleted;
-        private RegistrationViewModel _registrationViewModel;
+        private bool _isSetupCompleted;
 
-        public RegistrationViewModel RegistrationViewModel
-        {
-            get { return _registrationViewModel; }
-            set { SetProperty(ref _registrationViewModel, value); }
-        }
+        public WelcomeViewModel WelcomeViewModel {get; } = new WelcomeViewModel();
+        public ContactsViewModel ContactsViewModel { get; } = new ContactsViewModel();
 
-        public bool IsRegistrationCompleted
+        public bool IsSetupCompleted
         {
-            get { return _isRegistrationCompleted; }
-            set { SetProperty(ref _isRegistrationCompleted, value); }
+            get { return _isSetupCompleted; }
+            set { SetProperty(ref _isSetupCompleted, value); }
         }
 
         protected MainViewModelBase(CoreDispatcher uiDispatcher) : base(uiDispatcher)
@@ -25,7 +21,5 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public abstract void OnNavigatedTo();
-
-
     }
 }

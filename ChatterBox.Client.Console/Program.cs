@@ -17,7 +17,7 @@ namespace ChatterBox.Client.Console
             {
                 client.Register(new Registration
                 {
-                    Domain = "Macadamian.Test",
+                    Domain = "chatterbox.microsoft.com",
                     Name = userId,
                     UserId = userId,
                     PushToken = userId

@@ -11,6 +11,7 @@ using ChatterBox.Client.Presentation.Shared.Views;
 using ChatterBox.Client.Signaling;
 using ChatterBox.Client.Tasks.Signaling.Universal;
 using ChatterBox.Client.Universal.Helpers;
+using ChatterBox.Client.Universal.ViewModels;
 using Microsoft.ApplicationInsights;
 
 namespace ChatterBox.Client.Universal

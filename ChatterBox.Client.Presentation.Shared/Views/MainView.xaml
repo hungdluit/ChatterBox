@@ -14,6 +14,11 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <views:RegistrationView DataContext="{Binding RegistrationViewModel}"  Visibility="{Binding IsRegistrationCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Grid Visibility="{Binding IsSetupCompleted, Converter={StaticResource BooleanToVisibilityInvertedConverter}}">
+            <views:WelcomeView DataContext="{Binding WelcomeViewModel}" />
+        </Grid>
+        <Grid Visibility="{Binding IsSetupCompleted, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <views:ContactsView DataContext="{Binding ContactsViewModel}" />
+        </Grid>
     </Grid>
 </Page>
