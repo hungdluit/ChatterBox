@@ -56,10 +56,7 @@ namespace ChatterBox.Client.Universal.ViewModels
                 }
             }
 
-            IsWelcomeOpened = (!string.IsNullOrWhiteSpace(RegistrationSettings.Name) &&
-                               !string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
-
-            if(IsWelcomeOpened) WelcomeCompleted();
+            IsWelcomeOpened = true;
         }
 
 
@@ -71,13 +68,15 @@ namespace ChatterBox.Client.Universal.ViewModels
         }
 
         private void ContactSelected(ContactModel contact)
-        {            
+        {
+            IsContactsOpened = false;
             IsChatOpened = true;
             ChatViewModel.OnNavigatedTo(contact);
         }
 
         private void ChatClosed()
         {
+            IsContactsOpened = true;
             IsChatOpened = false;
         }
 

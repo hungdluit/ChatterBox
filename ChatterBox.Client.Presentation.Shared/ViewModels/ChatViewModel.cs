@@ -12,6 +12,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private ContactModel _contactModel;
         private ActionCommand _closeChat;
 
+        public ChatViewModel()
+        {
+            CloseChat = new ActionCommand(CloseChatExecute);
+        }
+
         public ContactModel Contact
         {
             get { return _contactModel; }
@@ -22,6 +27,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _closeChat; }
             set { SetProperty(ref _closeChat, value); }
+        }
+
+        private void CloseChatExecute(object param)
+        {
+            OnCompleted?.Invoke();
         }
 
         internal void OnNavigatedTo(ContactModel contact)

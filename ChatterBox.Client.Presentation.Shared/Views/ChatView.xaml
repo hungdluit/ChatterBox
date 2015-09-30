@@ -19,12 +19,21 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Text="{Binding Contact}" 
+                   Margin="12,5"
                    Grid.Row="0"
                    Grid.Column="0"/>
         <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
                     Grid.Row="0"
                     Grid.Column="1">
-            <Button Command="{Binding CloseChat}"></Button>
+            <Button Command="{Binding CloseChat}" 
+                    Margin="5"
+                    FontFamily="Segoe UI Symbol"
+                    Content="&#xE112;"/>
         </StackPanel>
+        <TextBox PlaceholderText="Enter a message"
+                 Margin="12,5"
+                 Grid.Row="2"
+                 Grid.ColumnSpan="2"/>
     </Grid>
 </UserControl>

@@ -36,7 +36,7 @@ namespace ChatterBox.Client.Presentation.Shared.Models
 
         public override string ToString()
         {
-            return $"{Name}-{IsOnline}";
+            return $"{Name}";
         }
     }
 }
