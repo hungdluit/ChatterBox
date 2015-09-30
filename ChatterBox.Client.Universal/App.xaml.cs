@@ -13,6 +13,7 @@ using ChatterBox.Client.Tasks.Signaling.Universal;
 using ChatterBox.Client.Universal.Helpers;
 using ChatterBox.Client.Universal.ViewModels;
 using Microsoft.ApplicationInsights;
+using ChatterBox.Client.Settings;
 
 namespace ChatterBox.Client.Universal
 {
@@ -63,6 +64,11 @@ namespace ChatterBox.Client.Universal
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     //TODO: Load state from previously suspended application
+                }
+                if (e.PreviousExecutionState == ApplicationExecutionState.ClosedByUser)
+                {
+                    //RegistrationSettings.Name = string.Empty;
+                    //RegistrationSettings.Domain = string.Empty;
                 }
 
                 // Place the frame in the current Window

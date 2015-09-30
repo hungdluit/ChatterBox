@@ -5,11 +5,36 @@
     xmlns:local="using:ChatterBox.Client.Presentation.Shared.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
+    <UserControl.Resources>
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForTrue="Green" ColorForFalse="Red" />
+    </UserControl.Resources>
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center" >
+            <Button Command="{Binding SwitchMic}" 
+                    Margin="5"
+                    Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
+                    FontFamily="Segoe UI Symbol"
+                    Content="&#xE1D6;" />
+            <Button Command="{Binding SwitchVideo}" 
+                    Margin="5"
+                    Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
+                    FontFamily="Segoe UI Symbol"
+                    Content="&#xE116;" />
+            <Button Command="{Binding CloseCall}" 
+                    Margin="5"
+                    Foreground="Red"
+                    FontFamily="Segoe UI Symbol"
+                    Content="&#xE137;" />
+        </StackPanel>
     </Grid>
 </UserControl>

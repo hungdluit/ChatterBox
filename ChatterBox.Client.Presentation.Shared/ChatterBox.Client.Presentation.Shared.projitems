@@ -10,8 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NegatedBoolConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\OnlineStatusToBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ContactModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\BindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />

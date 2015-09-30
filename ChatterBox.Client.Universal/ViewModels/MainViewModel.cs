@@ -24,6 +24,7 @@ namespace ChatterBox.Client.Universal.ViewModels
             ContactsViewModel.ContactSelected += ContactSelected;
 
             ChatViewModel.OnCompleted += ChatClosed;
+            ChatViewModel.OnCall += OnCall;
             CallViewModel.OnCompleted += CallClosed;
         }        
 
@@ -83,9 +84,18 @@ namespace ChatterBox.Client.Universal.ViewModels
             IsChatOpen = false;
         }
 
+        private void OnCall(bool onlyAudio)
+        {
+            IsChatOpen = false;
+            IsCallOpen = true;
+
+            CallViewModel.OnNvigatedTo(onlyAudio);
+        }
+
         private void CallClosed()
         {
             IsCallOpen = false;
+            IsChatOpen = true;
         }
 
         private void SignalingTask_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)

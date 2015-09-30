@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
 namespace ChatterBox.Client.Presentation.Shared.Converters
 {
-    internal class OnlineStatusToBrushConverter : IValueConverter
+    public sealed class BoolToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var boolValue = (bool)value;
-            Color color = boolValue ? Colors.LightGreen :
-                                      Colors.LightGray;
+            Color color = boolValue ? ColorForTrue :
+                                      ColorForFalse;
             return new SolidColorBrush(color);
         }
 
@@ -22,5 +21,9 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         {
             throw new NotImplementedException();
         }
+
+        public Color ColorForTrue { get; set; }
+
+        public Color ColorForFalse { get; set; }
     }
 }

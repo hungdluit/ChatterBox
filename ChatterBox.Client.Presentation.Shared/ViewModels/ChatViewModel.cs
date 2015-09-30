@@ -11,10 +11,14 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
     {
         private ContactModel _contactModel;
         private ActionCommand _closeChat;
+        private ActionCommand _call;
+        private ActionCommand _callOnlyAudio;
 
         public ChatViewModel()
         {
             CloseChat = new ActionCommand(CloseChatExecute);
+            Call = new ActionCommand(CallExecute);
+            CallOnlyAudio = new ActionCommand(CallOnlyAudioExecute);
         }
 
         public ContactModel Contact
@@ -29,9 +33,31 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _closeChat, value); }
         }
 
+        public ActionCommand Call
+        {
+            get { return _call; }
+            set { SetProperty(ref _call, value); }
+        }
+
+        public ActionCommand CallOnlyAudio
+        {
+            get { return _callOnlyAudio; }
+            set { SetProperty(ref _callOnlyAudio, value); }
+        }
+
         private void CloseChatExecute(object param)
         {
             OnCompleted?.Invoke();
+        }
+
+        private void CallExecute(object param)
+        {
+            OnCall?.Invoke(false);
+        }
+
+        private void CallOnlyAudioExecute(object param)
+        {
+            OnCall?.Invoke(true);
         }
 
         internal void OnNavigatedTo(ContactModel contact)
@@ -40,5 +66,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public event Action OnCompleted;
+        public event Action<bool> OnCall;
     }
 }

@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInvertedConverter" Inverted="True" />
-        <converters:OnlineStatusToBrushConverter x:Key="OnlineStatusToBrushConverter" />
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"  ColorForTrue="LightGreen" ColorForFalse="LightGray" />
     </UserControl.Resources>
 
     <Grid>
@@ -30,7 +30,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Fill="{Binding IsOnline, Mode=OneWay, Converter={StaticResource OnlineStatusToBrushConverter}}"
+                        <Ellipse Fill="{Binding IsOnline, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
                                  Width="15"
                                  Height="15" />
                         <Image Source="{Binding ProfileSource}" 
