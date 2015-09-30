@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NegatedBoolConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\OnlineStatusToBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ContactModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\BindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />
@@ -18,9 +19,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ActionCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ScreenUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CallViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ContactsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SettingsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\CallView.xaml.cs">
+      <DependentUpon>CallView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ChatView.xaml.cs">
+      <DependentUpon>ChatView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\ContactsView.xaml.cs">
       <DependentUpon>ContactsView.xaml</DependentUpon>
     </Compile>
@@ -32,6 +42,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\CallView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ChatView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ContactsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -44,5 +62,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\profile_1.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\profile_2.png" />
   </ItemGroup>
 </Project>

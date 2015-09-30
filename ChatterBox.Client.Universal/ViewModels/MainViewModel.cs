@@ -8,6 +8,7 @@ using ChatterBox.Client.Signaling;
 using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Client.Tasks.Signaling.Universal;
 using ChatterBox.Client.Universal.Helpers;
+using ChatterBox.Client.Presentation.Shared.Models;
 
 namespace ChatterBox.Client.Universal.ViewModels
 {
@@ -19,9 +20,12 @@ namespace ChatterBox.Client.Universal.ViewModels
         {
             WelcomeViewModel.Domain = RegistrationSettings.Domain;
             WelcomeViewModel.OnCompleted += WelcomeCompleted;
-        }
 
-        
+            ContactsViewModel.ContactSelected += ContactSelected;
+
+            ChatViewModel.OnCompleted += ChatClosed;
+            CallViewModel.OnCompleted += CallClosed;
+        }        
 
         public override async void OnNavigatedTo()
         {
@@ -52,18 +56,34 @@ namespace ChatterBox.Client.Universal.ViewModels
                 }
             }
 
-            IsSetupCompleted = (!string.IsNullOrWhiteSpace(RegistrationSettings.Name) &&
+            IsWelcomeOpened = (!string.IsNullOrWhiteSpace(RegistrationSettings.Name) &&
                                !string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
 
-
-            if(IsSetupCompleted) WelcomeCompleted();
-
+            if(IsWelcomeOpened) WelcomeCompleted();
         }
 
 
         private void WelcomeCompleted()
         {
             _signalingClient.RegisterUsingSettings();
+            IsWelcomeOpened = false;
+            IsContactsOpened = true;
+        }
+
+        private void ContactSelected(ContactModel contact)
+        {            
+            IsChatOpened = true;
+            ChatViewModel.OnNavigatedTo(contact);
+        }
+
+        private void ChatClosed()
+        {
+            IsChatOpened = false;
+        }
+
+        private void CallClosed()
+        {
+            IsCallOpened = false;
         }
 
         private void SignalingTask_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)

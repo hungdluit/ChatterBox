@@ -2,6 +2,7 @@
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Settings;
 using ChatterBox.Client.Signaling;
+using System;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -11,13 +12,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private string _domain;
         public DelegateCommand CompleteCommand { get; }
 
-
-
         public WelcomeViewModel()
         {
             CompleteCommand = new DelegateCommand(OnCompleteCommandExecute, CanCompleteCommandExecute);
         }
-
 
         public string Name
         {
@@ -31,7 +29,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
-
         public string Domain
         {
             get { return _domain; }
@@ -43,8 +40,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 }
             }
         }
-
-
 
         private bool CanCompleteCommandExecute()
         {
@@ -59,7 +54,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             OnCompleted?.Invoke();
 
         }
-        public event WelcomeEventHandler OnCompleted;
-        public delegate void WelcomeEventHandler();
+        public event Action OnCompleted;
     }
 }

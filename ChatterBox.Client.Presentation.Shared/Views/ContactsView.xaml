@@ -11,25 +11,43 @@
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInvertedConverter" Inverted="True" />
+        <converters:OnlineStatusToBrushConverter x:Key="OnlineStatusToBrushConverter" />
     </UserControl.Resources>
-
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Contacts"/>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Contacts}">
+        <TextBlock Text="Chatter members"
+                   Margin="12,5"
+                   Grid.Row="0"/>
+        <ListBox Grid.Row="1" 
+                 SelectedItem="{Binding SelectedContactModel, Mode=TwoWay}"
+                 Background="{ThemeResource ListBoxBackgroundThemeBrush}"
+                 ItemsSource="{Binding Contacts}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Name}"/>
-                        <TextBlock Text="Online" Visibility="{Binding IsOnline, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        <TextBlock Text="Offline" Visibility="{Binding IsOnline, Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
+                        <Ellipse Fill="{Binding IsOnline, Mode=OneWay, Converter={StaticResource OnlineStatusToBrushConverter}}"
+                                 Width="15"
+                                 Height="15" />
+                        <Image Source="{Binding ProfileSource}" 
+                               Margin="5"
+                               Width="45"
+                               Height="45" />
+                        <TextBlock Text="{Binding Name}"
+                                   VerticalAlignment="Center"
+                                   Margin="5" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Button Name="SettingsButton" 
+                Margin="12,5"
+                Background="{ThemeResource ButtonBackgroundThemeBrush}"
+                Content="Settings"
+                Grid.Row="2"/>
     </Grid>
 </UserControl>

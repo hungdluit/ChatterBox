@@ -9,16 +9,21 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInvertedConverter" Inverted="True" />
         <converters:NegatedBoolConverter x:Key="NegatedBoolConverter" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Visibility="{Binding IsSetupCompleted, Converter={StaticResource BooleanToVisibilityInvertedConverter}}">
+        <Grid Visibility="{Binding IsWelcomeOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
             <views:WelcomeView DataContext="{Binding WelcomeViewModel}" />
         </Grid>
-        <Grid Visibility="{Binding IsSetupCompleted, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsContactsOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
             <views:ContactsView DataContext="{Binding ContactsViewModel}" />
+        </Grid>
+        <Grid Visibility="{Binding IsChatOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <views:ChatView DataContext="{Binding ChatViewModel}" />
+        </Grid>
+        <Grid Visibility="{Binding IsCallOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <views:CallView DataContext="{Binding CallViewModel}" />
         </Grid>
     </Grid>
 </Page>

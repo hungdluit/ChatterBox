@@ -1,4 +1,5 @@
 ﻿using ChatterBox.Client.Presentation.Shared.MVVM;
+using Windows.UI.Xaml.Media;
 
 namespace ChatterBox.Client.Presentation.Shared.Models
 {
@@ -24,6 +25,13 @@ namespace ChatterBox.Client.Presentation.Shared.Models
         {
             get { return _isOnline; }
             set { SetProperty(ref _isOnline, value); }
+        }
+
+        private ImageSource _profileSource;
+        public ImageSource ProfileSource
+        {
+            get { return _profileSource; }
+            set { SetProperty(ref _profileSource, value); }
         }
 
         public override string ToString()
