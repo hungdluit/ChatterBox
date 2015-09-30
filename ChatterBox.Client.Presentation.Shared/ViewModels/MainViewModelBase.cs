@@ -5,10 +5,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public abstract class MainViewModelBase : DispatcherBindableBase
     {
-        private bool _isWelcomeOpened;
-        private bool _isChatOpened;
-        private bool _isCallOpened;
-        private bool _isContactsOpened;
+        private bool _isWelcomeOpen;
+        private bool _isChatOpen;
+        private bool _isCallOpen;
+        private bool _isContactsOpen;
 
         public WelcomeViewModel WelcomeViewModel {get; } = new WelcomeViewModel();
 
@@ -18,28 +18,28 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         public ChatViewModel ChatViewModel { get; } = new ChatViewModel();
 
-        public bool IsWelcomeOpened
+        public bool IsWelcomeOpen
         {
-            get { return _isWelcomeOpened; }
-            set { SetProperty(ref _isWelcomeOpened, value); }
+            get { return _isWelcomeOpen; }
+            set { SetProperty(ref _isWelcomeOpen, value); }
         }
 
-        public bool IsContactsOpened
+        public bool IsContactsOpen
         {
-            get { return _isContactsOpened; }
-            set { SetProperty(ref _isContactsOpened, value); }
+            get { return _isContactsOpen; }
+            set { SetProperty(ref _isContactsOpen, value); }
         }
 
-        public bool IsChatOpened
+        public bool IsChatOpen
         {
-            get { return _isChatOpened; }
-            set { SetProperty(ref _isChatOpened, value); }
+            get { return _isChatOpen; }
+            set { SetProperty(ref _isChatOpen, value); }
         }
 
-        public bool IsCallOpened
+        public bool IsCallOpen
         {
-            get { return _isCallOpened; }
-            set { SetProperty(ref _isCallOpened, value); }
+            get { return _isCallOpen; }
+            set { SetProperty(ref _isCallOpen, value); }
         }
 
         protected MainViewModelBase(CoreDispatcher uiDispatcher) : base(uiDispatcher)

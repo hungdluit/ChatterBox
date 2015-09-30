@@ -13,16 +13,16 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Visibility="{Binding IsWelcomeOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsWelcomeOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <views:WelcomeView DataContext="{Binding WelcomeViewModel}" />
         </Grid>
-        <Grid Visibility="{Binding IsContactsOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsContactsOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <views:ContactsView DataContext="{Binding ContactsViewModel}" />
         </Grid>
-        <Grid Visibility="{Binding IsChatOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsChatOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <views:ChatView DataContext="{Binding ChatViewModel}" />
         </Grid>
-        <Grid Visibility="{Binding IsCallOpened, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsCallOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <views:CallView DataContext="{Binding CallViewModel}" />
         </Grid>
     </Grid>

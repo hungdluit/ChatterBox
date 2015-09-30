@@ -56,36 +56,36 @@ namespace ChatterBox.Client.Universal.ViewModels
                 }
             }
 
-            IsWelcomeOpened = (!string.IsNullOrWhiteSpace(RegistrationSettings.Name) &&
-                               !string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
+            IsWelcomeOpen = (string.IsNullOrWhiteSpace(RegistrationSettings.Name) ||
+                             string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
 
-            if (IsWelcomeOpened) WelcomeCompleted();
+            if (!IsWelcomeOpen) WelcomeCompleted();
         }
 
 
         private void WelcomeCompleted()
         {
             _signalingClient.RegisterUsingSettings();
-            IsWelcomeOpened = false;
-            IsContactsOpened = true;
+            IsWelcomeOpen = false;
+            IsContactsOpen = true;
         }
 
         private void ContactSelected(ContactModel contact)
         {
-            IsContactsOpened = false;
-            IsChatOpened = true;
+            IsContactsOpen = false;
+            IsChatOpen = true;
             ChatViewModel.OnNavigatedTo(contact);
         }
 
         private void ChatClosed()
         {
-            IsContactsOpened = true;
-            IsChatOpened = false;
+            IsContactsOpen = true;
+            IsChatOpen = false;
         }
 
         private void CallClosed()
         {
-            IsCallOpened = false;
+            IsCallOpen = false;
         }
 
         private void SignalingTask_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
