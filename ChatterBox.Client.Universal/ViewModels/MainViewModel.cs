@@ -56,7 +56,10 @@ namespace ChatterBox.Client.Universal.ViewModels
                 }
             }
 
-            IsWelcomeOpened = true;
+            IsWelcomeOpened = (!string.IsNullOrWhiteSpace(RegistrationSettings.Name) &&
+                               !string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
+
+            if (IsWelcomeOpened) WelcomeCompleted();
         }
 
 
