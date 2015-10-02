@@ -9,12 +9,13 @@ using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Client.Tasks.Signaling.Universal;
 using ChatterBox.Client.Universal.Helpers;
 using ChatterBox.Client.Presentation.Shared.Models;
+using ChatterBox.Client.Presentation.Shared.MVVM.Utils;
 
 namespace ChatterBox.Client.Universal.ViewModels
 {
     public class MainViewModel : MainViewModelBase
     {
-        private SignalingClient _signalingClient;
+        private SignalingClient _signalingClient;        
 
         public MainViewModel(CoreDispatcher uiDispatcher) : base(uiDispatcher)
         {
@@ -22,10 +23,12 @@ namespace ChatterBox.Client.Universal.ViewModels
             WelcomeViewModel.OnCompleted += WelcomeCompleted;
 
             ContactsViewModel.ContactSelected += ContactSelected;
+            ContactsViewModel.SettingsSelected += SettingsSelected;
 
             ChatViewModel.OnCompleted += ChatClosed;
             ChatViewModel.OnCall += OnCall;
             CallViewModel.OnCompleted += CallClosed;
+            SettingsViewModel.OnCompleted += SettingsClose;            
         }        
 
         public override async void OnNavigatedTo()
@@ -76,6 +79,18 @@ namespace ChatterBox.Client.Universal.ViewModels
             IsContactsOpen = false;
             IsChatOpen = true;
             ChatViewModel.OnNavigatedTo(contact);
+        }
+
+        private void SettingsSelected()
+        {
+            IsSettingsOpen = true;
+            IsContactsOpen = false;
+        }
+
+        private void SettingsClose()
+        {
+            IsSettingsOpen = false;
+            IsContactsOpen = true;
         }
 
         private void ChatClosed()

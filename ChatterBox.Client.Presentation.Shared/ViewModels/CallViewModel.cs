@@ -13,6 +13,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private ActionCommand _switchVideo;
         private bool _isMicEnabled;
         private bool _isVideoEnabled;
+        private Uri _peerPlaceholderImage;
+        private Uri _selfPlaceholderImage;
+        private bool _isPeerVideoAvailable;
+        private bool _isSelfVideoAvailable;
 
         public CallViewModel()
         {
@@ -22,6 +26,21 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             IsMicEnabled = true;
             IsVideoEnabled = true;
+
+            PeerPlaceholderImage = new Uri("ms-appx:///Assets/profile_4.png");
+            SelfPlaceholderImage = new Uri("ms-appx:///Assets/profile_1.png");
+        }
+
+        public Uri PeerPlaceholderImage
+        {
+            get { return _peerPlaceholderImage; }
+            set { SetProperty(ref _peerPlaceholderImage, value); }
+        }
+
+        public Uri SelfPlaceholderImage
+        {
+            get { return _selfPlaceholderImage; }
+            set { SetProperty(ref _selfPlaceholderImage, value); }
         }
 
         public ActionCommand CloseCall
@@ -67,6 +86,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _isVideoEnabled; }
             set { SetProperty(ref _isVideoEnabled, value); }
+        }
+
+        public bool IsPeerVideoAvailable
+        {
+            get { return _isPeerVideoAvailable; }
+            set { SetProperty(ref _isPeerVideoAvailable, value); }
+        }
+
+        public bool IsSelfVideoAvailable
+        {
+            get { return _isSelfVideoAvailable; }
+            set { SetProperty(ref _isSelfVideoAvailable, value); }
         }
 
         public event Action OnCompleted;

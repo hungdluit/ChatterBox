@@ -17,17 +17,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ChatterBox.Client.Presentation.Shared.Views
 {
-    public sealed partial class CallView : UserControl
+    public sealed partial class SettingsView : UserControl
     {
-        public CallView()
+        public SettingsView()
         {
             this.InitializeComponent();
-        }
-
-        private void VideoGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            SelfPlaceholder.Width = SelfVideo.Width = e.NewSize.Width * 0.25D;
-            SelfPlaceholder.Height = SelfVideo.Height = e.NewSize.Height * 0.25D;
         }
     }
 }

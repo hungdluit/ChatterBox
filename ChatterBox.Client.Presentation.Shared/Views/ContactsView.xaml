@@ -45,9 +45,11 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <Button Name="SettingsButton" 
+                Command="{Binding Settings}"
                 Margin="12,5"
                 Background="{ThemeResource ButtonBackgroundThemeBrush}"
-                Content="Settings"
+                FontFamily="Segoe UI Symbol"
+                Content="&#xE115;"
                 Grid.Row="2"/>
     </Grid>
 </UserControl>

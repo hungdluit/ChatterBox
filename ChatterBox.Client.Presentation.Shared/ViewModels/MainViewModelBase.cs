@@ -9,6 +9,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private bool _isChatOpen;
         private bool _isCallOpen;
         private bool _isContactsOpen;
+        private bool _isSettingsOpen;
 
         public WelcomeViewModel WelcomeViewModel {get; } = new WelcomeViewModel();
 
@@ -17,6 +18,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public CallViewModel CallViewModel { get; } = new CallViewModel();
 
         public ChatViewModel ChatViewModel { get; } = new ChatViewModel();
+
+        public SettingsViewModel SettingsViewModel { get; } = new SettingsViewModel();
 
         public bool IsWelcomeOpen
         {
@@ -28,6 +31,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _isContactsOpen; }
             set { SetProperty(ref _isContactsOpen, value); }
+        }
+
+        public bool IsSettingsOpen
+        {
+            get { return _isSettingsOpen; }
+            set { SetProperty(ref _isSettingsOpen, value); }
         }
 
         public bool IsChatOpen

@@ -5,12 +5,30 @@ using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Signaling.Shared;
 using Windows.UI.Xaml.Media.Imaging;
 using System;
+using ChatterBox.Client.Presentation.Shared.MVVM.Utils;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public sealed class ContactsViewModel : BindableBase
     {
         private ContactModel _selectedContact;
+        private ActionCommand _settingsCommand;
+
+        public ContactsViewModel()
+        {
+            Settings = new ActionCommand(SettingsExecute);
+        }
+
+        public ActionCommand Settings
+        {
+            get { return _settingsCommand; }
+            set { SetProperty(ref _settingsCommand, value); }
+        }
+
+        private void SettingsExecute(object param)
+        {
+            SettingsSelected?.Invoke();
+        }
 
         public ObservableCollection<ContactModel> Contacts { get; } = new ObservableCollection<ContactModel>();
 
@@ -47,5 +65,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public event Action<ContactModel> ContactSelected;
+        public event Action SettingsSelected;
     }
 }

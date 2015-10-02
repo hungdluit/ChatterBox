@@ -11,12 +11,42 @@
     d:DesignWidth="400">
     <UserControl.Resources>
         <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForTrue="Green" ColorForFalse="Red" />
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBoolToVisConverter" Inverted="True" />
+        <converters:ProportionalConverter x:Key="ProportionalConverter" DownscalingFactor="20" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid Grid.Row="0"
+              x:Name="VideoGrid"
+              Margin="5"
+              SizeChanged="VideoGrid_SizeChanged"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch" >
+            <MediaElement Name="PeerVideo" 
+                          Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BoolToVisConverter}}"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch" />
+            <Image Name="PeerPlaceholder"
+                   Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBoolToVisConverter}}"
+                   Source="{Binding PeerPlaceholderImage}"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch" />
+            <MediaElement Name="SelfVideo" 
+                          Margin="5"
+                          Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource BoolToVisConverter}}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Bottom"/>
+            <Image Name="SelfPlaceholder"
+                   Margin="5"
+                   Source="{Binding SelfPlaceholderImage}"
+                   Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource InvertedBoolToVisConverter}}"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom" />            
+        </Grid>
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center" >
