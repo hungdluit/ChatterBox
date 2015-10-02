@@ -15,21 +15,12 @@ namespace ChatterBox.Client.Universal.ViewModels
 {
     public class MainViewModel : MainViewModelBase
     {
-        private SignalingClient _signalingClient;        
+        private SignalingClient _signalingClient;
 
         public MainViewModel(CoreDispatcher uiDispatcher) : base(uiDispatcher)
         {
-            WelcomeViewModel.Domain = RegistrationSettings.Domain;
-            WelcomeViewModel.OnCompleted += WelcomeCompleted;
 
-            ContactsViewModel.ContactSelected += ContactSelected;
-            ContactsViewModel.SettingsSelected += SettingsSelected;
-
-            ChatViewModel.OnCompleted += ChatClosed;
-            ChatViewModel.OnCall += OnCall;
-            CallViewModel.OnCompleted += CallClosed;
-            SettingsViewModel.OnCompleted += SettingsClose;            
-        }        
+        }
 
         public override async void OnNavigatedTo()
         {
@@ -58,59 +49,13 @@ namespace ChatterBox.Client.Universal.ViewModels
                     await dialog.ShowAsync();
                     return;
                 }
-            }
-
-            IsWelcomeOpen = (string.IsNullOrWhiteSpace(RegistrationSettings.Name) ||
-                             string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
-
-            if (!IsWelcomeOpen) WelcomeCompleted();
+            }            
+            base.OnNavigatedTo();
         }
 
-
-        private void WelcomeCompleted()
+        public override void OnRegistrationCompleted()
         {
             _signalingClient.RegisterUsingSettings();
-            IsWelcomeOpen = false;
-            IsContactsOpen = true;
-        }
-
-        private void ContactSelected(ContactModel contact)
-        {
-            IsContactsOpen = false;
-            IsChatOpen = true;
-            ChatViewModel.OnNavigatedTo(contact);
-        }
-
-        private void SettingsSelected()
-        {
-            IsSettingsOpen = true;
-            IsContactsOpen = false;
-        }
-
-        private void SettingsClose()
-        {
-            IsSettingsOpen = false;
-            IsContactsOpen = true;
-        }
-
-        private void ChatClosed()
-        {
-            IsContactsOpen = true;
-            IsChatOpen = false;
-        }
-
-        private void OnCall(bool onlyAudio)
-        {
-            IsChatOpen = false;
-            IsCallOpen = true;
-
-            CallViewModel.OnNvigatedTo(onlyAudio);
-        }
-
-        private void CallClosed()
-        {
-            IsCallOpen = false;
-            IsChatOpen = true;
         }
 
         private void SignalingTask_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)

@@ -13,12 +13,22 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private ActionCommand _closeChat;
         private ActionCommand _call;
         private ActionCommand _callOnlyAudio;
+        private bool _isBackButtonEnabled;
+        private ScreenUtils ScreenUtils;
 
         public ChatViewModel()
         {
             CloseChat = new ActionCommand(CloseChatExecute);
             Call = new ActionCommand(CallExecute);
             CallOnlyAudio = new ActionCommand(CallOnlyAudioExecute);
+            ScreenUtils = new ScreenUtils();
+            ScreenUtils.StateChanged += AppStateChanged;
+            IsBackButtonEnabled = ScreenUtils.CurrentState == ScreenUtils.AppState.OverlayState;
+        }
+
+        private void AppStateChanged(ScreenUtils.AppState newAppState)
+        {
+            IsBackButtonEnabled = newAppState == ScreenUtils.AppState.OverlayState;
         }
 
         public ContactModel Contact
@@ -43,6 +53,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _callOnlyAudio; }
             set { SetProperty(ref _callOnlyAudio, value); }
+        }
+
+        public bool IsBackButtonEnabled
+        {
+            get { return _isBackButtonEnabled; }
+            set { SetProperty(ref _isBackButtonEnabled, value); }
         }
 
         private void CloseChatExecute(object param)

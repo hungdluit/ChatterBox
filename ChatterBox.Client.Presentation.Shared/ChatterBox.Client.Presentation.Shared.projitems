@@ -9,6 +9,7 @@
     <Import_RootNamespace>ChatterBox.Client.Presentation.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\AppStateToStyleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NegatedBoolConverter.cs" />
@@ -18,7 +19,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DispatcherBindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ActionCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\NavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ScreenUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CallViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatViewModel.cs" />

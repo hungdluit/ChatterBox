@@ -18,12 +18,25 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
         <TextBlock Text="Chatter members"
                    Margin="12,5"
                    Grid.Row="0"/>
+        <Button Name="SettingsButton" 
+                Grid.Row="0"
+                Grid.Column="1"
+                Command="{Binding Settings}"
+                Margin="12,5"
+                Background="{ThemeResource ButtonBackgroundThemeBrush}"
+                FontFamily="Segoe UI Symbol"
+                Content="&#xE115;" />
         <ListBox Grid.Row="1" 
+                 Grid.Column="0"
+                 Grid.ColumnSpan="2"
                  SelectedItem="{Binding SelectedContactModel, Mode=TwoWay}"
                  Background="{ThemeResource ListBoxBackgroundThemeBrush}"
                  ItemsSource="{Binding Contacts}">
@@ -43,13 +56,6 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
-        <Button Name="SettingsButton" 
-                Command="{Binding Settings}"
-                Margin="12,5"
-                Background="{ThemeResource ButtonBackgroundThemeBrush}"
-                FontFamily="Segoe UI Symbol"
-                Content="&#xE115;"
-                Grid.Row="2"/>
+        </ListBox>        
     </Grid>
 </UserControl>

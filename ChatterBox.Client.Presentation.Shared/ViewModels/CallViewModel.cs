@@ -1,4 +1,5 @@
-﻿using ChatterBox.Client.Presentation.Shared.MVVM;
+﻿using ChatterBox.Client.Presentation.Shared.Models;
+using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.MVVM.Utils;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private Uri _selfPlaceholderImage;
         private bool _isPeerVideoAvailable;
         private bool _isSelfVideoAvailable;
+        private bool _isInCall;
+        private ContactModel _contact;
 
         public CallViewModel()
         {
@@ -29,6 +32,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             PeerPlaceholderImage = new Uri("ms-appx:///Assets/profile_4.png");
             SelfPlaceholderImage = new Uri("ms-appx:///Assets/profile_1.png");
+        }
+
+        public ContactModel Contact
+        {
+            get { return _contact; }
+            set { SetProperty(ref _contact, value); }
+        }
+
+        public bool IsInCall
+        {
+            get { return _isInCall; }
+            set { SetProperty(ref _isInCall, value); }
         }
 
         public Uri PeerPlaceholderImage
@@ -51,6 +66,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void CloseCallExecute(object param)
         {
+            IsInCall = false;
             OnCompleted?.Invoke();
         }
 
@@ -102,8 +118,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         public event Action OnCompleted;
 
-        internal void OnNvigatedTo(bool onlyAudio)
+        internal void OnNvigatedTo(ContactModel contact, bool onlyAudio)
         {
+            Contact = contact;
             if (onlyAudio)
             {
                 IsVideoEnabled = false;
@@ -114,6 +131,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 IsVideoEnabled = true;
                 IsMicEnabled = true;
             }
+            IsInCall = true;
         }
     }
 }
