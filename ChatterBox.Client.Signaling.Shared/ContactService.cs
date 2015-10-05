@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Windows.Storage;
+using ChatterBox.Client.Settings;
 
 namespace ChatterBox.Client.Signaling.Shared
 {
@@ -37,8 +38,8 @@ namespace ChatterBox.Client.Signaling.Shared
                 ? ContactsContainer.Containers[contact.UserId]
                 : ContactsContainer.CreateContainer(contact.UserId, ApplicationDataCreateDisposition.Always);
 
-            contactContainer.Values[nameof(Contact.Name)] = contact.Name;
-            contactContainer.Values[nameof(Contact.IsOnline)] = contact.IsOnline;
+            contactContainer.Values.AddOrUpdate(nameof(Contact.Name), contact.Name);
+            contactContainer.Values.AddOrUpdate(nameof(Contact.IsOnline), contact.IsOnline);
         }
 
         public static void Reset()

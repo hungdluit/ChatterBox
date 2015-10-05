@@ -98,11 +98,12 @@ namespace ChatterBox.Client.Signaling
 
         public void ServerHeartBeat()
         {
+            ClientHeartBeat();
         }
 
 
 
-        private async Task SendToServer(object arg=null, [CallerMemberName]string method=null)
+        private async Task SendToServer(object arg = null, [CallerMemberName]string method = null)
         {
             var message = ClientChannelWriteHelper.FormatOutput(arg, method);
             var socket = _signalingSocketService.GetSocket();
@@ -180,11 +181,11 @@ namespace ChatterBox.Client.Signaling
             }
             catch (Exception exception)
             {
-                
+
             }
         }
 
-        
+
 
 
 
@@ -205,20 +206,12 @@ namespace ChatterBox.Client.Signaling
         public bool CheckConnection()
         {
             var socket = _signalingSocketService.GetSocket();
-            if (socket == null)
+            var isConnected = socket != null;
+            if (socket != null)
             {
-                return false;
+                _signalingSocketService.HandoffSocket(socket);
             }
-
-            try
-            {
-                ClientHeartBeat();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return isConnected;
         }
 
         public bool Connect()

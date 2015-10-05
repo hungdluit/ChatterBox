@@ -4,7 +4,7 @@ namespace ChatterBox.Client.Settings
 {
     public static class SettingsExtensions
     {
-        public static void AddOrUpdate(this IPropertySet propertySet, string key, string value)
+        public static void AddOrUpdate(this IPropertySet propertySet, string key, object value)
         {
             if (propertySet.ContainsKey(key))
             {
