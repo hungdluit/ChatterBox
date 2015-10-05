@@ -93,45 +93,30 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void AppStateChanged(ScreenUtils.AppState newAppState)
         {
             this.AppState = newAppState;
-            if (newAppState == ScreenUtils.AppState.ParallelState)
-            {
-                IsContactsOpen = true;
-                if (ContactsViewModel.SelectedContactModel != null && !CallViewModel.IsInCall)
-                {
-                    ChatViewModel.OnNavigatedTo(ContactsViewModel.SelectedContactModel);
-                    IsChatOpen = true;
-                }
-            }
-            if (newAppState == ScreenUtils.AppState.OverlayState &&
-                (IsChatOpen || IsSettingsOpen || IsCallOpen))
-            {
-                IsContactsOpen = false;
-            }
+            var currentState = GetViewState();
+            SetViewState(currentState);
         }
 
         private void WelcomeCompleted()
         {
             OnRegistrationCompleted();
-            IsWelcomeOpen = false;
-            IsContactsOpen = true;
+            SetViewState(ViewState.Contacts);
         }
 
         private void ContactSelected(ContactModel contact)
         {
             if (ScreenUtils.CurrentState == ScreenUtils.AppState.OverlayState)
             {
-                IsContactsOpen = false;
+                SetViewState(ViewState.Contacts);
             }
             var isContactInCall = CallViewModel.Contact?.Name.Equals(contact.Name);
             if (CallViewModel.IsInCall && isContactInCall.HasValue && isContactInCall.Value)
             {
-                IsChatOpen = false;
-                IsCallOpen = true;
+                SetViewState(ViewState.Call);
             }
             else
             {
-                IsChatOpen = true;
-                IsCallOpen = false;
+                SetViewState(ViewState.Chat);
             }
             IsSettingsOpen = false;
             ChatViewModel.OnNavigatedTo(contact);
@@ -141,34 +126,34 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _viewState = GetViewState();
             SetViewState(ViewState.Settings);
-            if (ScreenUtils.CurrentState == ScreenUtils.AppState.OverlayState)
-            {
-                IsContactsOpen = false;
-            }
         }
 
         private void SettingsClose()
         {
-            SetViewState(_viewState);
+            if (_viewState == ViewState.Settings)
+            {
+                SetViewState(ViewState.Empty);
+            }
+            else
+            {
+                SetViewState(_viewState);
+            }
         }
 
         private void ChatClosed()
         {
-            IsContactsOpen = true;
-            IsChatOpen = false;
+            SetViewState(ViewState.Contacts);
         }
 
         private void OnCall(bool onlyAudio)
         {
-            IsChatOpen = false;
-            IsCallOpen = true;
+            SetViewState(ViewState.Call);
             CallViewModel.OnNvigatedTo(ChatViewModel.Contact, onlyAudio);
         }
 
         private void CallClosed()
         {
-            IsCallOpen = false;
-            IsChatOpen = true;
+            SetViewState(ViewState.Chat);
         }
 
         private ViewState GetViewState()
@@ -194,6 +179,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsContactsOpen = false;
             }
+            else
+            {
+                IsContactsOpen = true;
+            }
 
             switch (state)
             {
@@ -209,7 +198,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 case ViewState.Call:
                     IsCallOpen = true;
                     break;
-                case ViewState.Empty:                    
+                case ViewState.Empty:
                     break;
                 default:
                     break;
