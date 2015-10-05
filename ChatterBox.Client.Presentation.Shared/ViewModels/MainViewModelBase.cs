@@ -6,6 +6,15 @@ using ChatterBox.Client.Settings;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
+    public enum ViewState
+    {
+        Contacts,
+        Settings,
+        Chat,
+        Call,
+        Empty
+    }
+
     public abstract class MainViewModelBase : DispatcherBindableBase
     {
         private bool _isWelcomeOpen;
@@ -13,6 +22,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private bool _isCallOpen;
         private bool _isContactsOpen;
         private bool _isSettingsOpen;
+        private ViewState _viewState;
         private ScreenUtils.AppState _appState;
         protected ScreenUtils ScreenUtils;
 
@@ -86,13 +96,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             if (newAppState == ScreenUtils.AppState.ParallelState)
             {
                 IsContactsOpen = true;
-                if(ContactsViewModel.SelectedContactModel != null && !CallViewModel.IsInCall)
+                if (ContactsViewModel.SelectedContactModel != null && !CallViewModel.IsInCall)
                 {
                     ChatViewModel.OnNavigatedTo(ContactsViewModel.SelectedContactModel);
                     IsChatOpen = true;
                 }
             }
-            if (newAppState == ScreenUtils.AppState.OverlayState && 
+            if (newAppState == ScreenUtils.AppState.OverlayState &&
                 (IsChatOpen || IsSettingsOpen || IsCallOpen))
             {
                 IsContactsOpen = false;
@@ -129,9 +139,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void SettingsSelected()
         {
-            IsSettingsOpen = true;
-            IsChatOpen = false;
-            IsCallOpen = false;
+            _viewState = GetViewState();
+            SetViewState(ViewState.Settings);
             if (ScreenUtils.CurrentState == ScreenUtils.AppState.OverlayState)
             {
                 IsContactsOpen = false;
@@ -140,8 +149,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void SettingsClose()
         {
-            IsSettingsOpen = false;
-            IsContactsOpen = true;
+            SetViewState(_viewState);
         }
 
         private void ChatClosed()
@@ -161,6 +169,51 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             IsCallOpen = false;
             IsChatOpen = true;
+        }
+
+        private ViewState GetViewState()
+        {
+            if (IsSettingsOpen) return ViewState.Settings;
+
+            if (IsCallOpen) return ViewState.Call;
+
+            if (IsChatOpen) return ViewState.Chat;
+
+            if (IsContactsOpen && AppState == ScreenUtils.AppState.OverlayState) return ViewState.Contacts;
+
+            return ViewState.Empty;
+        }
+
+        private void SetViewState(ViewState state)
+        {
+            IsWelcomeOpen = false;
+            IsSettingsOpen = false;
+            IsChatOpen = false;
+            IsCallOpen = false;
+            if (AppState == ScreenUtils.AppState.OverlayState)
+            {
+                IsContactsOpen = false;
+            }
+
+            switch (state)
+            {
+                case ViewState.Contacts:
+                    IsContactsOpen = true;
+                    break;
+                case ViewState.Settings:
+                    IsSettingsOpen = true;
+                    break;
+                case ViewState.Chat:
+                    IsChatOpen = true;
+                    break;
+                case ViewState.Call:
+                    IsCallOpen = true;
+                    break;
+                case ViewState.Empty:                    
+                    break;
+                default:
+                    break;
+            }
         }
 
         public virtual void OnNavigatedTo()
