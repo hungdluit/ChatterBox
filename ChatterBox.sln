@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{079013
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.Signaling", "ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj", "{A286773B-AC8E-4990-ABDF-4017CC9FF29D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.Tasks.Win8.1", "ChatterBox.Client.Tasks.Win8.1\ChatterBox.Client.Tasks.Win8.1.csproj", "{889FE0CE-A903-4F27-A418-EB079B19AB74}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{6b237d83-603c-42af-aabe-9a8013ef1805}*SharedItemsImports = 4
@@ -220,6 +222,22 @@ Global
 		{A286773B-AC8E-4990-ABDF-4017CC9FF29D}.Release|x64.Build.0 = Release|Any CPU
 		{A286773B-AC8E-4990-ABDF-4017CC9FF29D}.Release|x86.ActiveCfg = Release|Any CPU
 		{A286773B-AC8E-4990-ABDF-4017CC9FF29D}.Release|x86.Build.0 = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|ARM.Build.0 = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|x64.Build.0 = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Debug|x86.Build.0 = Debug|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|ARM.ActiveCfg = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|ARM.Build.0 = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|x64.ActiveCfg = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|x64.Build.0 = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|x86.ActiveCfg = Release|Any CPU
+		{889FE0CE-A903-4F27-A418-EB079B19AB74}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,5 +258,6 @@ Global
 		{5EE2034E-0977-42B0-8F9D-5F65BDACCFF4} = {07901360-FF94-405E-A999-6CF77AD604A8}
 		{2093A3A2-0046-49EB-9E30-9E29D517606C} = {07901360-FF94-405E-A999-6CF77AD604A8}
 		{A286773B-AC8E-4990-ABDF-4017CC9FF29D} = {3E40FA14-1992-423F-BFE4-25B36A3B19BB}
+		{889FE0CE-A903-4F27-A418-EB079B19AB74} = {9CFEC98A-4DE7-4234-917D-F56A1695B726}
 	EndGlobalSection
 EndGlobal

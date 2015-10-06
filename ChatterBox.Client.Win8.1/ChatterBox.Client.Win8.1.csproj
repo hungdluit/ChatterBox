@@ -105,6 +105,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\SignalingTaskHelper.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalingSettingsView.xaml.cs">
       <DependentUpon>SignalingSettingsView.xaml</DependentUpon>
@@ -148,11 +150,16 @@
       <Project>{ca0c8677-1a3c-4418-997d-1bb450eaa6d0}</Project>
       <Name>ChatterBox.Client.Tasks.Signaling.Win8.1</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Tasks.Win8.1\ChatterBox.Client.Tasks.Win8.1.csproj">
+      <Project>{889fe0ce-a903-4f27-a418-eb079b19ab74}</Project>
+      <Name>ChatterBox.Client.Tasks.Win8.1</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
       <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

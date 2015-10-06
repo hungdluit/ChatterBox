@@ -11,7 +11,7 @@ namespace ChatterBox.Client.Universal.Helpers
 
         public async Task<IBackgroundTaskRegistration> RegisterTask()
         {
-            await BackgroundExecutionManager.RequestAccessAsync();
+            var status = await BackgroundExecutionManager.RequestAccessAsync();
             //TODO: Treat access grant
             try
             {

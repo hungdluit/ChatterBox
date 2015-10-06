@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CA0C8677-1A3C-4418-997D-1BB450EAA6D0}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{889FE0CE-A903-4F27-A418-EB079B19AB74}</ProjectGuid>
+    <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChatterBox.Client.Tasks.Signaling.Win8._1</RootNamespace>
-    <AssemblyName>ChatterBox.Client.Tasks.Signaling.Win8.1</AssemblyName>
+    <RootNamespace>ChatterBox.Client.Tasks.Win8._1</RootNamespace>
+    <AssemblyName>ChatterBox.Client.Tasks.Win8.1</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,22 +33,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignalingSocketService.cs" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj">
-      <Project>{a286773b-ac8e-4990-abdf-4017cc9ff29d}</Project>
-      <Name>ChatterBox.Client.Signaling</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
-      <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
-      <Name>ChatterBox.Common.Communication</Name>
-    </ProjectReference>
+    <Compile Include="SignalingTask.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

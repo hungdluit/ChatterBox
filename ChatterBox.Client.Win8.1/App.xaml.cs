@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
+using ChatterBox.Client.Win8._1.ViewModels;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -71,7 +72,7 @@ namespace ChatterBox.Client.Win8._1
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainView), null);
+                rootFrame.Navigate(typeof(MainView), new MainViewModel(CoreApplication.MainView.CoreWindow.Dispatcher));
             }
             // Ensure the current window is active
             Window.Current.Activate();
