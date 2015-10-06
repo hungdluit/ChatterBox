@@ -30,6 +30,7 @@ namespace ChatterBox.Server
         private ConcurrentQueue<RegisteredClientMessageQueueItem> MessageQueue { get; set; } = new ConcurrentQueue<RegisteredClientMessageQueueItem>();
         private ConcurrentQueue<string> WriteQueue { get; set; } = new ConcurrentQueue<string>();
         public bool IsOnline { get; private set; }
+        private Guid ConnectionId { get; set; }
 
 
         public RegisteredClient()
@@ -43,6 +44,7 @@ namespace ChatterBox.Server
         public void SetActiveConnection(UnregisteredConnection connection, Registration message)
         {
             Logger.Debug("Handling new TCP connection.");
+            ConnectionId = Guid.NewGuid();
             ActiveConnection = connection.TcpClient;
             OnRegistrationConfirmation(OkReply.For(message));
             ResetQueues();
@@ -76,10 +78,11 @@ namespace ChatterBox.Server
         {
             Task.Run(async () =>
             {
+                var connectionId = ConnectionId;
                 try
                 {
                     var reader = new StreamReader(ActiveConnection.GetStream());
-                    while (true)
+                    while (IsOnline && connectionId == ConnectionId)
                     {
                         var message = await reader.ReadLineAsync();
                         if (message == null) break;
@@ -102,13 +105,14 @@ namespace ChatterBox.Server
         {
             Task.Run(async () =>
             {
+                var connectionId = ConnectionId;
                 try
                 {
                     var writer = new StreamWriter(ActiveConnection.GetStream())
                     {
                         AutoFlush = true
                     };
-                    while (IsOnline)
+                    while (IsOnline && connectionId == ConnectionId)
                     {
                         while (!WriteQueue.IsEmpty)
                         {
