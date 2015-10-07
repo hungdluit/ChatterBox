@@ -7,7 +7,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Settings;
-using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
@@ -58,18 +57,13 @@ namespace ChatterBox.Client.Signaling
         public void OnPeerList(PeerList peerList)
         {
             ClientConfirmation(Confirmation.For(peerList));
-            foreach (var peerStatus in peerList.Peers.Select(peer => new Contact
+            foreach (var peerStatus in peerList.Peers)
             {
-                UserId = peer.UserId,
-                Name = peer.Name,
-                IsOnline = peer.IsOnline
-            }))
-            {
-                ContactService.AddOrUpdate(peerStatus);
+                SignaledPeerData.AddOrUpdate(peerStatus);
             }
         }
 
-        public void OnPeerPresence(PeerInformation peer)
+        public void OnPeerPresence(PeerUpdate peer)
         {
             ClientConfirmation(Confirmation.For(peer));
             GetPeerList(new Message());
@@ -99,10 +93,10 @@ namespace ChatterBox.Client.Signaling
         {
         }
 
-        public async void ServerRelay(RelayMessage message)
+        public void ServerRelay(RelayMessage message)
         {
             ClientConfirmation(Confirmation.For(message));
-            RelayMessageService.Add(message);
+            SignaledRelayMessages.Add(message);
         }
 
         private IAsyncOperation<bool> BufferFileExists()
@@ -129,9 +123,9 @@ namespace ChatterBox.Client.Signaling
 
         public bool Connect()
         {
-            ContactService.Reset();
+            SignaledPeerData.Reset();
             SignalingStatus.Reset();
-            RelayMessageService.Reset();
+            SignaledRelayMessages.Reset();
             return _signalingSocketService.Connect(SignalingSettings.SignalingServerHost,
                 int.Parse(SignalingSettings.SignalingServerPort));
         }

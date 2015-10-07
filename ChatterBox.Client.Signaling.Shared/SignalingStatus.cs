@@ -1,7 +1,7 @@
 ﻿using Windows.Storage;
 using ChatterBox.Client.Settings;
 
-namespace ChatterBox.Client.Signaling.Shared
+namespace ChatterBox.Client.Signaling
 {
     public static class SignalingStatus
     {

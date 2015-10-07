@@ -69,7 +69,7 @@ namespace ChatterBox.Client.Console
             }
         }
 
-        public void OnPeerPresence(PeerInformation peer)
+        public void OnPeerPresence(PeerUpdate peer)
         {
             ClientConfirmation(Confirmation.For(peer));
             GetPeerList(new Message());

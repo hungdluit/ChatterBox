@@ -4,7 +4,7 @@ using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
-using ChatterBox.Client.Signaling.Shared;
+using ChatterBox.Client.Signaling;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -56,7 +56,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void OnSignalingUpdate()
         {
-            var peers = ContactService.Peers;
+            var peers = SignaledPeerData.Peers;
             foreach (var peer in peers)
             {
                 var contact = Conversations.SingleOrDefault(s => s.UserId == peer.UserId);

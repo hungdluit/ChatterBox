@@ -1575,7 +1575,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -3252,7 +3252,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -4901,7 +4901,7 @@
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -6583,7 +6583,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -8232,7 +8232,7 @@
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -9914,7 +9914,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -11563,7 +11563,7 @@
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Unity/4.0.0": {
+      "Unity/4.0.1": {
         "dependencies": {
           "CommonServiceLocator": "[1.3.0, )"
         },
@@ -14992,8 +14992,8 @@
         "System.Xml.XmlSerializer.nuspec"
       ]
     },
-    "Unity/4.0.0": {
-      "sha512": "1mqwbFyiAn6mEO53lX8Bpmkr4yLLyAt74qSVIgmquti2VBjoX7mo8uc18mL17o8RlvKusyqnrfTFQyQCumBgyQ==",
+    "Unity/4.0.1": {
+      "sha512": "RHFTCW13E186hCI0Z4R47tl2SyxQOp3TNaBlilxKktO+u+NUWyOK/nPJ25PWwgPh4j4/GM46PQszSsusui+ikw==",
       "type": "Package",
       "files": [
         "[Content_Types].xml",
@@ -15015,7 +15015,7 @@
         "lib/wp80/Microsoft.Practices.Unity.RegistrationByConvention.dll",
         "lib/wp80/Microsoft.Practices.Unity.RegistrationByConvention.XML",
         "lib/wp80/Microsoft.Practices.Unity.xml",
-        "package/services/metadata/core-properties/26287d98962c496993a223ae1117bcc0.psmdcp",
+        "package/services/metadata/core-properties/924820f073a54dfda4a033e3efb68c3c.psmdcp",
         "Unity.nuspec",
         "UnityConfiguration30.xsd"
       ]
@@ -15027,7 +15027,7 @@
       "Microsoft.ApplicationInsights.PersistenceChannel >= 1.0.0",
       "Microsoft.ApplicationInsights.WindowsApps >= 1.0.0",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
-      "Unity >= 4.0.0"
+      "Unity >= 4.0.1"
     ],
     "UAP,Version=v10.0": []
   }

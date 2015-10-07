@@ -53,7 +53,7 @@ namespace ChatterBox.Server
         {
         }
 
-        public void OnPeerPresence(PeerInformation peer)
+        public void OnPeerPresence(PeerUpdate peer)
         {
         }
 

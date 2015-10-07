@@ -6,7 +6,6 @@ using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Settings;
 using ChatterBox.Client.Signaling;
-using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
@@ -71,16 +70,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         public void LoadHistory()
         {
-            for (var i = 0; i < 10; i++)
-            {
-                InstantMessages.Add(new InstantMessageViewModel
-                {
-                    Message = "Message " + i,
-                    DateTime = DateTimeOffset.UtcNow,
-                    IsSender = (i%2 == 0),
-                    Sender = (i%2 == 0) ? RegistrationSettings.Name : Name
-                });
-            }
+            
         }
 
         private bool OnSendInstantMessageCommandCanExecute()
@@ -102,11 +92,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _signalingClient.Relay(message);
         }
 
-        private async void SignalingUpdateService_OnUpdate()
+        private void SignalingUpdateService_OnUpdate()
         {
-            var messages = await RelayMessageService.GetMessages();
-            var newMessages =
-                messages.ToList().Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId).ToList();
+            var newMessages = SignaledRelayMessages.Messages
+                .Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId).ToList();
             foreach (var message in newMessages)
             {
                 InstantMessages.Add(new InstantMessageViewModel
@@ -116,6 +105,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     Sender = Name,
                     IsSender = false
                 });
+                SignaledRelayMessages.Delete(message.Id.ToString());
             }
         }
 

@@ -20,13 +20,16 @@ namespace ChatterBox.Server
 
         public string Name { get; set; }
 
-        private PeerInformation GetClientInformation(RegisteredClient registeredClient)
+        private PeerUpdate GetClientInformation(RegisteredClient registeredClient)
         {
-            return new PeerInformation
+            return new PeerUpdate
             {
-                UserId = registeredClient.UserId,
-                Name = registeredClient.Name,
-                IsOnline = registeredClient.IsOnline,
+                PeerData = new PeerData
+                {
+                    UserId = registeredClient.UserId,
+                    Name = registeredClient.Name,
+                    IsOnline = registeredClient.IsOnline,
+                },
                 SentDateTimeUtc = DateTime.UtcNow
             };
         }
@@ -113,7 +116,7 @@ namespace ChatterBox.Server
             sender.OnPeerList(new PeerList
             {
                 ReplyFor = message.Id,
-                Peers = GetPeers(sender).Select(GetClientInformation).ToArray()
+                Peers = GetPeers(sender).Select(s => GetClientInformation(s).PeerData).ToArray()
             });
         }
 

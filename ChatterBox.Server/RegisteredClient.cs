@@ -70,7 +70,7 @@ namespace ChatterBox.Server
             EnqueueMessage(peerList);
         }
 
-        public void OnPeerPresence(PeerInformation peer)
+        public void OnPeerPresence(PeerUpdate peer)
         {
             EnqueueMessage(peer);
         }

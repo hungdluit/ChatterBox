@@ -2,7 +2,6 @@
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Signaling;
-using ChatterBox.Client.Signaling.Shared;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {

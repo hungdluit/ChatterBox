@@ -7,7 +7,7 @@ namespace ChatterBox.Common.Communication.Contracts
     public interface IServerChannel
     {
         void OnPeerList(PeerList peerList);
-        void OnPeerPresence(PeerInformation peer);
+        void OnPeerPresence(PeerUpdate peer);
         void OnRegistrationConfirmation(OkReply reply);
         void ServerConfirmation(Confirmation confirmation);
         void ServerError(ErrorReply reply);
