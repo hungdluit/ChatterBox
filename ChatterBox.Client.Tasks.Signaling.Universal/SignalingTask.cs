@@ -9,7 +9,6 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
 {
     public sealed class SignalingTask : IBackgroundTask
     {
-
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             using (new BackgroundTaskDeferralWrapper(taskInstance.GetDeferral()))
@@ -27,7 +26,7 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                     switch (details.Reason)
                     {
                         case SocketActivityTriggerReason.SocketActivity:
-                            signalingProxy.Read();
+                            await signalingProxy.Read();
                             break;
                         case SocketActivityTriggerReason.KeepAliveTimerExpired:
                             signalingProxy.ClientHeartBeat();
@@ -39,7 +38,8 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                 }
                 catch (Exception exception)
                 {
-                    ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}", exception.Message));
+                    ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}",
+                        exception.Message));
                 }
             }
         }

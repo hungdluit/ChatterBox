@@ -8,11 +8,11 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
     {
         public bool Inverted { get; set; }
 
-
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (!(value is bool)) throw new ArgumentException(string.Format("The value converted is not of type {0}", typeof(bool).Name));
-            var booleanValue = (bool)value;
+            if (!(value is bool))
+                throw new ArgumentException(string.Format("The value converted is not of type {0}", typeof (bool).Name));
+            var booleanValue = (bool) value;
 
             return booleanValue
                 ? (!Inverted ? Visibility.Visible : Visibility.Collapsed)

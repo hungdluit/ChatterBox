@@ -12,6 +12,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ContactService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISignalingSocketService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contact.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RelayMessageService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RelayMessageTags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignalingClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SignalingStatus.cs" />
   </ItemGroup>
 </Project>

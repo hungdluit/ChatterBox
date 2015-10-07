@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Settings;
@@ -11,15 +13,13 @@ using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Signaling
 {
     public sealed class SignalingClient : IClientChannel, IServerChannel
     {
         private readonly ISignalingSocketService _signalingSocketService;
-        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
-        private ChannelInvoker ServerChannelInvoker { get; }
-
 
         public SignalingClient(ISignalingSocketService signalingSocketService)
         {
@@ -27,22 +27,12 @@ namespace ChatterBox.Client.Signaling
             ServerChannelInvoker = new ChannelInvoker(this);
         }
 
-
-        public async void Register(Registration message)
-        {
-            await SendToServer(message);
-        }
+        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IClientChannel));
+        private ChannelInvoker ServerChannelInvoker { get; }
 
         public async void ClientConfirmation(Confirmation confirmation)
         {
             await SendToServer(confirmation);
-        }
-
-
-
-        public async void GetPeerList(Message message)
-        {
-            await SendToServer(message);
         }
 
         public async void ClientHeartBeat()
@@ -50,27 +40,19 @@ namespace ChatterBox.Client.Signaling
             await SendToServer();
         }
 
-
-
-
-        public void ServerConfirmation(Confirmation confirmation)
+        public async void GetPeerList(Message message)
         {
+            await SendToServer(message);
         }
 
-        public void ServerReceivedInvalidMessage(InvalidMessage reply)
+        public async void Register(Registration message)
         {
-
+            await SendToServer(message);
         }
 
-        public void ServerError(ErrorReply reply)
+        public async void Relay(RelayMessage message)
         {
-
-        }
-
-        public void OnPeerPresence(PeerInformation peer)
-        {
-            ClientConfirmation(Confirmation.For(peer));
-            GetPeerList(new Message());
+            await SendToServer(message);
         }
 
         public void OnPeerList(PeerList peerList)
@@ -87,120 +69,51 @@ namespace ChatterBox.Client.Signaling
             }
         }
 
+        public void OnPeerPresence(PeerInformation peer)
+        {
+            ClientConfirmation(Confirmation.For(peer));
+            GetPeerList(new Message());
+        }
 
         public void OnRegistrationConfirmation(OkReply reply)
         {
             ClientConfirmation(Confirmation.For(reply));
+            SignalingStatus.IsRegistered = true;
             GetPeerList(new Message());
         }
 
+        public void ServerConfirmation(Confirmation confirmation)
+        {
+        }
 
+        public void ServerError(ErrorReply reply)
+        {
+        }
 
         public void ServerHeartBeat()
         {
             ClientHeartBeat();
         }
 
-
-
-        private async Task SendToServer(object arg = null, [CallerMemberName]string method = null)
+        public void ServerReceivedInvalidMessage(InvalidMessage reply)
         {
-            var message = ClientChannelWriteHelper.FormatOutput(arg, method);
-            var socket = _signalingSocketService.GetSocket();
-            if (socket != null)
-            {
-
-                using (var writer = new DataWriter(socket.OutputStream))
-                {
-                    writer.WriteString($"{message}{Environment.NewLine}");
-                    await writer.StoreAsync();
-                    await writer.FlushAsync();
-                }
-                _signalingSocketService.HandoffSocket(socket);
-            }
         }
 
-        public async void RegisterUsingSettings()
+        public async void ServerRelay(RelayMessage message)
         {
-            var bufferFile = await GetCommunicationBufferFile();
-            await bufferFile.DeleteAsync();
-
-            Register(new Registration
-            {
-                Name = RegistrationSettings.Name,
-                Domain = RegistrationSettings.Domain,
-                PushToken = RegistrationSettings.Name,
-                UserId = RegistrationSettings.UserId,
-            });
+            ClientConfirmation(Confirmation.For(message));
+            RelayMessageService.Add(message);
         }
 
-
-        public async void Read()
+        private IAsyncOperation<bool> BufferFileExists()
         {
-
-            try
-            {
-                var socket = _signalingSocketService.GetSocket();
-                string request;
-                using (var reader = new DataReader(socket.InputStream)
-                {
-                    InputStreamOptions = InputStreamOptions.Partial
-                })
-                {
-                    await reader.LoadAsync(8192);
-                    request = reader.ReadString(reader.UnconsumedBufferLength);
-                    _signalingSocketService.HandoffSocket(socket);
-                }
-
-
-                var bufferFile = await GetCommunicationBufferFile();
-                FileIO.AppendTextAsync(bufferFile, request).AsTask().Wait();
-                var requests = (await FileIO.ReadLinesAsync(bufferFile)).ToList();
-
-                if (requests.Count == 1)
-                {
-                    var invoked = ServerChannelInvoker.ProcessRequest(requests.Single());
-                    if (invoked)
+            return
+                Task.Run(
+                    async () =>
                     {
-                        await bufferFile.DeleteAsync();
-                    }
-                }
-                else
-                {
-                    for (var i = 0; i < requests.Count; i++)
-                    {
-                        var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
-                        if (i != requests.Count - 1) continue;
-                        //If the last message failed the invocation, leave it in the buffer file (it might be a partial message)
-                        await bufferFile.DeleteAsync();
-                        if (invoked) continue;
-                        bufferFile = await GetCommunicationBufferFile();
-                        await FileIO.AppendTextAsync(bufferFile, requests[i]);
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-
-            }
-        }
-
-
-
-
-
-        private async Task<StorageFile> GetCommunicationBufferFile()
-        {
-            try
-            {
-                return await
-                    ApplicationData.Current.LocalFolder.CreateFileAsync("CommunicationBufferFile",
-                        CreationCollisionOption.OpenIfExists);
-            }
-            catch (Exception exception)
-            {
-                return null;
-            }
+                        return
+                            (await ApplicationData.Current.LocalFolder.GetFilesAsync()).Any(s => s.Name == "BufferFile");
+                    }).AsAsyncOperation();
         }
 
         public bool CheckConnection()
@@ -217,8 +130,94 @@ namespace ChatterBox.Client.Signaling
         public bool Connect()
         {
             ContactService.Reset();
+            SignalingStatus.Reset();
+            RelayMessageService.Reset();
             return _signalingSocketService.Connect(SignalingSettings.SignalingServerHost,
                 int.Parse(SignalingSettings.SignalingServerPort));
+        }
+
+        private IAsyncOperation<StorageFile> GetBufferFile()
+        {
+            return ApplicationData.Current.LocalFolder.CreateFileAsync("BufferFile",
+                CreationCollisionOption.OpenIfExists);
+        }
+
+        public IAsyncAction Read()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    var socket = _signalingSocketService.GetSocket();
+                    string request;
+                    using (var reader = new DataReader(socket.InputStream)
+                    {
+                        InputStreamOptions = InputStreamOptions.Partial
+                    })
+                    {
+                        await reader.LoadAsync(65536);
+                        request = reader.ReadString(reader.UnconsumedBufferLength);
+                        _signalingSocketService.HandoffSocket(socket);
+                    }
+
+                    List<string> requests;
+                    if (await BufferFileExists())
+                    {
+                        var bufferFile = await GetBufferFile();
+                        await FileIO.AppendTextAsync(bufferFile, request);
+                        requests = (await FileIO.ReadLinesAsync(bufferFile)).ToList();
+                        await bufferFile.DeleteAsync();
+                    }
+                    else
+                    {
+                        requests =
+                            request.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    }
+
+
+                    for (var i = 0; i < requests.Count; i++)
+                    {
+                        var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
+                        if (i != requests.Count - 1) continue;
+                        if (invoked) continue;
+                        var bufferFile = await GetBufferFile();
+                        await FileIO.AppendTextAsync(bufferFile, requests[i]);
+                    }
+                }
+                catch (Exception exception)
+                {
+                }
+            }).AsAsyncAction();
+        }
+
+        public async void RegisterUsingSettings()
+        {
+            var bufferFile = await GetBufferFile();
+            await bufferFile.DeleteAsync();
+
+            Register(new Registration
+            {
+                Name = RegistrationSettings.Name,
+                Domain = RegistrationSettings.Domain,
+                PushToken = RegistrationSettings.Name,
+                UserId = RegistrationSettings.UserId
+            });
+        }
+
+        private async Task SendToServer(object arg = null, [CallerMemberName] string method = null)
+        {
+            var message = ClientChannelWriteHelper.FormatOutput(arg, method);
+            var socket = _signalingSocketService.GetSocket();
+            if (socket != null)
+            {
+                using (var writer = new DataWriter(socket.OutputStream))
+                {
+                    writer.WriteString($"{message}{Environment.NewLine}");
+                    await writer.StoreAsync();
+                    await writer.FlushAsync();
+                }
+                _signalingSocketService.HandoffSocket(socket);
+            }
         }
     }
 }

@@ -12,7 +12,6 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
             _deferral = deferral;
         }
 
-
         public void Dispose()
         {
             _deferral.Complete();

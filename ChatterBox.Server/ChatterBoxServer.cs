@@ -12,22 +12,42 @@ namespace ChatterBox.Server
 {
     public class ChatterBoxServer
     {
-        private ILog Logger => LogManager.GetLogger(nameof(ChatterBoxServer));
-
         private readonly Timer _heartBeatTimer = new Timer
         {
             Interval = 10000
         };
 
-        public int Port { get; }
-
-        public ConcurrentDictionary<string, Domain> Domains { get; } = new ConcurrentDictionary<string, Domain>();
-        public ConcurrentDictionary<Guid, UnregisteredConnection> UnregisteredConnections { get; } = new ConcurrentDictionary<Guid, UnregisteredConnection>();
-
         public ChatterBoxServer(int port = 50000)
         {
             Port = port;
             _heartBeatTimer.Elapsed += HeartBeatTimer_Elapsed;
+        }
+
+        public ConcurrentDictionary<string, Domain> Domains { get; } = new ConcurrentDictionary<string, Domain>();
+        private ILog Logger => LogManager.GetLogger(nameof(ChatterBoxServer));
+        public int Port { get; }
+
+        public ConcurrentDictionary<Guid, UnregisteredConnection> UnregisteredConnections { get; } =
+            new ConcurrentDictionary<Guid, UnregisteredConnection>();
+
+        private Domain GetOrAddDomain(string key)
+        {
+            return Domains.GetOrAdd(key.ToUpper(), new Domain
+            {
+                Name = key.ToUpper()
+            });
+        }
+
+        private void HandleNewConnection(TcpClient tcpClient)
+        {
+            Task.Run(() =>
+            {
+                var connection = new UnregisteredConnection(tcpClient);
+                Logger.Info($"{connection} connected.");
+                connection.OnRegister += UnregisteredConnection_OnRegister;
+                UnregisteredConnections.GetOrAdd(connection.Id, connection);
+                connection.WaitForRegistration();
+            });
         }
 
         private void HeartBeatTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -65,19 +85,6 @@ namespace ChatterBox.Server
             });
         }
 
-
-        private void HandleNewConnection(TcpClient tcpClient)
-        {
-            Task.Run(() =>
-            {
-                var connection = new UnregisteredConnection(tcpClient);
-                Logger.Info($"{connection} connected.");
-                connection.OnRegister += UnregisteredConnection_OnRegister;
-                UnregisteredConnections.GetOrAdd(connection.Id, connection);
-                connection.WaitForRegistration();
-            });
-        }
-
         private void UnregisteredConnection_OnRegister(UnregisteredConnection sender, Registration message)
         {
             var domain = GetOrAddDomain(message.Domain);
@@ -85,14 +92,6 @@ namespace ChatterBox.Server
             UnregisteredConnections.TryRemove(sender.Id, out connection);
             connection.OnRegister -= UnregisteredConnection_OnRegister;
             domain.HandleRegistration(connection, message);
-        }
-
-        private Domain GetOrAddDomain(string key)
-        {
-            return Domains.GetOrAdd(key.ToUpper(), new Domain
-            {
-                Name = key.ToUpper()
-            });
         }
     }
 }

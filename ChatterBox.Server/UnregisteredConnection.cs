@@ -8,21 +8,90 @@ using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using Common.Logging;
 
 namespace ChatterBox.Server
 {
     public class UnregisteredConnection : IClientChannel, IServerChannel
     {
-        private ILog Logger => LogManager.GetLogger(ToString());
-        public Guid Id { get; } = Guid.NewGuid();
-
-        public TcpClient TcpClient { get; set; }
-        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IServerChannel));
+        public delegate void OnRegisterHandler(UnregisteredConnection sender, Registration message);
 
         public UnregisteredConnection(TcpClient tcpClient)
         {
             TcpClient = tcpClient;
+        }
+
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IServerChannel));
+        public Guid Id { get; } = Guid.NewGuid();
+        private ILog Logger => LogManager.GetLogger(ToString());
+        public TcpClient TcpClient { get; set; }
+
+        public void ClientConfirmation(Confirmation confirmation)
+        {
+        }
+
+        public void ClientHeartBeat()
+        {
+        }
+
+        public void GetPeerList(Message message)
+        {
+        }
+
+        public void Register(Registration message)
+        {
+            ServerConfirmation(Confirmation.For(message));
+            OnRegister?.Invoke(this, message);
+        }
+
+        public void Relay(RelayMessage message)
+        {
+        }
+
+        public void OnPeerList(PeerList peerList)
+        {
+        }
+
+        public void OnPeerPresence(PeerInformation peer)
+        {
+        }
+
+        public void OnRegistrationConfirmation(OkReply reply)
+        {
+        }
+
+        public void ServerConfirmation(Confirmation confirmation)
+        {
+            Write(confirmation);
+        }
+
+        public void ServerError(ErrorReply reply)
+        {
+        }
+
+        public void ServerHeartBeat()
+        {
+        }
+
+        public void ServerReceivedInvalidMessage(InvalidMessage reply)
+        {
+            Write(reply);
+        }
+
+        public void ServerRelay(RelayMessage message)
+        {
+        }
+
+        public void OnInvalidRequest(InvalidMessage reply)
+        {
+        }
+
+        public event OnRegisterHandler OnRegister;
+
+        public override string ToString()
+        {
+            return $"{nameof(UnregisteredConnection)}[{Id}]";
         }
 
         public void WaitForRegistration()
@@ -37,70 +106,6 @@ namespace ChatterBox.Server
                     OnInvalidRequest(InvalidMessage.For(message));
                 }
             });
-
-        }
-
-
-        public event OnRegisterHandler OnRegister;
-        public delegate void OnRegisterHandler(UnregisteredConnection sender, Registration message);
-
-
-        public override string ToString()
-        {
-            return $"{nameof(UnregisteredConnection)}[{Id}]";
-        }
-
-        public void Register(Registration message)
-        {
-            ServerConfirmation(Confirmation.For(message));
-            OnRegister?.Invoke(this, message);
-        }
-
-        public void ClientConfirmation(Confirmation confirmation)
-        {
-
-        }
-
-        public void ClientHeartBeat()
-        {
-        }
-
-
-        public void ServerConfirmation(Confirmation confirmation)
-        {
-            Write(confirmation);
-
-        }
-
-        public void ServerReceivedInvalidMessage(InvalidMessage reply)
-        {
-            Write(reply);
-        }
-
-        public void ServerError(ErrorReply reply)
-        {
-        }
-
-        public void OnPeerPresence(PeerInformation peer)
-        {
-
-        }
-
-        public void OnPeerList(PeerList peerList)
-        {
-
-        }
-
-        public void OnRegistrationConfirmation(OkReply reply)
-        {
-        }
-
-        public void OnInvalidRequest(InvalidMessage reply)
-        {
-        }
-
-        public void ServerHeartBeat()
-        {
         }
 
         private void Write(object arg = null, [CallerMemberName] string method = null)
@@ -111,10 +116,6 @@ namespace ChatterBox.Server
                 AutoFlush = true
             };
             writer.WriteLine(message);
-        }
-
-        public void GetPeerList(Message message)
-        {
         }
     }
 }

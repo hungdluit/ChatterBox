@@ -12,7 +12,8 @@ namespace ChatterBox.Client.Signaling.Shared
             {
                 if (!ApplicationData.Current.LocalSettings.Containers.ContainsKey(nameof(ContactsContainer)))
                 {
-                    ApplicationData.Current.LocalSettings.CreateContainer(nameof(ContactsContainer), ApplicationDataCreateDisposition.Always);
+                    ApplicationData.Current.LocalSettings.CreateContainer(nameof(ContactsContainer),
+                        ApplicationDataCreateDisposition.Always);
                 }
                 return ApplicationData.Current.LocalSettings.Containers[nameof(ContactsContainer)];
             }
@@ -25,7 +26,7 @@ namespace ChatterBox.Client.Signaling.Shared
                 return ContactsContainer.Containers.Select(s => new Contact
                 {
                     Name = s.Value.Values[nameof(Contact.Name)].ToString(),
-                    IsOnline = (bool)s.Value.Values[nameof(Contact.IsOnline)],
+                    IsOnline = (bool) s.Value.Values[nameof(Contact.IsOnline)],
                     UserId = s.Key
                 }).ToArray();
             }

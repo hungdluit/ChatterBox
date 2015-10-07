@@ -25,8 +25,8 @@
               Margin="5"
               SizeChanged="VideoGrid_SizeChanged"
               HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch" >
-            <MediaElement Name="PeerVideo" 
+              VerticalAlignment="Stretch">
+            <MediaElement Name="PeerVideo"
                           Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BoolToVisConverter}}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch" />
@@ -35,32 +35,32 @@
                    Source="{Binding PeerPlaceholderImage}"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
-            <MediaElement Name="SelfVideo" 
+            <MediaElement Name="SelfVideo"
                           Margin="5"
                           Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource BoolToVisConverter}}"
                           HorizontalAlignment="Right"
-                          VerticalAlignment="Bottom"/>
+                          VerticalAlignment="Bottom" />
             <Image Name="SelfPlaceholder"
                    Margin="5"
                    Source="{Binding SelfPlaceholderImage}"
                    Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource InvertedBoolToVisConverter}}"
                    HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom" />            
+                   VerticalAlignment="Bottom" />
         </Grid>
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
-                    HorizontalAlignment="Center" >
-            <Button Command="{Binding SwitchMic}" 
+                    HorizontalAlignment="Center">
+            <Button Command="{Binding SwitchMic}"
                     Margin="5"
                     Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
                     FontFamily="Segoe UI Symbol"
                     Content="&#xE1D6;" />
-            <Button Command="{Binding SwitchVideo}" 
+            <Button Command="{Binding SwitchVideo}"
                     Margin="5"
                     Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
                     FontFamily="Segoe UI Symbol"
                     Content="&#xE116;" />
-            <Button Command="{Binding CloseCall}" 
+            <Button Command="{Binding CloseCall}"
                     Margin="5"
                     Foreground="Red"
                     FontFamily="Segoe UI Symbol"

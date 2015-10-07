@@ -9,21 +9,24 @@
     <Import_RootNamespace>ChatterBox.Client.Presentation.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\AppStateToStyleConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\LayoutTypeToStyleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NegatedBoolConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\NullToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ProportionalConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\ContactModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\BindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DispatcherBindableBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ActionCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MVVM\Utils\ScreenUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CallViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ISignalingUpdateService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LayoutService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LayoutType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ServicesBindingHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ConnectingViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ConversationViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ContactsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\InstantMessageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SettingsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WelcomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CallView.xaml.cs">
@@ -32,8 +35,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\ChatView.xaml.cs">
       <DependentUpon>ChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ConnectingView.xaml.cs">
+      <DependentUpon>ConnectingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\ContactsView.xaml.cs">
       <DependentUpon>ContactsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ConversationView.xaml.cs">
+      <DependentUpon>ConversationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -54,7 +63,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ConnectingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ContactsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ConversationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

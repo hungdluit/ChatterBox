@@ -5,19 +5,18 @@ namespace ChatterBox.Client.Settings
 {
     public static class RegistrationSettings
     {
-
-        public static string UserId
+        public static string Domain
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(UserId)))
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(Domain)))
                 {
-                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(UserId)];
+                    return (string) ApplicationData.Current.LocalSettings.Values[nameof(Domain)];
                 }
-                UserId = Guid.NewGuid().ToString();
-                return UserId;
+                Domain = "chatterbox.microsoft.com";
+                return Domain;
             }
-            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(UserId), value); }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(Domain), value); }
         }
 
         public static string Name
@@ -26,28 +25,25 @@ namespace ChatterBox.Client.Settings
             {
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(Name)))
                 {
-                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(Name)];
+                    return (string) ApplicationData.Current.LocalSettings.Values[nameof(Name)];
                 }
                 return null;
             }
-            set
-            {
-                ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(Name), value);
-            }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(Name), value); }
         }
 
-        public static string Domain
+        public static string UserId
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(Domain)))
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(UserId)))
                 {
-                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(Domain)];
+                    return (string) ApplicationData.Current.LocalSettings.Values[nameof(UserId)];
                 }
-                Domain = "chatterbox.microsoft.com";
-                return Domain;
+                UserId = Guid.NewGuid().ToString();
+                return UserId;
             }
-            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(Domain), value); }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(UserId), value); }
         }
     }
 }

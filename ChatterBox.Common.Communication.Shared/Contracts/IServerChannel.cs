@@ -1,20 +1,18 @@
 ﻿using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Common.Communication.Contracts
 {
     public interface IServerChannel
     {
+        void OnPeerList(PeerList peerList);
+        void OnPeerPresence(PeerInformation peer);
+        void OnRegistrationConfirmation(OkReply reply);
         void ServerConfirmation(Confirmation confirmation);
-        void ServerReceivedInvalidMessage(InvalidMessage reply);
         void ServerError(ErrorReply reply);
         void ServerHeartBeat();
-
-        void OnPeerPresence(PeerInformation peer);
-
-        void OnPeerList(PeerList peerList);
-
-
-        void OnRegistrationConfirmation(OkReply reply);
+        void ServerReceivedInvalidMessage(InvalidMessage reply);
+        void ServerRelay(RelayMessage message);
     }
 }

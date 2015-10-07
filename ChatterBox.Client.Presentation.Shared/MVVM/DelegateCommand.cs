@@ -8,15 +8,13 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
         private readonly Func<bool> _canExecute;
         private readonly Action _execute;
 
-        public event EventHandler CanExecuteChanged;
-
         public DelegateCommand(Action execute)
-                       : this(execute, null)
+            : this(execute, null)
         {
         }
 
         public DelegateCommand(Action execute,
-                       Func<bool> canExecute)
+            Func<bool> canExecute)
         {
             _execute = execute;
             _canExecute = canExecute;
@@ -26,6 +24,8 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
         {
             return _canExecute == null || _canExecute();
         }
+
+        public event EventHandler CanExecuteChanged;
 
         public void Execute(object parameter)
         {
@@ -40,18 +40,16 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
 
     public class DelegateCommand<T> : ICommand
     {
-        private readonly Func<T,bool> _canExecute;
+        private readonly Func<T, bool> _canExecute;
         private readonly Action<T> _execute;
 
-        public event EventHandler CanExecuteChanged;
-
         public DelegateCommand(Action<T> execute)
-                       : this(execute, null)
+            : this(execute, null)
         {
         }
 
         public DelegateCommand(Action<T> execute,
-                       Func<T,bool> canExecute)
+            Func<T, bool> canExecute)
         {
             _execute = execute;
             _canExecute = canExecute;
@@ -59,12 +57,14 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null || _canExecute((T)parameter);
+            return _canExecute == null || _canExecute((T) parameter);
         }
+
+        public event EventHandler CanExecuteChanged;
 
         public void Execute(object parameter)
         {
-            _execute((T)parameter);
+            _execute((T) parameter);
         }
 
         public void RaiseCanExecuteChanged()
