@@ -81,7 +81,7 @@
         </Grid>
         <Grid Grid.Column="1"
               Visibility="{Binding SelectedConversation, Converter={StaticResource NullToVisibilityConverter}}">
-            <ListBox ItemsSource="{Binding Conversations}"
+            <ListBox ItemsSource="{Binding Conversations}" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                      SelectedItem="{Binding SelectedConversation, Mode=OneWay}"
                      Background="{ThemeResource ListBoxBackgroundThemeBrush}">
                 <ListBox.ItemsPanel>

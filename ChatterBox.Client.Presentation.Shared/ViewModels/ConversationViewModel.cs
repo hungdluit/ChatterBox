@@ -68,11 +68,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _userId, value); }
         }
 
-        public void LoadHistory()
-        {
-            
-        }
-
         private bool OnSendInstantMessageCommandCanExecute()
         {
             return !string.IsNullOrWhiteSpace(InstantMessage);
@@ -90,6 +85,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             };
             InstantMessage = null;
             _signalingClient.Relay(message);
+            InstantMessages.Add(new InstantMessageViewModel
+            {
+                Message = message.Payload,
+                DateTime = message.SentDateTimeUtc,
+                IsSender = true,
+                Sender = RegistrationSettings.Name
+            });
         }
 
         private void SignalingUpdateService_OnUpdate()

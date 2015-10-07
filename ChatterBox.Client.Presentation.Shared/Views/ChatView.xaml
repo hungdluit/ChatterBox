@@ -5,11 +5,53 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
+    xmlns:styleSelectors="using:ChatterBox.Client.Presentation.Shared.StyleSelectors"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <Style x:Key="IMBaseStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid Margin="3">
+                            <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
+                            <Border Margin="5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Sender}" />
+                                        <TextBlock Text="{Binding DateTime}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Text="{Binding Message}" TextWrapping="WrapWholeWords" />
+                                </Grid>
+
+                            </Border>
+                        </Grid>
+
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
+            <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource IMBaseStyle}">
+                    <Setter Property="Background" Value="CornflowerBlue" />
+                    <Setter Property="Margin" Value="0,0,40,0" />
+                </Style>
+            </styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+            <styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource IMBaseStyle}">
+                    <Setter Property="Background" Value="LightSkyBlue" />
+                    <Setter Property="Margin" Value="40,0,0,0" />
+                </Style>
+            </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
+        </styleSelectors:InstantMessageStyleSelector>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -38,7 +80,9 @@
             </StackPanel>
 
         </Grid>
-        <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}" />
+        <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
+                 Background="Transparent"
+                 ItemContainerStyleSelector="{StaticResource InstantMessageStyleSelector}" />
 
         <Grid x:Name="IMCommandsRegion" Grid.Row="2">
             <Grid.ColumnDefinitions>

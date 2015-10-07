@@ -28,9 +28,9 @@ namespace ChatterBox.Server
                 {
                     UserId = registeredClient.UserId,
                     Name = registeredClient.Name,
-                    IsOnline = registeredClient.IsOnline,
+                    IsOnline = registeredClient.IsOnline
                 },
-                SentDateTimeUtc = DateTime.UtcNow
+                SentDateTimeUtc = DateTimeOffset.UtcNow
             };
         }
 

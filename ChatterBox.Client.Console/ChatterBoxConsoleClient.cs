@@ -101,14 +101,17 @@ namespace ChatterBox.Client.Console
         public void ServerRelay(RelayMessage message)
         {
             ClientConfirmation(Confirmation.For(message));
-            Relay(new RelayMessage
+            if (message.Tag == RelayMessageTags.InstantMessage)
             {
-                SentDateTimeUtc = DateTimeOffset.UtcNow,
-                ToUserId = message.FromUserId,
-                FromUserId = _userId,
-                Tag = message.Tag,
-                Payload = message.Payload
-            });
+                Relay(new RelayMessage
+                {
+                    SentDateTimeUtc = DateTimeOffset.UtcNow,
+                    ToUserId = message.FromUserId,
+                    FromUserId = _userId,
+                    Tag = message.Tag,
+                    Payload = $"Received: {message.Payload}"
+                });
+            }
         }
 
         public void Connect(string host = "localhost", int port = 50000)

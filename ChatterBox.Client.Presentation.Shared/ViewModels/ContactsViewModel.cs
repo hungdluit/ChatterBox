@@ -66,7 +66,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact.Name = peer.Name;
                     contact.UserId = peer.UserId;
                     contact.ProfileSource = new BitmapImage(new Uri("ms-appx:///Assets/profile_2.png"));
-                    contact.LoadHistory();
                     Conversations.Add(contact);
                 }
                 contact.IsOnline = peer.IsOnline;

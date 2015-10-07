@@ -21,7 +21,7 @@ namespace ChatterBox.Common.Communication.Helpers
             var message = argument as IMessage;
             if (message != null)
             {
-                message.SentDateTimeUtc = DateTime.UtcNow;
+                message.SentDateTimeUtc = DateTimeOffset.UtcNow;
             }
 
 
