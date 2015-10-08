@@ -1,70 +1,72 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
-using ChatterBox.Client.Presentation.Shared.Models;
-using ChatterBox.Client.Presentation.Shared.MVVM;
-using ChatterBox.Client.Signaling.Shared;
 using Windows.UI.Xaml.Media.Imaging;
-using System;
-using ChatterBox.Client.Presentation.Shared.MVVM.Utils;
+using ChatterBox.Client.Presentation.Shared.MVVM;
+using ChatterBox.Client.Presentation.Shared.Services;
+using ChatterBox.Client.Signaling;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public sealed class ContactsViewModel : BindableBase
     {
-        private ContactModel _selectedContact;
-        private ActionCommand _settingsCommand;
+        private readonly Func<ConversationViewModel> _contactFactory;
+        private ConversationViewModel _selectedConversation;
 
-        public ContactsViewModel()
+        public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
+            Func<ConversationViewModel> contactFactory)
         {
-            Settings = new ActionCommand(SettingsExecute);
+            _contactFactory = contactFactory;
+            signalingUpdateService.OnUpdate += OnSignalingUpdate;
+            LayoutService.Instance.LayoutChanged += LayoutChanged;
         }
 
-        public ActionCommand Settings
+        public ObservableCollection<ConversationViewModel> Conversations { get; } =
+            new ObservableCollection<ConversationViewModel>();
+
+        public ConversationViewModel SelectedConversation
         {
-            get { return _settingsCommand; }
-            set { SetProperty(ref _settingsCommand, value); }
+            get { return _selectedConversation; }
+            set { SetProperty(ref _selectedConversation, value); }
         }
 
-        private void SettingsExecute(object param)
+        private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
-            SettingsSelected?.Invoke();
+            SelectedConversation = null;
         }
 
-        public ObservableCollection<ContactModel> Contacts { get; } = new ObservableCollection<ContactModel>();
-
-        public ContactModel SelectedContactModel
+        private void LayoutChanged(LayoutType layout)
         {
-            get { return _selectedContact; }
-            set
+            UpdateSelection();
+        }
+
+        private void OnSignalingUpdate()
+        {
+            var peers = SignaledPeerData.Peers;
+            foreach (var peer in peers)
             {
-                SetProperty(ref _selectedContact, value);
-                if (value != null)
+                var contact = Conversations.SingleOrDefault(s => s.UserId == peer.UserId);
+                if (contact == null)
                 {
-                    ContactSelected?.Invoke(value);
+                    contact = _contactFactory();
+                    contact.Name = peer.Name;
+                    contact.UserId = peer.UserId;
+                    contact.ProfileSource = new BitmapImage(new Uri("ms-appx:///Assets/profile_2.png"));
+                    contact.OnCloseConversation += Contact_OnCloseConversation;
+                    Conversations.Add(contact);
                 }
+                contact.IsOnline = peer.IsOnline;
+            }
+
+            UpdateSelection();
+        }
+
+        private void UpdateSelection()
+        {
+            if (SelectedConversation == null && LayoutService.Instance.LayoutType == LayoutType.Parallel)
+            {
+                SelectedConversation = Conversations.FirstOrDefault();
             }
         }
-
-        public void Update(Contact[] contacts)
-        {
-            foreach (var contact in contacts)
-            {
-                var toUpdate = Contacts.SingleOrDefault(s => s.UserId == contact.UserId);
-                if (toUpdate == null)
-                {
-                    toUpdate = new ContactModel
-                    {
-                        Name = contact.Name,
-                        UserId = contact.UserId,
-                        ProfileSource = new BitmapImage(new Uri("ms-appx:///Assets/profile_2.png"))
-                    };
-                    Contacts.Add(toUpdate);
-                }
-                toUpdate.IsOnline = contact.IsOnline;
-            }
-        }
-
-        public event Action<ContactModel> ContactSelected;
-        public event Action SettingsSelected;
     }
 }

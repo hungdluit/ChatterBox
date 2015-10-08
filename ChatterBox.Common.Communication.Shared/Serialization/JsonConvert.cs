@@ -7,6 +7,14 @@ namespace ChatterBox.Common.Communication.Serialization
 {
     public static class JsonConvert
     {
+        public static object Deserialize(string json, Type type)
+        {
+            using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
+            {
+                return (new DataContractJsonSerializer(type)).ReadObject(stream);
+            }
+        }
+
         public static string Serialize(object instance)
         {
             using (var stream = new MemoryStream())
@@ -18,14 +26,6 @@ namespace ChatterBox.Common.Communication.Serialization
                 {
                     return reader.ReadToEnd();
                 }
-            }
-        }
-
-        public static object Deserialize(string json, Type type)
-        {
-            using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
-            {
-                return (new DataContractJsonSerializer(type)).ReadObject(stream);
             }
         }
     }

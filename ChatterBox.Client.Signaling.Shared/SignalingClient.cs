@@ -1,27 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Settings;
-using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
-using Windows.Networking.Sockets;
-using Windows.Foundation;
+using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Signaling
 {
     public sealed class SignalingClient : IClientChannel, IServerChannel
     {
         private readonly ISignalingSocketService _signalingSocketService;
-        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
-        private ChannelInvoker ServerChannelInvoker { get; }
-
 
         public SignalingClient(ISignalingSocketService signalingSocketService)
         {
@@ -29,22 +26,12 @@ namespace ChatterBox.Client.Signaling
             ServerChannelInvoker = new ChannelInvoker(this);
         }
 
-
-        public async void Register(Registration message)
-        {
-            await SendToServer(message);
-        }
+        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IClientChannel));
+        private ChannelInvoker ServerChannelInvoker { get; }
 
         public async void ClientConfirmation(Confirmation confirmation)
         {
             await SendToServer(confirmation);
-        }
-
-
-
-        public async void GetPeerList(Message message)
-        {
-            await SendToServer(message);
         }
 
         public async void ClientHeartBeat()
@@ -52,77 +39,154 @@ namespace ChatterBox.Client.Signaling
             await SendToServer();
         }
 
-
-
-
-        public void ServerConfirmation(Confirmation confirmation)
+        public async void GetPeerList(Message message)
         {
+            await SendToServer(message);
         }
 
-        public void ServerReceivedInvalidMessage(InvalidMessage reply)
+        public async void Register(Registration message)
         {
-
+            await SendToServer(message);
         }
 
-        public void ServerError(ErrorReply reply)
+        public async void Relay(RelayMessage message)
         {
-
-        }
-
-        public void OnPeerPresence(PeerInformation peer)
-        {
-            ClientConfirmation(Confirmation.For(peer));
-            GetPeerList(new Message());
+            await SendToServer(message);
         }
 
         public void OnPeerList(PeerList peerList)
         {
             ClientConfirmation(Confirmation.For(peerList));
-            foreach (var peerStatus in peerList.Peers.Select(peer => new Contact
+            foreach (var peerStatus in peerList.Peers)
             {
-                UserId = peer.UserId,
-                Name = peer.Name,
-                IsOnline = peer.IsOnline
-            }))
-            {
-                ContactService.AddOrUpdate(peerStatus);
+                SignaledPeerData.AddOrUpdate(peerStatus);
             }
         }
 
+        public void OnPeerPresence(PeerUpdate peer)
+        {
+            ClientConfirmation(Confirmation.For(peer));
+            GetPeerList(new Message());
+        }
 
         public void OnRegistrationConfirmation(OkReply reply)
         {
             ClientConfirmation(Confirmation.For(reply));
+            SignalingStatus.IsRegistered = true;
             GetPeerList(new Message());
         }
 
-
-
-        public void ServerHeartBeat()
+        public void ServerConfirmation(Confirmation confirmation)
         {
         }
 
-
-
-        private async Task SendToServer(object arg=null, [CallerMemberName]string method=null)
+        public void ServerError(ErrorReply reply)
         {
-            var message = ClientChannelWriteHelper.FormatOutput(arg, method);
+        }
+
+        public void ServerHeartBeat()
+        {
+            ClientHeartBeat();
+        }
+
+        public void ServerReceivedInvalidMessage(InvalidMessage reply)
+        {
+        }
+
+        public void ServerRelay(RelayMessage message)
+        {
+            ClientConfirmation(Confirmation.For(message));
+            SignaledRelayMessages.Add(message);
+        }
+
+        private IAsyncOperation<bool> BufferFileExists()
+        {
+            return
+                Task.Run(
+                    async () =>
+                    {
+                        return
+                            (await ApplicationData.Current.LocalFolder.GetFilesAsync()).Any(s => s.Name == "BufferFile");
+                    }).AsAsyncOperation();
+        }
+
+        public bool CheckConnection()
+        {
             var socket = _signalingSocketService.GetSocket();
+            var isConnected = socket != null;
             if (socket != null)
             {
-
-                using (var writer = new DataWriter(socket.OutputStream))
-                {
-                    writer.WriteString($"{message}{Environment.NewLine}");
-                    await writer.StoreAsync();
-                }
                 _signalingSocketService.HandoffSocket(socket);
             }
+            return isConnected;
+        }
+
+        public bool Connect()
+        {
+            SignaledPeerData.Reset();
+            SignalingStatus.Reset();
+            SignaledRelayMessages.Reset();
+            return _signalingSocketService.Connect(SignalingSettings.SignalingServerHost,
+                int.Parse(SignalingSettings.SignalingServerPort));
+        }
+
+        private IAsyncOperation<StorageFile> GetBufferFile()
+        {
+            return ApplicationData.Current.LocalFolder.CreateFileAsync("BufferFile",
+                CreationCollisionOption.OpenIfExists);
+        }
+
+        public IAsyncAction Read()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    var socket = _signalingSocketService.GetSocket();
+                    string request;
+                    using (var reader = new DataReader(socket.InputStream)
+                    {
+                        InputStreamOptions = InputStreamOptions.Partial
+                    })
+                    {
+                        await reader.LoadAsync(65536);
+                        request = reader.ReadString(reader.UnconsumedBufferLength);
+                        _signalingSocketService.HandoffSocket(socket);
+                    }
+
+                    List<string> requests;
+                    if (await BufferFileExists())
+                    {
+                        var bufferFile = await GetBufferFile();
+                        await FileIO.AppendTextAsync(bufferFile, request);
+                        requests = (await FileIO.ReadLinesAsync(bufferFile)).ToList();
+                        await bufferFile.DeleteAsync();
+                    }
+                    else
+                    {
+                        requests =
+                            request.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    }
+
+
+                    for (var i = 0; i < requests.Count; i++)
+                    {
+                        var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
+                        if (i != requests.Count - 1) continue;
+                        if (invoked) continue;
+                        var bufferFile = await GetBufferFile();
+                        await FileIO.AppendTextAsync(bufferFile, requests[i]);
+                    }
+                }
+                catch (Exception exception)
+                {
+                }
+            }).AsAsyncAction();
         }
 
         public async void RegisterUsingSettings()
         {
-            var bufferFile = await GetCommunicationBufferFile();
+            var bufferFile = await GetBufferFile();
             await bufferFile.DeleteAsync();
 
             Register(new Registration
@@ -130,157 +194,24 @@ namespace ChatterBox.Client.Signaling
                 Name = RegistrationSettings.Name,
                 Domain = RegistrationSettings.Domain,
                 PushToken = RegistrationSettings.Name,
-                UserId = RegistrationSettings.UserId,
+                UserId = RegistrationSettings.UserId
             });
-            PostSocketRead(300, _signalingSocketService.GetSocket());
         }
 
-        async void PostSocketRead(int length, StreamSocket socket)
+        private async Task SendToServer(object arg = null, [CallerMemberName] string method = null)
         {
-            // IMPORTANT: When using winRT based transports such as StreamSocket with the ControlChannelTrigger,
-            // we have to use the raw async pattern for handling reads instead of the await model. 
-            // Using the raw async pattern allows Windows to synchronize the PushNotification task's 
-            // IBackgroundTask::Run method with the return of the receive  completion callback. 
-            // The Run method is invoked after the completion callback returns. This ensures that the app has
-            // received the data/errors before the Run method is invoked.
-            // It is important to note that the app has to post another read before it returns control from the completion callback.
-            // It is also important to note that the DataReader is not directly used with the 
-            // StreamSocket transport since that breaks the synchronization described above.
-            // It is not supported to use DataReader's LoadAsync method directly on top of the transport. Instead,
-            // the IBuffer returned by the transport's ReadAsync method can be later passed to DataReader::FromBuffer()
-            // for further processing.
-            try
-            {
-                var readBuf = new Windows.Storage.Streams.Buffer((uint)length);
-                var readOp = socket.InputStream.ReadAsync(readBuf, (uint)length, InputStreamOptions.Partial);
-                readOp.Completed = (IAsyncOperationWithProgress<IBuffer, uint> asyncAction, AsyncStatus asyncStatus) =>
-                {
-                    switch (asyncStatus)
-                    {
-                        case AsyncStatus.Completed:
-                        case AsyncStatus.Error:
-                            try
-                            {
-                                // GetResults in AsyncStatus::Error is called as it throws a user friendly error string.
-                                IBuffer localBuf = asyncAction.GetResults();
-                                uint bytesRead = localBuf.Length;
-                                var readPacket = DataReader.FromBuffer(localBuf);
-                                OnDataReadCompletion(bytesRead, readPacket);
-                            }
-                            catch (Exception exp)
-                            {
-                            }
-                            break;
-                        case AsyncStatus.Canceled:
-
-                            // Read is not cancelled in this sample.
-                            break;
-                    }
-                };
-                await readOp;
-            }
-            catch (Exception exp)
-            {
-            }
-        }
-
-        private void OnDataReadCompletion(uint bytesRead, DataReader readPacket)
-        {
-            
-        }
-
-        public async void Read()
-        {
-
-            try
-            {
-                var socket = _signalingSocketService.GetSocket();
-                string request;
-                using (var reader = new DataReader(socket.InputStream)
-                {
-                    InputStreamOptions = InputStreamOptions.Partial
-                })
-                {
-                    await reader.LoadAsync(8192);
-                    request = reader.ReadString(reader.UnconsumedBufferLength);
-                    _signalingSocketService.HandoffSocket(socket);
-                }
-
-
-                var bufferFile = await GetCommunicationBufferFile();
-                FileIO.AppendTextAsync(bufferFile, request).AsTask().Wait();
-                var requests = (await FileIO.ReadLinesAsync(bufferFile)).ToList();
-
-                if (requests.Count == 1)
-                {
-                    var invoked = ServerChannelInvoker.ProcessRequest(requests.Single());
-                    if (invoked)
-                    {
-                        await bufferFile.DeleteAsync();
-                    }
-                }
-                else
-                {
-                    for (var i = 0; i < requests.Count; i++)
-                    {
-                        var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
-                        if (i != requests.Count - 1) continue;
-                        //If the last message failed the invocation, leave it in the buffer file (it might be a partial message)
-                        await bufferFile.DeleteAsync();
-                        if (invoked) continue;
-                        bufferFile = await GetCommunicationBufferFile();
-                        await FileIO.AppendTextAsync(bufferFile, requests[i]);
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                
-            }
-        }
-
-        
-
-
-
-        private async Task<StorageFile> GetCommunicationBufferFile()
-        {
-            try
-            {
-                return await
-                    ApplicationData.Current.LocalFolder.CreateFileAsync("CommunicationBufferFile",
-                        CreationCollisionOption.OpenIfExists);
-            }
-            catch (Exception exception)
-            {
-                return null;
-            }
-        }
-
-        public bool CheckConnection()
-        {
+            var message = ClientChannelWriteHelper.FormatOutput(arg, method);
             var socket = _signalingSocketService.GetSocket();
-            if (socket == null)
+            if (socket != null)
             {
-                return false;
+                using (var writer = new DataWriter(socket.OutputStream))
+                {
+                    writer.WriteString($"{message}{Environment.NewLine}");
+                    await writer.StoreAsync();
+                    await writer.FlushAsync();
+                }
+                _signalingSocketService.HandoffSocket(socket);
             }
-
-            try
-            {
-                ClientHeartBeat();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public bool Connect()
-        {
-            ContactService.Reset();
-            return _signalingSocketService.Connect("172.24.10.65",
-                int.Parse(SignalingSettings.SignalingServerPort));
         }
     }
 }

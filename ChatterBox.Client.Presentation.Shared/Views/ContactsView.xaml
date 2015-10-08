@@ -5,57 +5,109 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
+    xmlns:services="using:ChatterBox.Client.Presentation.Shared.Services"
+    xmlns:views="using:ChatterBox.Client.Presentation.Shared.Views"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
+
+        <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
+        <Style x:Key="OverlayStyle" TargetType="ItemsControl">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <Grid />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ParallelStyle" TargetType="ItemsControl">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="400" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <converters:LayoutTypeToStyleConverter x:Key="LayoutTypeToStyleConverter"
+                                               ParallelStyle="{StaticResource ParallelStyle}"
+                                               OverlayStyle="{StaticResource OverlayStyle}" />
+
+
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInvertedConverter" Inverted="True" />
-        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"  ColorForTrue="LightGreen" ColorForFalse="LightGray" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForTrue="LightGreen"
+                                         ColorForFalse="LightGray" />
     </UserControl.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Text="Chatter members"
-                   Margin="12,5"
-                   Grid.Row="0"/>
-        <Button Name="SettingsButton" 
-                Grid.Row="0"
-                Grid.Column="1"
-                Command="{Binding Settings}"
-                Margin="12,5"
-                Background="{ThemeResource ButtonBackgroundThemeBrush}"
-                FontFamily="Segoe UI Symbol"
-                Content="&#xE115;" />
-        <ListBox Grid.Row="1" 
-                 Grid.Column="0"
-                 Grid.ColumnSpan="2"
-                 SelectedItem="{Binding SelectedContactModel, Mode=TwoWay}"
-                 Background="{ThemeResource ListBoxBackgroundThemeBrush}"
-                 ItemsSource="{Binding Contacts}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Ellipse Fill="{Binding IsOnline, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
-                                 Width="15"
-                                 Height="15" />
-                        <Image Source="{Binding ProfileSource}" 
-                               Margin="5"
-                               Width="45"
-                               Height="45" />
-                        <TextBlock Text="{Binding Name}"
-                                   VerticalAlignment="Center"
-                                   Margin="5" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>        
-    </Grid>
+    <ItemsControl Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  Style="{Binding  Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource LayoutTypeToStyleConverter}}">
+        <Grid x:Name="ContactsList">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Chatter members" Margin="12,5" />
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding Conversations}"
+                     SelectedItem="{Binding SelectedConversation, Mode=TwoWay}"
+                     Background="{ThemeResource ListBoxBackgroundThemeBrush}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse
+                                Fill="{Binding IsOnline, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
+                                Width="15"
+                                Height="15" />
+                            <Image Source="{Binding ProfileSource}"
+                                   Margin="5"
+                                   Width="45"
+                                   Height="45" />
+                            <TextBlock Text="{Binding Name}"
+                                       VerticalAlignment="Center"
+                                       Margin="5" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid Grid.Column="1"
+              Visibility="{Binding SelectedConversation, Converter={StaticResource NullToVisibilityConverter}}">
+            <ListBox ItemsSource="{Binding Conversations}" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     SelectedItem="{Binding SelectedConversation, Mode=OneWay}"
+                     Background="{ThemeResource ListBoxBackgroundThemeBrush}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <views:ConversationView
+                                        Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsSelected, Converter = {StaticResource BooleanToVisibilityConverter}}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <views:ConversationView DataContext="{Binding SelectedConversation}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+    </ItemsControl>
 </UserControl>

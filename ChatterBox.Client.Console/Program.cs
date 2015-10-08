@@ -1,17 +1,16 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChatterBox.Common.Communication.Messages.Registration;
 
 namespace ChatterBox.Client.Console
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             System.Console.Write("Enter your user ID: ");
             var userId = System.Console.ReadLine();
             System.Console.Title = userId;
-            var client = new ChatterBoxClient();
+            var client = new ChatterBoxConsoleClient();
             client.Connect();
             Task.Run(() =>
             {
@@ -23,7 +22,7 @@ namespace ChatterBox.Client.Console
                     PushToken = userId
                 });
             });
-            
+
             System.Console.ReadLine();
         }
     }

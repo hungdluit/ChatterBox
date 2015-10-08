@@ -7,8 +7,8 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
 {
     public sealed class SignalingSocketService : ISignalingSocketService
     {
+        private static readonly string SignalingSocketId = nameof(SignalingSocketId);
         private readonly Guid _signalingTaskId;
-        private static string SignalingSocketId = nameof(SignalingSocketId);
 
         public SignalingSocketService(Guid signalingTaskId)
         {
@@ -27,18 +27,18 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                 HandoffSocket(socket);
                 return true;
             }
-            catch
+            catch (Exception exception)
             {
                 return false;
             }
         }
 
-        
-
         public StreamSocket GetSocket()
         {
             SocketActivityInformation socketInformation;
-            return SocketActivityInformation.AllSockets.TryGetValue(SignalingSocketId, out socketInformation) ? socketInformation.StreamSocket : null;
+            return SocketActivityInformation.AllSockets.TryGetValue(SignalingSocketId, out socketInformation)
+                ? socketInformation.StreamSocket
+                : null;
         }
 
         public void HandoffSocket(StreamSocket socket)

@@ -2,68 +2,112 @@
     x:Class="ChatterBox.Client.Presentation.Shared.Views.ChatView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ChatterBox.Client.Presentation.Shared.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
+    xmlns:styleSelectors="using:ChatterBox.Client.Presentation.Shared.StyleSelectors"
+    xmlns:services="using:ChatterBox.Client.Presentation.Shared.Services"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
+        <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
+            <converters:LayoutTypeToStyleConverter.OverlayStyle>
+                <Style TargetType="Button">
+                    <Setter Property="Visibility" Value="Visible" />
+                </Style>
+            </converters:LayoutTypeToStyleConverter.OverlayStyle>
+            <converters:LayoutTypeToStyleConverter.ParallelStyle>
+                <Style TargetType="Button">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </converters:LayoutTypeToStyleConverter.ParallelStyle>
+        </converters:LayoutTypeToStyleConverter>
+        <Style x:Key="IMBaseStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid Margin="3">
+                            <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
+                            <Border Margin="5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Sender}" />
+                                        <TextBlock Text="{Binding DateTime}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Text="{Binding Message}" TextWrapping="WrapWholeWords" />
+                                </Grid>
+
+                            </Border>
+                        </Grid>
+
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
+            <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource IMBaseStyle}">
+                    <Setter Property="Background" Value="CornflowerBlue" />
+                    <Setter Property="Margin" Value="0,0,40,0" />
+                </Style>
+            </styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+            <styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource IMBaseStyle}">
+                    <Setter Property="Background" Value="LightSkyBlue" />
+                    <Setter Property="Margin" Value="40,0,0,0" />
+                </Style>
+            </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
+        </styleSelectors:InstantMessageStyleSelector>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding CloseChat}" 
-                    Visibility="{Binding IsBackButtonEnabled, Converter={StaticResource BoolToVisConverter}}"
-                    Margin="5"
-                    FontFamily="Segoe UI Symbol"
-                    Content="&#xE112;"/>
-            <TextBlock Text="{Binding Contact}" 
-                       Margin="12,5"
-                       VerticalAlignment="Center"
-                       Grid.Row="0"
-                       Grid.Column="0"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Grid.Row="0"
-                    Grid.Column="1">
-            <Button Command="{Binding CallOnlyAudio}" 
-                    Margin="5"
-                    Foreground="Green"
-                    FontFamily="Segoe UI Symbol"
-                    Content="&#xE13A;"/>
-            <Button Command="{Binding Call}" 
-                    Margin="5"
-                    Foreground="Green"
-                    FontFamily="Segoe UI Symbol"
-                    Content="&#xE116;"/>
-        </StackPanel>
-        <Grid Grid.Row="2"
-              Grid.ColumnSpan="2" >
+        <Grid x:Name="Header">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding CloseConversationCommand}"
+                        Style="{Binding  Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource CloseConversationButtonStyleConverter}}"
+                        Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE112;" />
+                <TextBlock Text="{Binding Contact}" Margin="12,5" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="2">
+                <Button Command="{Binding CallCommand}" Margin="5"
+                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE13A;" />
+                <Button Command="{Binding VideoCallCommand}" Margin="5"
+                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE116;" />
+            </StackPanel>
+
+        </Grid>
+        <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
+                 Background="Transparent"
+                 ItemContainerStyleSelector="{StaticResource InstantMessageStyleSelector}" />
+
+        <Grid x:Name="IMCommandsRegion" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBox PlaceholderText="Enter a message"
-                     Grid.Column="0"
-                     Margin="12,5" />
-            <Button Command="{Binding Send}" 
-                    Margin="5"
-                    Grid.Column="1"
-                    FontFamily="Segoe UI Symbol"
+            <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Enter a message" Margin="12,5" AcceptsReturn="True" />
+            <Button Command="{Binding SendInstantMessageCommand}" Margin="5"
+                    Grid.Column="1" FontFamily="Segoe UI Symbol"
                     HorizontalContentAlignment="Left"
-                    Content="&#xE122;"/>
+                    Content="&#xE122;" />
         </Grid>
     </Grid>
 </UserControl>

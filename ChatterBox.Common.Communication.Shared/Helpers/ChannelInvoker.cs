@@ -7,13 +7,12 @@ namespace ChatterBox.Common.Communication.Helpers
 {
     public sealed class ChannelInvoker
     {
-
-        private object Handler { get; }
         public ChannelInvoker(object handler)
         {
             Handler = handler;
         }
 
+        private object Handler { get; }
 
         public bool ProcessRequest(string request)
         {
@@ -35,7 +34,7 @@ namespace ChatterBox.Common.Communication.Helpers
                     argument = JsonConvert.Deserialize(serializedParameter, parameters.Single().ParameterType);
                 }
 
-                method.Invoke(Handler, argument == null ? null : new[] { argument });
+                method.Invoke(Handler, argument == null ? null : new[] {argument});
                 return true;
             }
             catch
@@ -44,6 +43,4 @@ namespace ChatterBox.Common.Communication.Helpers
             }
         }
     }
-
-    
 }

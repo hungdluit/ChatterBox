@@ -3,28 +3,30 @@ using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
 using ChatterBox.Client.Signaling;
 using ChatterBox.Client.Tasks.Signaling.Universal;
 using ChatterBox.Client.Universal.Helpers;
-using ChatterBox.Client.Universal.ViewModels;
+using ChatterBox.Client.Universal.Services;
 using Microsoft.ApplicationInsights;
-using ChatterBox.Client.Settings;
+using Microsoft.Practices.Unity;
 
 namespace ChatterBox.Client.Universal
 {
     /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
+    ///     Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    public sealed partial class App
     {
         /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
+        ///     Initializes the singleton application object.  This is the first line of authored code
+        ///     executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
@@ -35,22 +37,43 @@ namespace ChatterBox.Client.Universal
             Suspending += OnSuspending;
         }
 
+        public UnityContainer Container { get; } = new UnityContainer();
+
         /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
+        ///     Invoked when the application is launched normally by the end user.  Other entry points
+        ///     will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-
 #if DEBUG
             if (Debugger.IsAttached)
             {
                 // this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+            Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
 
-            Frame rootFrame = Window.Current.Content as Frame;
+            var helper = new SignalingTaskHelper();
+            var signalingTask = await helper.GetSignalingTaskRegistration();
+            if (signalingTask == null)
+            {
+                var message = new MessageDialog("The signaling task is required.");
+                await message.ShowAsync();
+                return;
+            }
+
+            signalingTask.Completed +=
+                (reg, completedArgs) => { Container.Resolve<ISignalingUpdateService>().RaiseUpdate(); };
+
+
+            Container
+                .RegisterType<ISignalingSocketService, SignalingSocketService>(
+                    new ContainerControlledLifetimeManager(), new InjectionConstructor(signalingTask.TaskId))
+                .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
+
+
+            var rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -80,26 +103,26 @@ namespace ChatterBox.Client.Universal
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainView), new MainViewModel(CoreApplication.MainView.CoreWindow.Dispatcher));
+                rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>());
             }
             // Ensure the current window is active
             Window.Current.Activate();
         }
 
         /// <summary>
-        /// Invoked when Navigation to a certain page fails
+        ///     Invoked when Navigation to a certain page fails
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
         /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
+        ///     Invoked when application execution is being suspended.  Application state is saved
+        ///     without knowing whether the application will be terminated or resumed with the contents
+        ///     of memory still intact.
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
@@ -108,6 +131,12 @@ namespace ChatterBox.Client.Universal
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            LayoutService.Instance.LayoutRoot = args.Window;
+            base.OnWindowCreated(args);
         }
     }
 }

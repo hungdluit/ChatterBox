@@ -2,9 +2,9 @@
 
 namespace ChatterBox.Server
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             try
             {

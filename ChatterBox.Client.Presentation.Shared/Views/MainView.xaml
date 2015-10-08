@@ -9,60 +9,26 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:NegatedBoolConverter x:Key="NegatedBoolConverter" />
-        <Style x:Key="OverlayStyle" TargetType="ItemsControl">
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <Grid />
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>            
-        </Style>
-        <Style x:Key="ParallelStyle" TargetType="ItemsControl">
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="400" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                        </Grid>
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <converters:AppStateToStyleConverter x:Key="AppStateToStyleConverter" ParallelStyle="{StaticResource ParallelStyle}" OverlayStyle="{StaticResource OverlayStyle}" />
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Inverted="True" />
     </Page.Resources>
 
-    <ItemsControl Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
-                  Style="{Binding AppState, Converter={StaticResource AppStateToStyleConverter}}">
-        <Grid Visibility="{Binding IsWelcomeOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-              Name="WelcomeGrid"
-              Grid.Column="0">
-            <views:WelcomeView DataContext="{Binding WelcomeViewModel}" />
+    <Grid x:Name="LayoutRoot">
+        <Grid x:Name="ActiveRegion"
+              Visibility="{Binding IsActive, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid x:Name="ContactsRegion">
+                <views:ContactsView DataContext="{Binding ContactsViewModel}" />
+            </Grid>
         </Grid>
-        <Grid Visibility="{Binding IsContactsOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-              Name="ContactsGrid"
-              Grid.Column="0">
-            <views:ContactsView DataContext="{Binding ContactsViewModel}" />
+        <Grid x:Name="InactiveRegion"
+              Visibility="{Binding IsActive, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+            <Grid x:Name="WelcomeRegion"
+                  Visibility="{Binding WelcomeViewModel.IsCompleted, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                <views:WelcomeView DataContext="{Binding WelcomeViewModel}" />
+            </Grid>
+            <Grid x:Name="ConnectingRegion"
+                  Visibility="{Binding WelcomeViewModel.IsCompleted, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <views:ConnectingView DataContext="{Binding ConnectingViewModel}" />
+            </Grid>
         </Grid>
-        
-        <Grid Visibility="{Binding IsSettingsOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-              Name="SettingsGrid" 
-              Grid.Column="1">
-            <views:SettingsView DataContext="{Binding SettingsViewModel}" />
-        </Grid>
-        <Grid Visibility="{Binding IsChatOpen, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Name="ChatGrid"
-              Grid.Column="1">
-            <views:ChatView DataContext="{Binding ChatViewModel}" />
-        </Grid>
-        <Grid Visibility="{Binding IsCallOpen, Converter={StaticResource BooleanToVisibilityConverter}}" 
-              Name="CallGrid"
-              Grid.Column="1">
-            <views:CallView DataContext="{Binding CallViewModel}" />
-        </Grid>
-    </ItemsControl>
+    </Grid>
 </Page>
