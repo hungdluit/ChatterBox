@@ -11,6 +11,8 @@ using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
+using Windows.Networking.Sockets;
+using Windows.Foundation;
 
 namespace ChatterBox.Client.Signaling
 {
@@ -113,7 +115,6 @@ namespace ChatterBox.Client.Signaling
                 {
                     writer.WriteString($"{message}{Environment.NewLine}");
                     await writer.StoreAsync();
-                    await writer.FlushAsync();
                 }
                 _signalingSocketService.HandoffSocket(socket);
             }
@@ -131,8 +132,62 @@ namespace ChatterBox.Client.Signaling
                 PushToken = RegistrationSettings.Name,
                 UserId = RegistrationSettings.UserId,
             });
+            PostSocketRead(300, _signalingSocketService.GetSocket());
         }
 
+        async void PostSocketRead(int length, StreamSocket socket)
+        {
+            // IMPORTANT: When using winRT based transports such as StreamSocket with the ControlChannelTrigger,
+            // we have to use the raw async pattern for handling reads instead of the await model. 
+            // Using the raw async pattern allows Windows to synchronize the PushNotification task's 
+            // IBackgroundTask::Run method with the return of the receive  completion callback. 
+            // The Run method is invoked after the completion callback returns. This ensures that the app has
+            // received the data/errors before the Run method is invoked.
+            // It is important to note that the app has to post another read before it returns control from the completion callback.
+            // It is also important to note that the DataReader is not directly used with the 
+            // StreamSocket transport since that breaks the synchronization described above.
+            // It is not supported to use DataReader's LoadAsync method directly on top of the transport. Instead,
+            // the IBuffer returned by the transport's ReadAsync method can be later passed to DataReader::FromBuffer()
+            // for further processing.
+            try
+            {
+                var readBuf = new Windows.Storage.Streams.Buffer((uint)length);
+                var readOp = socket.InputStream.ReadAsync(readBuf, (uint)length, InputStreamOptions.Partial);
+                readOp.Completed = (IAsyncOperationWithProgress<IBuffer, uint> asyncAction, AsyncStatus asyncStatus) =>
+                {
+                    switch (asyncStatus)
+                    {
+                        case AsyncStatus.Completed:
+                        case AsyncStatus.Error:
+                            try
+                            {
+                                // GetResults in AsyncStatus::Error is called as it throws a user friendly error string.
+                                IBuffer localBuf = asyncAction.GetResults();
+                                uint bytesRead = localBuf.Length;
+                                var readPacket = DataReader.FromBuffer(localBuf);
+                                OnDataReadCompletion(bytesRead, readPacket);
+                            }
+                            catch (Exception exp)
+                            {
+                            }
+                            break;
+                        case AsyncStatus.Canceled:
+
+                            // Read is not cancelled in this sample.
+                            break;
+                    }
+                };
+                await readOp;
+            }
+            catch (Exception exp)
+            {
+            }
+        }
+
+        private void OnDataReadCompletion(uint bytesRead, DataReader readPacket)
+        {
+            
+        }
 
         public async void Read()
         {
@@ -224,7 +279,7 @@ namespace ChatterBox.Client.Signaling
         public bool Connect()
         {
             ContactService.Reset();
-            return _signalingSocketService.Connect(SignalingSettings.SignalingServerHost,
+            return _signalingSocketService.Connect("172.24.10.65",
                 int.Parse(SignalingSettings.SignalingServerPort));
         }
     }
