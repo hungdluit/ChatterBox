@@ -25,7 +25,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             signalingUpdateService.OnUpdate += SignalingUpdateService_OnUpdate;
             SendInstantMessageCommand = new DelegateCommand(OnSendInstantMessageCommandExecute,
                 OnSendInstantMessageCommandCanExecute);
+            CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
         }
+
+        public DelegateCommand CloseConversationCommand { get; }
 
         public string InstantMessage
         {
@@ -66,6 +69,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _userId; }
             set { SetProperty(ref _userId, value); }
+        }
+
+        public event Action<ConversationViewModel> OnCloseConversation;
+
+        private void OnCloseConversationCommandExecute()
+        {
+            OnCloseConversation?.Invoke(this);
         }
 
         private bool OnSendInstantMessageCommandCanExecute()

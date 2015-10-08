@@ -6,8 +6,8 @@ namespace ChatterBox.Client.Presentation.Shared.StyleSelectors
 {
     public class InstantMessageStyleSelector : StyleSelector
     {
-        public Style PeerMessageStyle { get; set; }
         public Style OwnMessageStyle { get; set; }
+        public Style PeerMessageStyle { get; set; }
 
         protected override Style SelectStyleCore(object item, DependencyObject container)
         {

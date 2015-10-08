@@ -6,11 +6,24 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
     xmlns:styleSelectors="using:ChatterBox.Client.Presentation.Shared.StyleSelectors"
+    xmlns:services="using:ChatterBox.Client.Presentation.Shared.Services"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
+        <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
+            <converters:LayoutTypeToStyleConverter.OverlayStyle>
+                <Style TargetType="Button">
+                    <Setter Property="Visibility" Value="Visible" />
+                </Style>
+            </converters:LayoutTypeToStyleConverter.OverlayStyle>
+            <converters:LayoutTypeToStyleConverter.ParallelStyle>
+                <Style TargetType="Button">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </converters:LayoutTypeToStyleConverter.ParallelStyle>
+        </converters:LayoutTypeToStyleConverter>
         <Style x:Key="IMBaseStyle" TargetType="ListBoxItem">
             <Setter Property="Template">
                 <Setter.Value>
@@ -66,8 +79,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding CloseChat}"
-                        Visibility="{Binding IsBackButtonEnabled, Converter={StaticResource BoolToVisConverter}}"
+                <Button Command="{Binding CloseConversationCommand}"
+                        Style="{Binding  Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource CloseConversationButtonStyleConverter}}"
                         Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE112;" />
                 <TextBlock Text="{Binding Contact}" Margin="12,5" VerticalAlignment="Center" />
             </StackPanel>

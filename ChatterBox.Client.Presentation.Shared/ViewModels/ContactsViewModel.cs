@@ -19,10 +19,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _contactFactory = contactFactory;
             signalingUpdateService.OnUpdate += OnSignalingUpdate;
             LayoutService.Instance.LayoutChanged += LayoutChanged;
-            CloseConversationCommand = new DelegateCommand(OnCloseConversationExecute, OnCloseConversationCanExecute);
         }
-
-        public DelegateCommand CloseConversationCommand { get; }
 
         public ObservableCollection<ConversationViewModel> Conversations { get; } =
             new ObservableCollection<ConversationViewModel>();
@@ -30,28 +27,17 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public ConversationViewModel SelectedConversation
         {
             get { return _selectedConversation; }
-            set
-            {
-                if (SetProperty(ref _selectedConversation, value))
-                {
-                    CloseConversationCommand.RaiseCanExecuteChanged();
-                }
-            }
+            set { SetProperty(ref _selectedConversation, value); }
+        }
+
+        private void Contact_OnCloseConversation(ConversationViewModel obj)
+        {
+            SelectedConversation = null;
         }
 
         private void LayoutChanged(LayoutType layout)
         {
             UpdateSelection();
-        }
-
-        private bool OnCloseConversationCanExecute()
-        {
-            return SelectedConversation != null;
-        }
-
-        private void OnCloseConversationExecute()
-        {
-            SelectedConversation = null;
         }
 
         private void OnSignalingUpdate()
@@ -66,6 +52,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact.Name = peer.Name;
                     contact.UserId = peer.UserId;
                     contact.ProfileSource = new BitmapImage(new Uri("ms-appx:///Assets/profile_2.png"));
+                    contact.OnCloseConversation += Contact_OnCloseConversation;
                     Conversations.Add(contact);
                 }
                 contact.IsOnline = peer.IsOnline;

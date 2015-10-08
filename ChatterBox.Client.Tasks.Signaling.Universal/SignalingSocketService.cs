@@ -27,7 +27,7 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                 HandoffSocket(socket);
                 return true;
             }
-            catch
+            catch (Exception exception)
             {
                 return false;
             }

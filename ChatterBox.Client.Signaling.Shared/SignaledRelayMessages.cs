@@ -8,19 +8,6 @@ namespace ChatterBox.Client.Signaling
 {
     public static class SignaledRelayMessages
     {
-        private static ApplicationDataContainer RelayMessageContainer
-        {
-            get
-            {
-                if (!ApplicationData.Current.LocalSettings.Containers.ContainsKey(nameof(RelayMessageContainer)))
-                {
-                    ApplicationData.Current.LocalSettings.CreateContainer(nameof(RelayMessageContainer),
-                        ApplicationDataCreateDisposition.Always);
-                }
-                return ApplicationData.Current.LocalSettings.Containers[nameof(RelayMessageContainer)];
-            }
-        }
-
         public static RelayMessage[] Messages
         {
             get
@@ -34,6 +21,19 @@ namespace ChatterBox.Client.Signaling
                     Payload = s.Value.Values[nameof(RelayMessage.Payload)].ToString(),
                     Tag = s.Value.Values[nameof(RelayMessage.Tag)].ToString()
                 }).ToArray();
+            }
+        }
+
+        private static ApplicationDataContainer RelayMessageContainer
+        {
+            get
+            {
+                if (!ApplicationData.Current.LocalSettings.Containers.ContainsKey(nameof(RelayMessageContainer)))
+                {
+                    ApplicationData.Current.LocalSettings.CreateContainer(nameof(RelayMessageContainer),
+                        ApplicationDataCreateDisposition.Always);
+                }
+                return ApplicationData.Current.LocalSettings.Containers[nameof(RelayMessageContainer)];
             }
         }
 
