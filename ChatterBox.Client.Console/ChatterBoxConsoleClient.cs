@@ -114,7 +114,7 @@ namespace ChatterBox.Client.Console
             }
         }
 
-        public void Connect(string host = "172.24.10.65", int port = 50000)
+        public void Connect(string host = "localhost", int port = 50000)
         {
             TcpClient.Connect(host, port);
             var networkStream = TcpClient.GetStream();
