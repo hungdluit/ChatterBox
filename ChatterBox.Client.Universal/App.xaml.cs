@@ -66,12 +66,10 @@ namespace ChatterBox.Client.Universal
             signalingTask.Completed +=
                 (reg, completedArgs) => { Container.Resolve<ISignalingUpdateService>().RaiseUpdate(); };
 
-
             Container
                 .RegisterType<ISignalingSocketService, SignalingSocketService>(
                     new ContainerControlledLifetimeManager(), new InjectionConstructor(signalingTask.TaskId))
                 .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
-
 
             var rootFrame = Window.Current.Content as Frame;
 

@@ -5,7 +5,14 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.ApplicationModel.Core;
 using ChatterBox.Client.Presentation.Shared.Views;
-using ChatterBox.Client.Win8dot1.ViewModels;
+using Windows.ApplicationModel.Background;
+using ChatterBox.Client.Tasks.Signaling.Win8dot1;
+using ChatterBox.Client.Signaling;
+using Windows.UI.Popups;
+using ChatterBox.Client.Presentation.Shared.ViewModels;
+using Microsoft.Practices.Unity;
+using ChatterBox.Client.Presentation.Shared.Services;
+using ChatterBox.Client.Win8dot1.Services;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -14,6 +21,8 @@ namespace ChatterBox.Client.Win8dot1
     /// </summary>
     sealed partial class App : Application
     {
+        private SignalingClient _signalingClient;
+
         /// <summary>
         /// Initializes the singleton Application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -24,14 +33,43 @@ namespace ChatterBox.Client.Win8dot1
             this.Suspending += OnSuspending;
         }
 
+        public UnityContainer Container { get; } = new UnityContainer();
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used when the application is launched to open a specific file, to display
         /// search results, and so forth.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
+            Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
+
+            var signalingTaskHelper = new SignalingTaskHelper();
+            var signalingTask = await signalingTaskHelper.RegisterTask();
+
+            signalingTask.Completed +=
+                (reg, completedArgs) => { Container.Resolve<ISignalingUpdateService>().RaiseUpdate(); };
+
+            var socketService = new SignalingSocketService(signalingTaskHelper.ControlChannelTrigger);
+            _signalingClient = new SignalingClient(socketService);
+
+            Container.RegisterInstance(typeof(ISignalingSocketService), socketService)
+                     .RegisterInstance(typeof(SignalingSocketService), socketService)
+                     .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
+
+            var isConnected = _signalingClient.CheckConnection();
+            if (!isConnected)
+            {
+                isConnected = _signalingClient.Connect();
+                if (!isConnected)
+                {
+                    var dialog = new MessageDialog("Connecting to the server failed.");
+                    await dialog.ShowAsync();
+                    return;
+                }
+            }
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -51,7 +89,7 @@ namespace ChatterBox.Client.Win8dot1
                 // indicating an alternate launch (e.g.: via toast or secondary tile), 
                 // navigate to the appropriate page, configuring the new page by passing required 
                 // information as a navigation parameter
-                if (!rootFrame.Navigate(typeof(MainView), new MainViewModel(CoreApplication.MainView.CoreWindow.Dispatcher)))
+                if (!rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>()))
                 {
                     throw new Exception("Failed to create initial page");
                 }
