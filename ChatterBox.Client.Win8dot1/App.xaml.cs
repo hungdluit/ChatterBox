@@ -58,18 +58,6 @@ namespace ChatterBox.Client.Win8dot1
                      .RegisterInstance(typeof(SignalingSocketService), socketService)
                      .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
 
-            var isConnected = _signalingClient.CheckConnection();
-            if (!isConnected)
-            {
-                isConnected = _signalingClient.Connect();
-                if (!isConnected)
-                {
-                    var dialog = new MessageDialog("Connecting to the server failed.");
-                    await dialog.ShowAsync();
-                    return;
-                }
-            }
-
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
