@@ -13,6 +13,7 @@ using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Common;
 
 namespace ChatterBox.Client.Signaling
 {
@@ -138,45 +139,61 @@ namespace ChatterBox.Client.Signaling
 
         public IAsyncAction Read()
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
                 try
                 {
+                    const uint length = 65536;
+                    string request = string.Empty;
                     var socket = _signalingSocketService.GetSocket();
-                    string request;
-                    using (var reader = new DataReader(socket.InputStream)
+                    var readBuf = new Windows.Storage.Streams.Buffer(length);
+                    var readOp = socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                    readOp.Completed = (IAsyncOperationWithProgress<IBuffer, uint> asyncAction, AsyncStatus asyncStatus) =>
                     {
-                        InputStreamOptions = InputStreamOptions.Partial
-                    })
-                    {
-                        await reader.LoadAsync(65536);
-                        request = reader.ReadString(reader.UnconsumedBufferLength);
-                        _signalingSocketService.HandoffSocket(socket);
-                    }
+                        if(asyncStatus == AsyncStatus.Completed)
+                        {
+                            var localBuffer = asyncAction.GetResults();
+                            var dataReader = DataReader.FromBuffer(localBuffer);
+                            request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                            _signalingSocketService.HandoffSocket(socket);
 
-                    List<string> requests;
-                    if (await BufferFileExists())
-                    {
-                        var bufferFile = await GetBufferFile();
-                        await FileIO.AppendTextAsync(bufferFile, request);
-                        requests = (await FileIO.ReadLinesAsync(bufferFile)).ToList();
-                        await bufferFile.DeleteAsync();
-                    }
-                    else
-                    {
-                        requests =
-                            request.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    }
+                            List<string> requests;
+                            var fileTask = BufferFileExists().AsTask();
+                            fileTask.Wait();
+                            if (fileTask.Result)
+                            {
+                                var bufferFileTask = GetBufferFile().AsTask();
+                                bufferFileTask.Wait();
+                                var bufferFile = bufferFileTask.Result;
 
+                                var task = FileIO.AppendTextAsync(bufferFile, request).AsTask();
+                                task.Wait();
 
-                    for (var i = 0; i < requests.Count; i++)
-                    {
-                        var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
-                        if (i != requests.Count - 1) continue;
-                        if (invoked) continue;
-                        var bufferFile = await GetBufferFile();
-                        await FileIO.AppendTextAsync(bufferFile, requests[i]);
-                    }
+                                var readLinesTask = FileIO.ReadLinesAsync(bufferFile).AsTask();
+                                readLinesTask.Wait();
+                                requests = (readLinesTask.Result).ToList();
+
+                                var deleteTask = bufferFile.DeleteAsync().AsTask();
+                                deleteTask.Wait();
+                            }
+                            else
+                            {
+                                requests =
+                                    request.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            }
+
+                            for (var i = 0; i < requests.Count; i++)
+                            {
+                                var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
+                                if (i != requests.Count - 1) continue;
+                                if (invoked) continue;
+                                var bufferFileTask = GetBufferFile().AsTask();
+                                bufferFileTask.Wait();
+                                var appendTask = FileIO.AppendTextAsync(bufferFileTask.Result, requests[i]).AsTask();
+                                appendTask.Wait();
+                            }
+                        }
+                    };                 
                 }
                 catch (Exception exception)
                 {
@@ -200,17 +217,25 @@ namespace ChatterBox.Client.Signaling
 
         private async Task SendToServer(object arg = null, [CallerMemberName] string method = null)
         {
-            var message = ClientChannelWriteHelper.FormatOutput(arg, method);
-            var socket = _signalingSocketService.GetSocket();
-            if (socket != null)
+            try
             {
-                using (var writer = new DataWriter(socket.OutputStream))
+                var message = ClientChannelWriteHelper.FormatOutput(arg, method);
+                var socket = _signalingSocketService.GetSocket();
+                if (socket != null)
                 {
-                    writer.WriteString($"{message}{Environment.NewLine}");
-                    await writer.StoreAsync();
-                    await writer.FlushAsync();
+                    using (var writer = new DataWriter(socket.OutputStream))
+                    {
+                        writer.WriteString($"{message}{Environment.NewLine}");
+                        await writer.StoreAsync();
+                        await writer.FlushAsync();
+                    }
+                    _signalingSocketService.HandoffSocket(socket);
                 }
-                _signalingSocketService.HandoffSocket(socket);
+            }
+            catch (Exception)
+            {
+                
+                throw;
             }
         }
     }
