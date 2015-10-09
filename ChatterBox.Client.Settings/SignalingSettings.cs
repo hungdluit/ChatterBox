@@ -8,13 +8,12 @@ namespace ChatterBox.Client.Settings
         {
             get
             {
-                return "172.24.10.65";
-                //if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(SignalingServerHost)))
-                //{
-                //    return (string) ApplicationData.Current.LocalSettings.Values[nameof(SignalingServerHost)];
-                //}
-                //SignalingServerHost = "localhost";
-                //return SignalingServerHost;
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(SignalingServerHost)))
+                {
+                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(SignalingServerHost)];
+                }
+                SignalingServerHost = "localhost";
+                return SignalingServerHost;
             }
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(SignalingServerHost), value); }
         }
