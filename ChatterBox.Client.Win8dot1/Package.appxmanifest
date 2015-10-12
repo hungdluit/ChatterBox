@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
+  <Identity Name="ChatterBox" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.0.0.0" />
+  <Properties>
+    <DisplayName>ChatterBox</DisplayName>
+    <PublisherDisplayName>Macadamian</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Prerequisites>
+    <OSMinVersion>6.3.0</OSMinVersion>
+    <OSMaxVersionTested>6.3.0</OSMaxVersionTested>
+  </Prerequisites>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="Chatterbox.App" Executable="$targetnametoken$.exe" EntryPoint="ChatterBox.Client.Win8dot1.App">
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" Executable="$targetnametoken$.exe" EntryPoint="ChatterBox.Client.Tasks.Signaling.Win8dot1.SignalingTask">
+          <BackgroundTasks>
+            <Task Type="controlChannel" />
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" Executable="$targetnametoken$.exe" EntryPoint="ChatterBox.Client.Tasks.Signaling.Win8dot1.KeepAliveTask">
+          <BackgroundTasks>
+            <Task Type="controlChannel" />
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
+      <m2:VisualElements DisplayName="ChatterBox" Description="ChatterBox" BackgroundColor="transparent" ToastCapable="true" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png">
+        <m2:DefaultTile ShortName="ChatterBox">
+        </m2:DefaultTile>
+        <m2:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
+        <m2:SplashScreen Image="Assets\SplashScreen.png" />
+      </m2:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="privateNetworkClientServer" />
+    <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
+  </Capabilities>
+</Package>
