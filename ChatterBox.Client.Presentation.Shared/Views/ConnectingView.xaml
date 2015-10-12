@@ -9,10 +9,14 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel>
-            <TextBlock Text="{Binding Status}" />
-            <Button Command="{Binding ConnectCommand}" Width="120" Content="Reconnect" />
+            <TextBlock Text="{Binding Status}"                        
+                       Margin="12,5"/>
+            <Button Command="{Binding ConnectCommand}" 
+                    Margin="12,5"
+                    Width="120" 
+                    Content="Reconnect" />
         </StackPanel>
 
     </Grid>

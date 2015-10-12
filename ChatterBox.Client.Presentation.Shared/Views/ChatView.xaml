@@ -66,13 +66,14 @@
             </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
         </styleSelectors:InstantMessageStyleSelector>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid x:Name="Header">
+        <Grid x:Name="Header"
+              Margin="12,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -94,10 +95,11 @@
 
         </Grid>
         <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
+                 Margin="12,5"
                  Background="Transparent"
                  ItemContainerStyleSelector="{StaticResource InstantMessageStyleSelector}" />
 
-        <Grid x:Name="IMCommandsRegion" Grid.Row="2">
+        <Grid x:Name="IMCommandsRegion" Grid.Row="2" Margin="12,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

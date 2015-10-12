@@ -15,14 +15,14 @@
         <converters:BooleanToVisibilityConverter x:Key="InvertedBoolToVisConverter" Inverted="True" />
         <converters:ProportionalConverter x:Key="ProportionalConverter" DownscalingFactor="20" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
               x:Name="VideoGrid"
-              Margin="5"
+              Margin="12,5"
               SizeChanged="VideoGrid_SizeChanged"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
@@ -48,6 +48,7 @@
                    VerticalAlignment="Bottom" />
         </Grid>
         <StackPanel Grid.Row="1"
+                    Margin="12,5"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center">
             <Button Command="{Binding SwitchMic}"

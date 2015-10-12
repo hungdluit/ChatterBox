@@ -17,7 +17,7 @@
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
-                        <Grid />
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
@@ -26,7 +26,7 @@
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
-                        <Grid>
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="400" />
                                 <ColumnDefinition Width="*" />
@@ -57,6 +57,7 @@
             </Grid.RowDefinitions>
             <TextBlock Text="Chatter members" Margin="12,5" />
             <ListBox Grid.Row="1"
+                     Margin="12,5"
                      ItemsSource="{Binding Conversations}"
                      SelectedItem="{Binding SelectedConversation, Mode=TwoWay}"
                      Background="{ThemeResource ListBoxBackgroundThemeBrush}">
