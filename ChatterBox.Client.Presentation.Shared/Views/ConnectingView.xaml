@@ -10,10 +10,12 @@
     d:DesignWidth="400">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
             <TextBlock Text="{Binding Status}"
                        Margin="12,5" />
             <Button Command="{Binding ConnectCommand}"
+                    HorizontalAlignment="Center"
                     Margin="12,5"
                     Width="120"
                     Content="Reconnect" />
