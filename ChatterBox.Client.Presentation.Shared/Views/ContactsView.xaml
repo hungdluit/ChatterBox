@@ -17,7 +17,7 @@
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
-                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>

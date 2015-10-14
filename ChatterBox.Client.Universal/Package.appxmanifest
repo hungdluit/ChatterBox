@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="4f7ed8bf-6259-4e99-b2bd-894a32f8a963" Publisher="CN=GodAdmin" Version="1.0.0.0" />
+  <Identity Name="ChatterBox.Client.Universal" Publisher="CN=GodAdmin" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="4f7ed8bf-6259-4e99-b2bd-894a32f8a963" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>ChatterBox.Client.Universal</DisplayName>
@@ -24,6 +24,7 @@
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Tasks.Signaling.Universal.SignalingTask">
           <BackgroundTasks>
             <Task Type="systemEvent" />
+            <uap:Task Type="chatMessageNotification" />
           </BackgroundTasks>
         </Extension>
       </Extensions>
@@ -33,5 +34,9 @@
     <Capability Name="internetClient" />
     <Capability Name="privateNetworkClientServer" />
     <Capability Name="internetClientServer" />
+    <uap:Capability Name="voipCall" />
+    <uap:Capability Name="chat" />
+    <DeviceCapability Name="webcam" />
+    <DeviceCapability Name="microphone" />
   </Capabilities>
 </Package>

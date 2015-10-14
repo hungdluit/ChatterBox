@@ -114,6 +114,10 @@
     <Compile Include="SignalingTask.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ChatterBox.Client.Notifications\ChatterBox.Client.Notifications.csproj">
+      <Project>{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}</Project>
+      <Name>ChatterBox.Client.Notifications</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Settings\ChatterBox.Client.Settings.csproj">
       <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
       <Name>ChatterBox.Client.Settings</Name>

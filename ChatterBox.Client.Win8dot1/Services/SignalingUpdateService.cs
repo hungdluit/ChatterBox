@@ -1,11 +1,7 @@
-﻿using ChatterBox.Client.Presentation.Shared.MVVM;
-using ChatterBox.Client.Presentation.Shared.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using Windows.UI.Core;
+using ChatterBox.Client.Presentation.Shared.MVVM;
+using ChatterBox.Client.Presentation.Shared.Services;
 
 namespace ChatterBox.Client.Win8dot1.Services
 {

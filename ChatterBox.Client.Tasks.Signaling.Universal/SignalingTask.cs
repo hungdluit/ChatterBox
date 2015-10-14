@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Linq;
 using Windows.ApplicationModel.Background;
 using Windows.Networking.Sockets;
-using Windows.UI.Notifications;
+using Windows.Storage.Streams;
+using ChatterBox.Client.Notifications;
 using ChatterBox.Client.Signaling;
+using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace ChatterBox.Client.Tasks.Signaling.Universal
 {
@@ -20,19 +21,28 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                     {
                         return;
                     }
-
-                    var signalingProxy = new SignalingClient(new SignalingSocketService(taskInstance.InstanceId));
+                    var signalingSocketService = new SignalingSocketService(taskInstance.InstanceId);
+                    var client = new SignalingClient(signalingSocketService);
 
                     switch (details.Reason)
                     {
                         case SocketActivityTriggerReason.SocketActivity:
-                            await signalingProxy.Read();
+
+                            const uint length = 65536;
+                            var socket = signalingSocketService.GetSocket();
+                            var readBuf = new Buffer(length);
+                            var localBuffer = await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                            var dataReader = DataReader.FromBuffer(localBuffer);
+                            var request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                            signalingSocketService.HandoffSocket(socket);
+
+                            client.HandleRequest(request);
                             break;
                         case SocketActivityTriggerReason.KeepAliveTimerExpired:
-                            signalingProxy.ClientHeartBeat();
+                            client.ClientHeartBeat();
                             break;
                         case SocketActivityTriggerReason.SocketClosed:
-                            ToastNotificationService.ShowToastNotification("Disconnected");
+                            ToastNotificationService.ShowToastNotification("Disconnected.");
                             break;
                     }
                 }
@@ -42,18 +52,6 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                         exception.Message));
                 }
             }
-        }
-    }
-
-    public sealed class ToastNotificationService
-    {
-        public static void ShowToastNotification(string message)
-        {
-            var toastNotifier = ToastNotificationManager.CreateToastNotifier();
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-            var textNodes = toastXml.GetElementsByTagName("text");
-            textNodes.First().AppendChild(toastXml.CreateTextNode(message));
-            toastNotifier.Show(new ToastNotification(toastXml));
         }
     }
 }

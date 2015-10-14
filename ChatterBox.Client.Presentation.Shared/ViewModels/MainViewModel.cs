@@ -19,10 +19,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             ContactsViewModel = contactsViewModel;
             SettingsViewModel = settingsViewModel;
 
-
             WelcomeViewModel.OnCompleted += WelcomeCompleted;
             ConnectingViewModel.ConnectionEstablished += ConnectingViewModel_ConnectionEstablished;
         }
+
 
         public ConnectingViewModel ConnectingViewModel { get; }
         public ContactsViewModel ContactsViewModel { get; }
@@ -43,7 +43,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         public void OnNavigatedTo()
         {
-            IsActive = false;
             if (WelcomeViewModel.IsCompleted) WelcomeCompleted();
         }
 

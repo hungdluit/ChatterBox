@@ -11,11 +11,11 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel>
-            <TextBlock Text="{Binding Status}"                        
-                       Margin="12,5"/>
-            <Button Command="{Binding ConnectCommand}" 
+            <TextBlock Text="{Binding Status}"
+                       Margin="12,5" />
+            <Button Command="{Binding ConnectCommand}"
                     Margin="12,5"
-                    Width="120" 
+                    Width="120"
                     Content="Reconnect" />
         </StackPanel>
 

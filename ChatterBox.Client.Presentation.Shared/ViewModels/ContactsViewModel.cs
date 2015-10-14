@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Signaling;
+using ChatterBox.Client.Signaling.Shared.Avatars;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -51,7 +52,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact = _contactFactory();
                     contact.Name = peer.Name;
                     contact.UserId = peer.UserId;
-                    contact.ProfileSource = new BitmapImage(new Uri("ms-appx:///Assets/profile_2.png"));
+                    contact.ProfileSource = new BitmapImage(new Uri(AvatarLink.For(peer.Avatar)));
                     contact.OnCloseConversation += Contact_OnCloseConversation;
                     Conversations.Add(contact);
                 }

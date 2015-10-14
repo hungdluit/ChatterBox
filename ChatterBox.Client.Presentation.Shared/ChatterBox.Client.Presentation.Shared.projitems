@@ -89,9 +89,4 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Assets\profile_1.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\profile_2.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Profile_4.png" />
-  </ItemGroup>
 </Project>

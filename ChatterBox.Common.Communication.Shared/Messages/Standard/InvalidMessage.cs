@@ -6,7 +6,7 @@ namespace ChatterBox.Common.Communication.Messages.Standard
     public sealed class InvalidMessage : IMessage
     {
         public string OriginalMessage { get; set; }
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public DateTimeOffset SentDateTimeUtc { get; set; }
 
         public static InvalidMessage For(string request)

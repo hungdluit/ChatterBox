@@ -52,6 +52,10 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ChatterBox.Client.Notifications\ChatterBox.Client.Notifications.csproj">
+      <Project>{d33cff24-8fae-4637-b4e5-4c7edb972a64}</Project>
+      <Name>ChatterBox.Client.Notifications</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Settings\ChatterBox.Client.Settings.csproj">
       <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
       <Name>ChatterBox.Client.Settings</Name>

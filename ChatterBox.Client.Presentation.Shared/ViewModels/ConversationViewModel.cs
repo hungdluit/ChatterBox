@@ -2,10 +2,12 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Settings;
 using ChatterBox.Client.Signaling;
+using ChatterBox.Client.Signaling.Shared.Avatars;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
@@ -56,6 +58,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _name; }
             set { SetProperty(ref _name, value); }
         }
+
+        public ImageSource OwnProfileSource { get; } = new BitmapImage(new Uri(AvatarLink.For(SignalingStatus.Avatar)));
 
         public ImageSource ProfileSource
         {
@@ -117,7 +121,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     Sender = Name,
                     IsSender = false
                 });
-                SignaledRelayMessages.Delete(message.Id.ToString());
+                SignaledRelayMessages.Delete(message.Id);
             }
         }
 

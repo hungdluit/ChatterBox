@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.Win8dot1"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.Tasks.Signaling.Win8dot1", "ChatterBox.Client.Tasks.Signaling.Win8dot1\ChatterBox.Client.Tasks.Signaling.Win8dot1.csproj", "{347D730C-65AC-495A-929C-4232D8E19492}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.Notifications", "ChatterBox.Client.Notifications\ChatterBox.Client.Notifications.csproj", "{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{6b237d83-603c-42af-aabe-9a8013ef1805}*SharedItemsImports = 4
@@ -220,6 +222,22 @@ Global
 		{347D730C-65AC-495A-929C-4232D8E19492}.Release|x64.Build.0 = Release|Any CPU
 		{347D730C-65AC-495A-929C-4232D8E19492}.Release|x86.ActiveCfg = Release|Any CPU
 		{347D730C-65AC-495A-929C-4232D8E19492}.Release|x86.Build.0 = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|ARM.Build.0 = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|x64.Build.0 = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Debug|x86.Build.0 = Debug|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|ARM.ActiveCfg = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|ARM.Build.0 = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|x64.ActiveCfg = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|x64.Build.0 = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|x86.ActiveCfg = Release|Any CPU
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,5 +258,6 @@ Global
 		{A286773B-AC8E-4990-ABDF-4017CC9FF29D} = {3E40FA14-1992-423F-BFE4-25B36A3B19BB}
 		{CF1CD0D5-BF6B-457A-9927-8079FC667CA4} = {9CFEC98A-4DE7-4234-917D-F56A1695B726}
 		{347D730C-65AC-495A-929C-4232D8E19492} = {9CFEC98A-4DE7-4234-917D-F56A1695B726}
+		{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64} = {3E40FA14-1992-423F-BFE4-25B36A3B19BB}
 	EndGlobalSection
 EndGlobal

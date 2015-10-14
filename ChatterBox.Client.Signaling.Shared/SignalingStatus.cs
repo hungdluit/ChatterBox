@@ -5,6 +5,19 @@ namespace ChatterBox.Client.Signaling
 {
     public static class SignalingStatus
     {
+        public static int Avatar
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(Avatar)))
+                {
+                    return (int) ApplicationData.Current.LocalSettings.Values[nameof(Avatar)];
+                }
+                return 0;
+            }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(Avatar), value); }
+        }
+
         public static bool IsRegistered
         {
             get
@@ -17,6 +30,7 @@ namespace ChatterBox.Client.Signaling
             }
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(IsRegistered), value); }
         }
+
 
         private static ApplicationDataContainer SignalingStatusContainer
         {
