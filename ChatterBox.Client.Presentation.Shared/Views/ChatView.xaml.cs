@@ -1,7 +1,4 @@
-﻿
-
-using System.Collections.Specialized;
-using Windows.Foundation.Collections;
+﻿using Windows.Foundation.Collections;
 
 namespace ChatterBox.Client.Presentation.Shared.Views
 {
@@ -10,7 +7,7 @@ namespace ChatterBox.Client.Presentation.Shared.Views
         public ChatView()
         {
             InitializeComponent();
-            ((IObservableVector<object>)InstantMessagingHistory.Items).VectorChanged += HistoryChanged;
+            InstantMessagingHistory.Items.VectorChanged += HistoryChanged;
         }
 
         private void HistoryChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)

@@ -31,7 +31,6 @@ namespace ChatterBox.Client.Signaling
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(IsRegistered), value); }
         }
 
-
         private static ApplicationDataContainer SignalingStatusContainer
         {
             get

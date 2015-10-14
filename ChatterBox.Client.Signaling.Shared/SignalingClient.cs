@@ -29,7 +29,7 @@ namespace ChatterBox.Client.Signaling
             ServerChannelInvoker = new ChannelInvoker(this);
         }
 
-        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
+        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IClientChannel));
         private ChannelInvoker ServerChannelInvoker { get; }
 
         public async void ClientConfirmation(Confirmation confirmation)
@@ -71,7 +71,7 @@ namespace ChatterBox.Client.Signaling
             ClientConfirmation(Confirmation.For(peer));
             GetPeerList(new Message());
 
-            if (peer.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalSeconds < 60)
+            if (peer.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalSeconds < 10)
             {
                 ToastNotificationService.ShowPresenceNotification(
                     peer.PeerData.Name,
@@ -177,7 +177,7 @@ namespace ChatterBox.Client.Signaling
             }
             else
             {
-                requests = request.Split(new[] { Environment.NewLine }, 
+                requests = request.Split(new[] {Environment.NewLine},
                     StringSplitOptions.RemoveEmptyEntries).ToList();
             }
 
@@ -191,7 +191,6 @@ namespace ChatterBox.Client.Signaling
                 var appendTask = FileIO.AppendTextAsync(bufferFileTask.Result, requests[i]).AsTask();
                 appendTask.Wait();
             }
-
         }
 
         public async void RegisterUsingSettings()

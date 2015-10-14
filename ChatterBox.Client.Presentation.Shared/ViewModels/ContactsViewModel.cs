@@ -12,9 +12,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
     public sealed class ContactsViewModel : BindableBase
     {
         private readonly Func<ConversationViewModel> _contactFactory;
-        private ConversationViewModel _selectedConversation;
         private bool _isConversationsListVisible;
         private bool _isSeparatorVisible;
+        private ConversationViewModel _selectedConversation;
 
         public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
             Func<ConversationViewModel> contactFactory)
@@ -27,12 +27,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public ObservableCollection<ConversationViewModel> Conversations { get; } =
             new ObservableCollection<ConversationViewModel>();
 
-        public ConversationViewModel SelectedConversation
-        {
-            get { return _selectedConversation; }
-            set { SetProperty(ref _selectedConversation, value); }
-        }
-                
         public bool IsConversationsListVisible
         {
             get { return _isConversationsListVisible; }
@@ -44,7 +38,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _isSeparatorVisible; }
             set { SetProperty(ref _isSeparatorVisible, value); }
         }
-        
+
+        public ConversationViewModel SelectedConversation
+        {
+            get { return _selectedConversation; }
+            set { SetProperty(ref _selectedConversation, value); }
+        }
+
         private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
             SelectedConversation = null;

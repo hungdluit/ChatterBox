@@ -16,13 +16,13 @@ namespace ChatterBox.Client.Notifications
             toastTextElements[1].AppendChild(toastXml.CreateTextNode(message));
 
             // Set image
-            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement)s)).First();
+            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement) s)).First();
             toastImageAttribute.SetAttribute("src", imageUri);
             toastImageAttribute.SetAttribute("alt", "logo");
 
             // toast duration
             var toastNode = toastXml.SelectSingleNode("/toast");
-            var xmlElement = (XmlElement)toastNode;
+            var xmlElement = (XmlElement) toastNode;
             xmlElement?.SetAttribute("duration", "short");
 
             ShowNotification(toastXml);
@@ -31,15 +31,6 @@ namespace ChatterBox.Client.Notifications
         private static void ShowNotification(XmlDocument toastXml)
         {
             ToastNotificationManager.CreateToastNotifier().Show(new ToastNotification(toastXml));
-        }
-
-        public static void ShowToastNotification(string message)
-        {
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-            var textNodes = toastXml.GetElementsByTagName("text");
-            textNodes.First().AppendChild(toastXml.CreateTextNode(message));
-
-            ShowNotification(toastXml);
         }
 
         public static void ShowPresenceNotification(string name, string imageUri, bool isOnline)
@@ -52,14 +43,23 @@ namespace ChatterBox.Client.Notifications
             toastTextElements[1].AppendChild(toastXml.CreateTextNode(isOnline ? "is now Online" : "is now Offline"));
 
             // Set image
-            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement)s)).First();
+            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement) s)).First();
             toastImageAttribute.SetAttribute("src", imageUri);
             toastImageAttribute.SetAttribute("alt", "logo");
 
             // toast duration
             var toastNode = toastXml.SelectSingleNode("/toast");
-            var xmlElement = (XmlElement)toastNode;
+            var xmlElement = (XmlElement) toastNode;
             xmlElement?.SetAttribute("duration", "short");
+
+            ShowNotification(toastXml);
+        }
+
+        public static void ShowToastNotification(string message)
+        {
+            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            var textNodes = toastXml.GetElementsByTagName("text");
+            textNodes.First().AppendChild(toastXml.CreateTextNode(message));
 
             ShowNotification(toastXml);
         }

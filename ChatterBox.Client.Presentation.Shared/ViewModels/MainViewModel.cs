@@ -28,7 +28,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             ConnectingViewModel.ConnectionEstablished += ConnectingViewModel_ConnectionEstablished;
         }
 
-
         public ConnectingViewModel ConnectingViewModel { get; }
         public ContactsViewModel ContactsViewModel { get; }
 

@@ -31,7 +31,8 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                             const uint length = 65536;
                             var socket = signalingSocketService.GetSocket();
                             var readBuf = new Buffer(length);
-                            var localBuffer = await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                            var localBuffer =
+                                await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
                             var dataReader = DataReader.FromBuffer(localBuffer);
                             var request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
                             signalingSocketService.HandoffSocket(socket);

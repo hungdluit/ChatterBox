@@ -61,7 +61,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="No contacts available" Margin="12,5"
                        Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityInvertedConverter}}" />
-            <TextBlock Text="Chatter members" Margin="12,5" 
+            <TextBlock Text="Chatter members" Margin="12,5"
                        Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ListBox Grid.Row="1"
                      Margin="12,5"
@@ -87,7 +87,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Border Grid.Column="1" Grid.Row="0"  Grid.RowSpan="2"
+            <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                     Margin="3" BorderBrush="DarkGray"
                     BorderThickness="1,0,0,0" Name="SeparatorBorder"
                     Visibility="{Binding IsSeparatorVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />

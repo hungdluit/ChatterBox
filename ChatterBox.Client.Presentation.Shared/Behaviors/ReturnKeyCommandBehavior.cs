@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace ChatterBox.Client.Presentation.Shared.Behaviors
 {
     public class ReturnKeyCommandBehavior
     {
-        private static bool _isControlPressed = false;
         private static ICommand _command;
+        private static bool _isControlPressed;
+
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.RegisterAttached("Command", typeof (ICommand), typeof (ReturnKeyCommandBehavior),
+                new PropertyMetadata(0, OnCommandUpdatePropertyChanged));
 
         static ReturnKeyCommandBehavior()
         {
@@ -36,20 +35,34 @@ namespace ChatterBox.Client.Presentation.Shared.Behaviors
 
         public static ICommand GetCommand(DependencyObject obj)
         {
-            return (ICommand)obj.GetValue(CommandProperty);
+            return (ICommand) obj.GetValue(CommandProperty);
         }
 
-        public static void SetCommand(DependencyObject obj, ICommand value)
+        private static void HandleKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            obj.SetValue(CommandProperty, value);
+            if (e.Key == VirtualKey.Control)
+            {
+                _isControlPressed = true;
+                var cmd = ((UIElement) sender).GetValue(CommandProperty) as ICommand;
+                if (cmd != null && cmd.CanExecute(null))
+                {
+                    _command = cmd;
+                }
+            }
         }
 
-        public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.RegisterAttached("Command", typeof(ICommand), typeof(ReturnKeyCommandBehavior), new PropertyMetadata(0, OnCommandUpdatePropertyChanged));
+        private static void HandleKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control)
+            {
+                _isControlPressed = false;
+                _command = null;
+            }
+        }
 
         private static void OnCommandUpdatePropertyChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
         {
-            UIElement element = dp as UIElement;
+            var element = dp as UIElement;
 
             if (element == null)
             {
@@ -69,26 +82,9 @@ namespace ChatterBox.Client.Presentation.Shared.Behaviors
             }
         }
 
-        static void HandleKeyDown(object sender, KeyRoutedEventArgs e)
+        public static void SetCommand(DependencyObject obj, ICommand value)
         {
-            if (e.Key == VirtualKey.Control)
-            {
-                _isControlPressed = true;
-                var cmd = ((UIElement)sender).GetValue(CommandProperty) as ICommand;
-                if (cmd != null && cmd.CanExecute(null))
-                {
-                    _command = cmd;
-                }
-            }
-        }
-
-        static void HandleKeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Control)
-            {
-                _isControlPressed = false;
-                _command = null;
-            }
+            obj.SetValue(CommandProperty, value);
         }
     }
 }
