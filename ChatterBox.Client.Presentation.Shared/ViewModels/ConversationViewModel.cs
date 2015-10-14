@@ -90,7 +90,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 SentDateTimeUtc = DateTimeOffset.UtcNow,
                 ToUserId = UserId,
                 FromUserId = RegistrationSettings.UserId,
-                Payload = InstantMessage,
+                Payload = InstantMessage.Trim(),
                 Tag = RelayMessageTags.InstantMessage
             };
             InstantMessage = null;
@@ -98,7 +98,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             InstantMessages.Add(new InstantMessageViewModel
             {
                 Message = message.Payload,
-                DateTime = message.SentDateTimeUtc,
+                DateTime = message.SentDateTimeUtc.LocalDateTime,
                 IsSender = true,
                 Sender = RegistrationSettings.Name
             });
@@ -113,7 +113,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 InstantMessages.Add(new InstantMessageViewModel
                 {
                     Message = message.Payload,
-                    DateTime = message.SentDateTimeUtc,
+                    DateTime = message.SentDateTimeUtc.LocalDateTime,
                     Sender = Name,
                     IsSender = false
                 });

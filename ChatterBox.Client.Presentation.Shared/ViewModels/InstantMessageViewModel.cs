@@ -4,7 +4,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class InstantMessageViewModel
     {
-        public DateTimeOffset DateTime { get; set; }
+        public DateTime DateTime { get; set; }
         public bool IsSender { get; set; }
         public string Message { get; set; }
         public string Sender { get; set; }

@@ -55,11 +55,15 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock Text="Chatter members" Margin="12,5" />
+            <TextBlock Text="No contacts available" Margin="12,5"
+                       Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityInvertedConverter}}" />
+            <TextBlock Text="Chatter members" Margin="12,5" 
+                       Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ListBox Grid.Row="1"
                      Margin="12,5"
                      ItemsSource="{Binding Conversations}"
                      SelectedItem="{Binding SelectedConversation, Mode=TwoWay}"
+                     Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                      Background="{ThemeResource ListBoxBackgroundThemeBrush}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

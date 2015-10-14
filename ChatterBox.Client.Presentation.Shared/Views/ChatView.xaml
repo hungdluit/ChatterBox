@@ -7,10 +7,12 @@
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
     xmlns:styleSelectors="using:ChatterBox.Client.Presentation.Shared.StyleSelectors"
     xmlns:services="using:ChatterBox.Client.Presentation.Shared.Services"
+    xmlns:behaviors="using:ChatterBox.Client.Presentation.Shared.Behaviors"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
     <UserControl.Resources>
+        <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss"/>
         <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
         <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
             <converters:LayoutTypeToStyleConverter.OverlayStyle>
@@ -35,18 +37,13 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Sender}" />
-                                        <TextBlock Text="{Binding DateTime}" />
-                                    </StackPanel>
+                                    </Grid.RowDefinitions>                                                                            
+                                    <TextBlock Text="{Binding DateTime, Converter={StaticResource FormatDateTimeConverter}}" FontSize="11"
+                                               Foreground="Gray"/>
                                     <TextBlock Grid.Row="1" Text="{Binding Message}" TextWrapping="WrapWholeWords" />
                                 </Grid>
-
                             </Border>
                         </Grid>
-
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -54,13 +51,13 @@
         <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
             <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource IMBaseStyle}">
-                    <Setter Property="Background" Value="CornflowerBlue" />
+                    <Setter Property="Background" Value="Blue" />
                     <Setter Property="Margin" Value="0,0,40,0" />
                 </Style>
             </styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
             <styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource IMBaseStyle}">
-                    <Setter Property="Background" Value="LightSkyBlue" />
+                    <Setter Property="Background" Value="LightGray" />
                     <Setter Property="Margin" Value="40,0,0,0" />
                 </Style>
             </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
@@ -83,7 +80,7 @@
                 <Button Command="{Binding CloseConversationCommand}"
                         Style="{Binding  Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource CloseConversationButtonStyleConverter}}"
                         Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE112;" />
-                <TextBlock Text="{Binding Contact}" Margin="12,5" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Name}" Margin="12,5" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         Grid.Column="2">
@@ -95,7 +92,7 @@
 
         </Grid>
         <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
-                 Margin="12,5"
+                  Margin="12,5" 
                  Background="Transparent"
                  ItemContainerStyleSelector="{StaticResource InstantMessageStyleSelector}" />
 
@@ -105,7 +102,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     PlaceholderText="Enter a message" Margin="12,5" AcceptsReturn="True" />
+                     PlaceholderText="Enter a message" Margin="12,5" AcceptsReturn="True"
+                     behaviors:ReturnKeyCommandBehavior.Command="{Binding SendInstantMessageCommand}" />
             <Button Command="{Binding SendInstantMessageCommand}" Margin="5"
                     Grid.Column="1" FontFamily="Segoe UI Symbol"
                     HorizontalContentAlignment="Left"
