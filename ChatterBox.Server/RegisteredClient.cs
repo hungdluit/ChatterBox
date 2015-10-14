@@ -214,7 +214,7 @@ namespace ChatterBox.Server
                     {
                         var message = await reader.ReadLineAsync();
                         if (message == null) break;
-                        Logger.Trace($"Received: {message}");
+                        Logger.Trace($">> {message}");
                         if (!ClientReadProxy.ProcessRequest(message))
                         {
                             ServerReceivedInvalidMessage(InvalidMessage.For(message));
@@ -247,7 +247,7 @@ namespace ChatterBox.Server
                             string message;
                             if (!WriteQueue.TryDequeue(out message)) continue;
 
-                            Logger.Debug($"Sent: {message}");
+                            Logger.Debug($"<< {message}");
                             await writer.WriteLineAsync(message);
                         }
                         await Task.Delay(100);
@@ -263,7 +263,7 @@ namespace ChatterBox.Server
 
         public override string ToString()
         {
-            return $"Client[{Domain}/{UserId}/{Name}]";
+            return $"[{Domain}/{Name}]";
         }
     }
 }

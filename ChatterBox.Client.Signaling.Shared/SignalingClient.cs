@@ -70,6 +70,14 @@ namespace ChatterBox.Client.Signaling
         {
             ClientConfirmation(Confirmation.For(peer));
             GetPeerList(new Message());
+
+            if (peer.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalSeconds < 60)
+            {
+                ToastNotificationService.ShowPresenceNotification(
+                    peer.PeerData.Name,
+                    AvatarLink.For(peer.PeerData.Avatar),
+                    peer.PeerData.IsOnline);
+            }
         }
 
         public void OnRegistrationConfirmation(RegisteredReply reply)

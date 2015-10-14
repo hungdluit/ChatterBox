@@ -1,10 +1,13 @@
 ﻿using Windows.UI.Core;
 using ChatterBox.Client.Presentation.Shared.MVVM;
+using ChatterBox.Client.Signaling;
+using ChatterBox.Common.Communication.Messages.Standard;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public sealed class MainViewModel : DispatcherBindableBase
     {
+        private readonly SignalingClient _signalingClient;
         private bool _isActive;
 
         public MainViewModel(
@@ -12,8 +15,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             ConnectingViewModel connectingViewModel,
             ContactsViewModel contactsViewModel,
             SettingsViewModel settingsViewModel,
+            SignalingClient signalingClient,
             CoreDispatcher uiDispatcher) : base(uiDispatcher)
         {
+            _signalingClient = signalingClient;
             WelcomeViewModel = welcomeViewModel;
             ConnectingViewModel = connectingViewModel;
             ContactsViewModel = contactsViewModel;
@@ -44,6 +49,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public void OnNavigatedTo()
         {
             if (WelcomeViewModel.IsCompleted) WelcomeCompleted();
+            if (SignalingStatus.IsRegistered)
+            {
+                _signalingClient.GetPeerList(new Message());
+            }
         }
 
         private void WelcomeCompleted()

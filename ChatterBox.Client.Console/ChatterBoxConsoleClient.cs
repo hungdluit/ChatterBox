@@ -43,6 +43,7 @@ namespace ChatterBox.Client.Console
 
         public void ClientHeartBeat()
         {
+            SendToServer();
         }
 
         public void GetPeerList(Message message)
@@ -92,6 +93,7 @@ namespace ChatterBox.Client.Console
 
         public void ServerHeartBeat()
         {
+            ClientHeartBeat();
         }
 
         public void ServerReceivedInvalidMessage(InvalidMessage reply)

@@ -16,13 +16,13 @@ namespace ChatterBox.Client.Notifications
             toastTextElements[1].AppendChild(toastXml.CreateTextNode(message));
 
             // Set image
-            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement) s)).First();
+            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement)s)).First();
             toastImageAttribute.SetAttribute("src", imageUri);
             toastImageAttribute.SetAttribute("alt", "logo");
 
             // toast duration
             var toastNode = toastXml.SelectSingleNode("/toast");
-            var xmlElement = (XmlElement) toastNode;
+            var xmlElement = (XmlElement)toastNode;
             xmlElement?.SetAttribute("duration", "short");
 
             ShowNotification(toastXml);
@@ -38,6 +38,28 @@ namespace ChatterBox.Client.Notifications
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var textNodes = toastXml.GetElementsByTagName("text");
             textNodes.First().AppendChild(toastXml.CreateTextNode(message));
+
+            ShowNotification(toastXml);
+        }
+
+        public static void ShowPresenceNotification(string name, string imageUri, bool isOnline)
+        {
+            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
+
+            // Set Text
+            var toastTextElements = toastXml.GetElementsByTagName("text");
+            toastTextElements[0].AppendChild(toastXml.CreateTextNode(name));
+            toastTextElements[1].AppendChild(toastXml.CreateTextNode(isOnline ? "is now Online" : "is now Offline"));
+
+            // Set image
+            var toastImageAttribute = toastXml.GetElementsByTagName("image").Select(s => ((XmlElement)s)).First();
+            toastImageAttribute.SetAttribute("src", imageUri);
+            toastImageAttribute.SetAttribute("alt", "logo");
+
+            // toast duration
+            var toastNode = toastXml.SelectSingleNode("/toast");
+            var xmlElement = (XmlElement)toastNode;
+            xmlElement?.SetAttribute("duration", "short");
 
             ShowNotification(toastXml);
         }
