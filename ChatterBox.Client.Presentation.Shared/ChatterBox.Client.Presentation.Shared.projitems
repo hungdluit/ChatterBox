@@ -9,6 +9,8 @@
     <Import_RootNamespace>ChatterBox.Client.Presentation.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Behaviors\ReturnKeyCommandBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\FormatDateTimeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\LayoutTypeToStyleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToBrushConverter.cs" />

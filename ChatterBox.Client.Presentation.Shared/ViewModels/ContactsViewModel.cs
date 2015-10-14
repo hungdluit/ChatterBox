@@ -13,6 +13,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
     {
         private readonly Func<ConversationViewModel> _contactFactory;
         private ConversationViewModel _selectedConversation;
+        private bool _isConversationsListVisible;
+        private bool _isSeparatorVisible;
 
         public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
             Func<ConversationViewModel> contactFactory)
@@ -30,7 +32,19 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _selectedConversation; }
             set { SetProperty(ref _selectedConversation, value); }
         }
+                
+        public bool IsConversationsListVisible
+        {
+            get { return _isConversationsListVisible; }
+            set { SetProperty(ref _isConversationsListVisible, value); }
+        }
 
+        public bool IsSeparatorVisible
+        {
+            get { return _isSeparatorVisible; }
+            set { SetProperty(ref _isSeparatorVisible, value); }
+        }
+        
         private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
             SelectedConversation = null;
@@ -64,6 +78,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void UpdateSelection()
         {
+            IsConversationsListVisible = Conversations.Count > 0;
+            IsSeparatorVisible = LayoutService.Instance.LayoutType == LayoutType.Parallel;
             if (SelectedConversation == null && LayoutService.Instance.LayoutType == LayoutType.Parallel)
             {
                 SelectedConversation = Conversations.FirstOrDefault();

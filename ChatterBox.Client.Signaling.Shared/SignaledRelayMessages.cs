@@ -18,7 +18,7 @@ namespace ChatterBox.Client.Signaling
                     SentDateTimeUtc = (DateTimeOffset) s.Value.Values[nameof(RelayMessage.SentDateTimeUtc)],
                     FromUserId = s.Value.Values[nameof(RelayMessage.FromUserId)].ToString(),
                     ToUserId = s.Value.Values[nameof(RelayMessage.ToUserId)].ToString(),
-                    Payload = s.Value.Values[nameof(RelayMessage.Payload)].ToString(),
+                    Payload = s.Value.Values[nameof(RelayMessage.Payload)]?.ToString(),
                     Tag = s.Value.Values[nameof(RelayMessage.Tag)].ToString()
                 }).ToArray();
             }

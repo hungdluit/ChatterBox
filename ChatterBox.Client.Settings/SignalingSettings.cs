@@ -10,7 +10,7 @@ namespace ChatterBox.Client.Settings
             {
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(SignalingServerHost)))
                 {
-                    return (string) ApplicationData.Current.LocalSettings.Values[nameof(SignalingServerHost)];
+                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(SignalingServerHost)];
                 }
                 SignalingServerHost = "localhost";
                 return SignalingServerHost;

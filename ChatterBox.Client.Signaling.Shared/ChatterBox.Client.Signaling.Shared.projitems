@@ -17,8 +17,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)SignalingStatus.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\0.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Avatars\1.jpg" />
-    <Content Include="$(MSBuildThisFileDirectory)Avatars\10.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\10.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Avatars\2.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Avatars\3.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Avatars\4.jpg" />
