@@ -28,7 +28,8 @@ namespace ChatterBox.Client.Signaling
                 {
                     Name = s.Value.Values[nameof(PeerData.Name)].ToString(),
                     IsOnline = (bool) s.Value.Values[nameof(PeerData.IsOnline)],
-                    UserId = s.Key
+                    UserId = s.Key,
+                    Avatar = (int) (s.Value.Values[nameof(PeerData.Avatar)])
                 }).ToArray();
             }
         }
@@ -41,6 +42,7 @@ namespace ChatterBox.Client.Signaling
                 : PeerDataContainer.CreateContainer(contact.UserId, ApplicationDataCreateDisposition.Always);
 
             contactContainer.Values.AddOrUpdate(nameof(PeerData.Name), contact.Name);
+            contactContainer.Values.AddOrUpdate(nameof(PeerData.Avatar), contact.Avatar);
             contactContainer.Values.AddOrUpdate(nameof(PeerData.IsOnline), contact.IsOnline);
         }
 

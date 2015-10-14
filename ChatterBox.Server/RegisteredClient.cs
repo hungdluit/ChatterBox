@@ -11,6 +11,7 @@ using ChatterBox.Common.Communication.Messages.Interfaces;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
+using ChatterBox.Common.Communication.Shared.Messages.Registration;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using Common.Logging;
 
@@ -24,6 +25,7 @@ namespace ChatterBox.Server
         }
 
         private TcpClient ActiveConnection { get; set; }
+        public int Avatar { get; set; }
         private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IServerChannel));
         private ChannelInvoker ClientReadProxy { get; }
         private Guid ConnectionId { get; set; }
@@ -75,7 +77,7 @@ namespace ChatterBox.Server
             EnqueueMessage(peer);
         }
 
-        public void OnRegistrationConfirmation(OkReply reply)
+        public void OnRegistrationConfirmation(RegisteredReply reply)
         {
             EnqueueMessage(reply);
         }
@@ -159,7 +161,11 @@ namespace ChatterBox.Server
             Logger.Debug("Handling new TCP connection.");
             ConnectionId = Guid.NewGuid();
             ActiveConnection = connection.TcpClient;
-            OnRegistrationConfirmation(OkReply.For(message));
+            OnRegistrationConfirmation(new RegisteredReply
+            {
+                Avatar = Avatar,
+                ReplyFor = message.Id
+            });
             ResetQueues();
             StartReading();
             StartWriting();

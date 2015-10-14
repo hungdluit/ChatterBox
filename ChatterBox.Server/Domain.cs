@@ -28,7 +28,8 @@ namespace ChatterBox.Server
                 {
                     UserId = registeredClient.UserId,
                     Name = registeredClient.Name,
-                    IsOnline = registeredClient.IsOnline
+                    IsOnline = registeredClient.IsOnline,
+                    Avatar = registeredClient.Avatar
                 },
                 SentDateTimeUtc = DateTimeOffset.UtcNow
             };
@@ -62,7 +63,8 @@ namespace ChatterBox.Server
                     UserId = message.UserId,
                     Domain = Name,
                     Name = message.Name,
-                    PushToken = message.PushToken
+                    PushToken = message.PushToken,
+                    Avatar = Clients.Count + 1
                 };
                 registeredClient.OnConnected += RegisteredClient_OnConnected;
                 registeredClient.OnDisconnected += RegisteredClient_OnDisconnected;
@@ -128,6 +130,8 @@ namespace ChatterBox.Server
                 return;
             }
             message.FromUserId = sender.UserId;
+            message.FromName = sender.Name;
+            message.FromAvatar = sender.Avatar;
             receiver.ServerRelay(message);
         }
     }

@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Signaling;
+using ChatterBox.Client.Signaling.Shared.Avatars;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -13,6 +14,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private readonly Func<ConversationViewModel> _contactFactory;
         private ConversationViewModel _selectedConversation;
         private bool _isConversationsListVisible;
+        private bool _isSeparatorVisible;
 
         public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
             Func<ConversationViewModel> contactFactory)
@@ -36,6 +38,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _isConversationsListVisible; }
             set { SetProperty(ref _isConversationsListVisible, value); }
         }
+
+        public bool IsSeparatorVisible
+        {
+            get { return _isSeparatorVisible; }
+            set { SetProperty(ref _isSeparatorVisible, value); }
+        }
         
         private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
@@ -58,7 +66,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact = _contactFactory();
                     contact.Name = peer.Name;
                     contact.UserId = peer.UserId;
-                    contact.ProfileSource = new BitmapImage(new Uri("ms-appx:///Assets/profile_2.png"));
+                    contact.ProfileSource = new BitmapImage(new Uri(AvatarLink.For(peer.Avatar)));
                     contact.OnCloseConversation += Contact_OnCloseConversation;
                     Conversations.Add(contact);
                 }
@@ -71,6 +79,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void UpdateSelection()
         {
             IsConversationsListVisible = Conversations.Count > 0;
+            IsSeparatorVisible = LayoutService.Instance.LayoutType == LayoutType.Parallel;
             if (SelectedConversation == null && LayoutService.Instance.LayoutType == LayoutType.Parallel)
             {
                 SelectedConversation = Conversations.FirstOrDefault();

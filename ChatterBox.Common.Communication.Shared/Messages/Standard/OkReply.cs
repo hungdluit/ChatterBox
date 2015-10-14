@@ -5,9 +5,9 @@ namespace ChatterBox.Common.Communication.Messages.Standard
 {
     public sealed class OkReply : IMessageReply
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public DateTimeOffset SentDateTimeUtc { get; set; }
-        public Guid ReplyFor { get; set; }
+        public string ReplyFor { get; set; }
 
         public static OkReply For(IMessage message)
         {

@@ -1,12 +1,13 @@
 ﻿using System;
 using ChatterBox.Common.Communication.Messages.Interfaces;
 
-namespace ChatterBox.Common.Communication.Messages.Peers
+namespace ChatterBox.Common.Communication.Shared.Messages.Registration
 {
-    public sealed class PeerUpdate : IMessage
+    public sealed class RegisteredReply : IMessageReply
     {
-        public PeerData PeerData { get; set; }
+        public int Avatar { get; set; }
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public DateTimeOffset SentDateTimeUtc { get; set; }
+        public string ReplyFor { get; set; }
     }
 }

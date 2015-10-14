@@ -1,17 +1,13 @@
-﻿using ChatterBox.Client.Signaling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using Windows.Networking;
 using Windows.Networking.Sockets;
+using ChatterBox.Client.Signaling;
 
 namespace ChatterBox.Client.Tasks.Signaling.Win8dot1
 {
     public sealed class SignalingSocketService : ISignalingSocketService
     {
-        ControlChannelTrigger _controlChannelTrigger;
+        private readonly ControlChannelTrigger _controlChannelTrigger;
         private bool _isConnected;
 
         public SignalingSocketService(ControlChannelTrigger streamSocket)
@@ -23,7 +19,7 @@ namespace ChatterBox.Client.Tasks.Signaling.Win8dot1
         {
             try
             {
-                var streamSocket = (StreamSocket)_controlChannelTrigger.TransportObject;
+                var streamSocket = (StreamSocket) _controlChannelTrigger.TransportObject;
                 streamSocket.ConnectAsync(new HostName(hostname), port.ToString())
                     .AsTask().Wait();
 
@@ -47,12 +43,11 @@ namespace ChatterBox.Client.Tasks.Signaling.Win8dot1
 
         public StreamSocket GetSocket()
         {
-            return _isConnected ? (StreamSocket)_controlChannelTrigger.TransportObject : null;
+            return _isConnected ? (StreamSocket) _controlChannelTrigger.TransportObject : null;
         }
 
         public void HandoffSocket(StreamSocket socket)
         {
-
         }
     }
 }

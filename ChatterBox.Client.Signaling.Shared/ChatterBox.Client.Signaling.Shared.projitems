@@ -9,10 +9,24 @@
     <Import_RootNamespace>ChatterBox.Client.Signaling.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Avatars\AvatarLink.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignaledPeerData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISignalingSocketService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignaledRelayMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignalingClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignalingStatus.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\0.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\1.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\10.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\2.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\3.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\4.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\5.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\6.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\7.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\8.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Avatars\9.jpg" />
   </ItemGroup>
 </Project>

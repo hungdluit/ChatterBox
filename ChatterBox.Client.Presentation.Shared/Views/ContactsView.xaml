@@ -17,7 +17,7 @@
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
-                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
@@ -55,6 +55,10 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <TextBlock Text="No contacts available" Margin="12,5"
                        Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityInvertedConverter}}" />
             <TextBlock Text="Chatter members" Margin="12,5" 
@@ -83,6 +87,10 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <Border Grid.Column="1" Grid.Row="0"  Grid.RowSpan="2"
+                    Margin="3" BorderBrush="DarkGray"
+                    BorderThickness="1,0,0,0" Name="SeparatorBorder"
+                    Visibility="{Binding IsSeparatorVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
         <Grid Grid.Column="1"
               Visibility="{Binding SelectedConversation, Converter={StaticResource NullToVisibilityConverter}}">

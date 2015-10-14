@@ -14,11 +14,11 @@ namespace ChatterBox.Client.Signaling
             {
                 return RelayMessageContainer.Containers.Select(s => new RelayMessage
                 {
-                    Id = (Guid) s.Value.Values[nameof(RelayMessage.Id)],
+                    Id = s.Value.Values[nameof(RelayMessage.Id)].ToString(),
                     SentDateTimeUtc = (DateTimeOffset) s.Value.Values[nameof(RelayMessage.SentDateTimeUtc)],
                     FromUserId = s.Value.Values[nameof(RelayMessage.FromUserId)].ToString(),
                     ToUserId = s.Value.Values[nameof(RelayMessage.ToUserId)].ToString(),
-                    Payload = s.Value.Values[nameof(RelayMessage.Payload)].ToString(),
+                    Payload = s.Value.Values[nameof(RelayMessage.Payload)]?.ToString(),
                     Tag = s.Value.Values[nameof(RelayMessage.Tag)].ToString()
                 }).ToArray();
             }
@@ -39,7 +39,7 @@ namespace ChatterBox.Client.Signaling
 
         public static void Add(RelayMessage message)
         {
-            var messageContainer = RelayMessageContainer.CreateContainer(message.Id.ToString(),
+            var messageContainer = RelayMessageContainer.CreateContainer(message.Id,
                 ApplicationDataCreateDisposition.Always);
             messageContainer.Values.AddOrUpdate(nameof(RelayMessage.Id), message.Id);
             messageContainer.Values.AddOrUpdate(nameof(RelayMessage.SentDateTimeUtc), message.SentDateTimeUtc);

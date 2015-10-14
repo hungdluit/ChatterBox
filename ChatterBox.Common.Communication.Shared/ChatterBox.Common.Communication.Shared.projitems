@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Peers\PeerData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Peers\PeerUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Peers\PeerList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\Registration\RegisteredReply.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Registration\Registration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Relay\RelayMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Relay\RelayMessageTags.cs" />
