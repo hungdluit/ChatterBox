@@ -8,7 +8,7 @@ namespace ChatterBox.Client.Universal.Helpers
 {
     public class SignalingTaskHelper
     {
-        public async Task<IBackgroundTaskRegistration> GetSignalingTaskRegistration()
+        public async Task<IBackgroundTaskRegistration> GetSignalingTaskRegistration(bool registerAgain)
         {
             var status = await BackgroundExecutionManager.RequestAccessAsync();
             //TODO: Treat access grant
@@ -18,7 +18,18 @@ namespace ChatterBox.Client.Universal.Helpers
                     .Select(s => s.Value)
                     .FirstOrDefault(s => s.Name == typeof (SignalingTask).Name);
 
-                if (signalingTaskRegistration != null) return signalingTaskRegistration;
+                if (signalingTaskRegistration != null)
+                {
+                    if (!registerAgain)
+                    {
+                        return signalingTaskRegistration;
+                    }
+                    else
+                    {
+                        signalingTaskRegistration.Unregister(true);
+                        signalingTaskRegistration = null;
+                    }
+                }
 
                 var signalingTaskBuilder = new BackgroundTaskBuilder
                 {

@@ -13,8 +13,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public WelcomeViewModel()
         {
             CompleteCommand = new DelegateCommand(OnCompleteCommandExecute, CanCompleteCommandExecute);
-            IsCompleted = (!string.IsNullOrWhiteSpace(RegistrationSettings.Name) &&
-                           !string.IsNullOrWhiteSpace(RegistrationSettings.Domain));
+            IsCompleted = ValidateStrings(Name, Domain);
 
             Domain = RegistrationSettings.Domain;
             Name = RegistrationSettings.Name;
@@ -54,7 +53,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool CanCompleteCommandExecute()
         {
-            return !string.IsNullOrWhiteSpace(Name);
+            return ValidateStrings(Name, Domain);
         }
 
         private void OnCompleteCommandExecute()
@@ -63,6 +62,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             RegistrationSettings.Domain = Domain;
             IsCompleted = true;
             OnCompleted?.Invoke();
+        }
+
+        private bool ValidateStrings(params string[] strings)
+        {
+            if (strings == null) return false;
+            foreach (var @string in strings)
+            {
+                if (string.IsNullOrWhiteSpace(@string) ||
+                    string.IsNullOrEmpty(@string))
+                    return false;
+            }
+            return true;
         }
 
         public event Action OnCompleted;
