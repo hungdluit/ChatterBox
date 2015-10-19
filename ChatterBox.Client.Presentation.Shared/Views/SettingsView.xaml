@@ -5,26 +5,157 @@
     xmlns:local="using:ChatterBox.Client.Presentation.Shared.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:ChatterBox.Client.Presentation.Shared.Services"
+    xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <UserControl.Resources>
+        <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
+
+        <Style x:Key="OverlayStyle" TargetType="ItemsControl">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ParallelStyle" TargetType="ItemsControl">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <converters:LayoutTypeToStyleConverter x:Key="LayoutTypeToStyleConverter"
+                                               ParallelStyle="{StaticResource ParallelStyle}"
+                                               OverlayStyle="{StaticResource OverlayStyle}" />
+    </UserControl.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <Button Name="CloseButton"
-                    Command="{Binding Close}"
+                    Command="{Binding CloseCommand}"
                     Margin="12,5"
                     Background="{ThemeResource ButtonBackgroundThemeBrush}"
                     FontFamily="Segoe UI Symbol"
                     Content="&#xE112;"
                     Grid.Row="2" />
-            <TextBlock Margin="12,5"
-                       VerticalAlignment="Center"
-                       Text="Settings" />
         </StackPanel>
+        <ScrollViewer Grid.Row="2">
+            <ItemsControl Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1"
+                      Style="{Binding Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource LayoutTypeToStyleConverter}}">
+                <Grid Name="WebRTCSettingsPanel" HorizontalAlignment="Stretch" MaxWidth="500" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="WebRTC Settings" Grid.Row="0" Margin="5" FontSize="18" 
+                               HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Name="CameraListBoxHeader" Grid.Row="1" Text="Available cameras"
+                               Margin="5" HorizontalAlignment="Left"/>
+                    <ListBox Name="CameraListBox" ItemsSource="{Binding Cameras}" Grid.Row="2"
+                             SelectedItem="{Binding SelectedCamera, Mode=TwoWay}" BorderThickness="1"
+                             BorderBrush="Black" Margin="5" MinHeight="120">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Name="MicrophoneListBoxHeader" Text="Available Microphones" Margin="5" 
+                               HorizontalAlignment="Left" Grid.Row="3"/>
+                    <ListBox Name="MicrophoneListBox" MinHeight="120" ItemsSource="{Binding Microphones}"
+                             SelectedItem="{Binding SelectedMicrophone, Mode=TwoWay}" BorderThickness="1"
+                             BorderBrush="Black" Margin="5" HorizontalAlignment="Center" Grid.Row="4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ComboBox Name="AudioCodecCombo" Header="Audio codec" Grid.Row="5" Margin="5" 
+                        ItemsSource="{Binding AudioCodecs}" SelectedItem="{Binding SelectedAudioCodec, Mode=TwoWay}"
+                        HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}"/>
+                                    <TextBlock Text="|"/>
+                                    <TextBlock Text="{Binding Clockrate}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox Name="VideoCodecCombo" Header="Video codec" Grid.Row="6" Margin="5"
+                        ItemsSource="{Binding VideoCodecs}" SelectedItem="{Binding SelectedVideoCodec, Mode=TwoWay}"
+                        HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}"/>
+                                    <TextBlock Text="|"/>
+                                    <TextBlock Text="{Binding Clockrate}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox Name="VideoResolutionCombo" Header="Capture resolution:" Grid.Row="7" Margin="5"
+                        HorizontalAlignment="Stretch" ItemsSource="{Binding AllCapRes, Mode=OneWay}"
+                        SelectedItem="{Binding SelectedCapResItem, Mode=TwoWay}"/>
+                    <ComboBox Name="VideoFrameRateCombo" Header="Capture frame rate:" Grid.Row="8"
+                        Margin="5" HorizontalAlignment="Stretch"
+                        DisplayMemberPath="FrameRateDescription" 
+                        ItemsSource="{Binding AllCapFPS, Mode=OneWay}"
+                        SelectedItem="{Binding SelectedCapFPSItem, Mode=TwoWay}" />
+                </Grid>
+                <Grid Name="ChatterBoxSettingsPanel" Grid.Row="1" Grid.Column="1" MaxWidth="500"
+                      HorizontalAlignment="Stretch" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="ChatterBox Settings" Margin="5" HorizontalAlignment="Center" 
+                               FontSize="18" FontWeight="Bold" Grid.Row="0"/>
+                    <TextBlock Text="Registerd name" Margin="5" Grid.Row="1" 
+                               HorizontalAlignment="Left"/>
+                    <TextBox Text="{Binding RegisteredName}" IsEnabled="False"
+                             HorizontalAlignment="Stretch" Grid.Row="2"/>
+                    <TextBlock Text="Registerd domain" Margin="5" Grid.Row="3" 
+                               HorizontalAlignment="Left"/>
+                    <TextBox Text="{Binding RegisteredDomain}" IsEnabled="False"
+                             HorizontalAlignment="Stretch" Grid.Row="4" />
+                </Grid>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </UserControl>

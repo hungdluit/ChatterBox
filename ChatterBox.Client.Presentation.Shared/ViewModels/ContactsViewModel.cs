@@ -15,14 +15,21 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private bool _isConversationsListVisible;
         private bool _isSeparatorVisible;
         private ConversationViewModel _selectedConversation;
+        private SettingsViewModel _settingsViewModel;
+        private bool _isSettingsVisible;
+        private DelegateCommand _showSettings;
 
         public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
+            SettingsViewModel settingsViewModel,
             Func<ConversationViewModel> contactFactory)
         {
             _contactFactory = contactFactory;
+            settingsViewModel.Close += Settings_OnClose;
+            SettingsViewModel = settingsViewModel;
             signalingUpdateService.OnUpdate += OnSignalingUpdate;
             LayoutService.Instance.LayoutChanged += LayoutChanged;
-        }
+            ShowSettings = new DelegateCommand(ShowSettingsExecute);
+        }        
 
         public ObservableCollection<ConversationViewModel> Conversations { get; } =
             new ObservableCollection<ConversationViewModel>();
@@ -45,9 +52,37 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _selectedConversation, value); }
         }
 
+        public SettingsViewModel SettingsViewModel
+        {
+            get { return _settingsViewModel; }
+            set { SetProperty(ref _settingsViewModel, value); }
+        }
+
+        public DelegateCommand ShowSettings
+        {
+            get { return _showSettings; }
+            set { SetProperty(ref _showSettings, value); }
+        }
+
+        public bool IsSettingsVisible
+        {
+            get { return _isSettingsVisible; }
+            set { SetProperty(ref _isSettingsVisible, value); }
+        }
+
+        private void ShowSettingsExecute()
+        {
+            IsSettingsVisible = true;
+        }
+
         private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
             SelectedConversation = null;
+        }
+
+        private void Settings_OnClose()
+        {
+            IsSettingsVisible = false;
         }
 
         private void LayoutChanged(LayoutType layout)
