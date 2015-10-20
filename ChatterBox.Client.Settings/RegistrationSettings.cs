@@ -45,5 +45,12 @@ namespace ChatterBox.Client.Settings
             }
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(UserId), value); }
         }
+
+        public static void Reset()
+        {
+            ApplicationData.Current.LocalSettings.Values.Remove(nameof(Domain));
+            ApplicationData.Current.LocalSettings.Values.Remove(nameof(Name));
+            ApplicationData.Current.LocalSettings.Values.Remove(nameof(UserId));
+        }
     }
 }

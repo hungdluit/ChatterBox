@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.ApplicationModel.Background;
 
-namespace ChatterBox.Client.Tasks.Signaling.Universal
+namespace ChatterBox.Client.Universal.Common.DeferralWrappers
 {
     public sealed class BackgroundTaskDeferralWrapper : IDisposable
     {

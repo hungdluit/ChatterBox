@@ -3,7 +3,7 @@ using Windows.Networking;
 using Windows.Networking.Sockets;
 using ChatterBox.Client.Signaling;
 
-namespace ChatterBox.Client.Tasks.Signaling.Universal
+namespace ChatterBox.Client.Universal.Common
 {
     public sealed class SignalingSocketService : ISignalingSocketService
     {

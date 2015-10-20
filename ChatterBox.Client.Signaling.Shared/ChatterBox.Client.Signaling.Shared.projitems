@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Avatars\AvatarLink.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISignaledDataUpdateNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignaledPeerData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISignalingSocketService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignaledRelayMessages.cs" />

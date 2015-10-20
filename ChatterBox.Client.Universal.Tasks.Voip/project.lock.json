@@ -3,45 +3,6 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -1574,61 +1535,9 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -3251,61 +3160,9 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -4900,61 +4757,9 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x64": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -6582,61 +6387,9 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -8231,61 +7984,9 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x86": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -9913,61 +9614,9 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
-      "CommonServiceLocator/1.3.0": {
-        "compile": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        },
-        "runtime": {
-          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights/1.0.0": {
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        },
-        "runtime": {
-          "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll": {}
-        }
-      },
-      "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-        "dependencies": {
-          "Microsoft.ApplicationInsights": "[1.0.0, )",
-          "Microsoft.ApplicationInsights.PersistenceChannel": "[1.0.0, )"
-        },
-        "compile": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        },
-        "runtime": {
-          "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll": {}
-        }
-      },
       "Microsoft.CSharp/4.0.0": {
         "dependencies": {
           "System.Collections": "[4.0.10, )",
@@ -11562,88 +11211,10 @@
         "runtime": {
           "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
-      },
-      "Unity/4.0.1": {
-        "dependencies": {
-          "CommonServiceLocator": "[1.3.0, )"
-        },
-        "compile": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        },
-        "runtime": {
-          "lib/win8/Microsoft.Practices.Unity.dll": {},
-          "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
-        }
       }
     }
   },
   "libraries": {
-    "CommonServiceLocator/1.3.0": {
-      "sha512": "fbjO0SNwbOFPdwVfyqv+B7gIJ2CVBOFPKqn1mDDECK7KER8jFaOdcvroFYoAHa0ktPbxi5s+15qOLnA96f8GSA==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "CommonServiceLocator.nuspec",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.pdb",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.XML",
-        "package/services/metadata/core-properties/8a82b9e5a63a439481bfa8d4ec335002.psmdcp",
-        "package/services/metadata/core-properties/99be0c88b2fd41c8b07c42071005ee47.psmdcp"
-      ]
-    },
-    "Microsoft.ApplicationInsights/1.0.0": {
-      "sha512": "HZ47/thX57SOuIivSvIbsR6L9CCb/Yt3IyB2i4KHmmNlf3DO+lqFwWIKDdbDNWKX+qh0Rg20/JSMPK0dwUsYYw==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "lib/net40/Microsoft.ApplicationInsights.dll",
-        "lib/net40/Microsoft.ApplicationInsights.XML",
-        "lib/net45/Microsoft.ApplicationInsights.dll",
-        "lib/net45/Microsoft.ApplicationInsights.XML",
-        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.dll",
-        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.XML",
-        "lib/wp8/Microsoft.ApplicationInsights.dll",
-        "lib/wp8/Microsoft.ApplicationInsights.XML",
-        "Microsoft.ApplicationInsights.nuspec",
-        "package/services/metadata/core-properties/b9e7bc7ab2454491af07046165ff01d0.psmdcp"
-      ]
-    },
-    "Microsoft.ApplicationInsights.PersistenceChannel/1.0.0": {
-      "sha512": "0qQXC+CtbyF2RPuld5pF74fxsnP6ml0LUnzQ6GL9AXXY64LPsLDsPUAymoUffo7LZvPDppZboTYX59TfVxKA7A==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "lib/net40/Microsoft.ApplicationInsights.PersistenceChannel.dll",
-        "lib/net40/Microsoft.ApplicationInsights.PersistenceChannel.XML",
-        "lib/portable-win8+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.XML",
-        "lib/portable-win81+wpa81/Microsoft.ApplicationInsights.PersistenceChannel.dll",
-        "lib/wp8/Microsoft.ApplicationInsights.PersistenceChannel.dll",
-        "lib/wp8/Microsoft.ApplicationInsights.PersistenceChannel.XML",
-        "Microsoft.ApplicationInsights.PersistenceChannel.nuspec",
-        "package/services/metadata/core-properties/dc9ebba80e7343fdbd0a39a3cdeb672c.psmdcp"
-      ]
-    },
-    "Microsoft.ApplicationInsights.WindowsApps/1.0.0": {
-      "sha512": "NvBQnFeiFd0O1QdBz06UGApD7zn7ztVi7qO18IsM3EjiXRNgfrEBXB+azNm8XqLY8xGFAqh3HAuSd/wHZMe0XA==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
-        "lib/win81/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
-        "lib/wp8/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
-        "lib/wp8/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
-        "lib/wpa81/Microsoft.ApplicationInsights.Extensibility.Windows.dll",
-        "lib/wpa81/Microsoft.ApplicationInsights.Extensibility.Windows.XML",
-        "Microsoft.ApplicationInsights.WindowsApps.nuspec",
-        "package/services/metadata/core-properties/4f6f732debe548beaa1183418e8d65cc.psmdcp"
-      ]
-    },
     "Microsoft.CSharp/4.0.0": {
       "sha512": "oWqeKUxHXdK6dL2CFjgMcaBISbkk+AqEg+yvJHE4DElNzS4QaTsCflgkkqZwVlWby1Dg9zo9n+iCAMFefFdJ/A==",
       "type": "Package",
@@ -14991,43 +14562,11 @@
         "runtimes/win8-aot/lib/netcore50/System.Xml.XmlSerializer.dll",
         "System.Xml.XmlSerializer.nuspec"
       ]
-    },
-    "Unity/4.0.1": {
-      "sha512": "RHFTCW13E186hCI0Z4R47tl2SyxQOp3TNaBlilxKktO+u+NUWyOK/nPJ25PWwgPh4j4/GM46PQszSsusui+ikw==",
-      "type": "Package",
-      "files": [
-        "[Content_Types].xml",
-        "_rels/.rels",
-        "lib/net45/Microsoft.Practices.Unity.Configuration.dll",
-        "lib/net45/Microsoft.Practices.Unity.Configuration.XML",
-        "lib/net45/Microsoft.Practices.Unity.dll",
-        "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll",
-        "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.XML",
-        "lib/net45/Microsoft.Practices.Unity.xml",
-        "lib/portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10/Microsoft.Practices.Unity.dll",
-        "lib/portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10/Microsoft.Practices.Unity.xml",
-        "lib/win8/Microsoft.Practices.Unity.dll",
-        "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll",
-        "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.pri",
-        "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.XML",
-        "lib/win8/Microsoft.Practices.Unity.xml",
-        "lib/wp80/Microsoft.Practices.Unity.dll",
-        "lib/wp80/Microsoft.Practices.Unity.RegistrationByConvention.dll",
-        "lib/wp80/Microsoft.Practices.Unity.RegistrationByConvention.XML",
-        "lib/wp80/Microsoft.Practices.Unity.xml",
-        "package/services/metadata/core-properties/924820f073a54dfda4a033e3efb68c3c.psmdcp",
-        "Unity.nuspec",
-        "UnityConfiguration30.xsd"
-      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "Microsoft.ApplicationInsights >= 1.0.0",
-      "Microsoft.ApplicationInsights.PersistenceChannel >= 1.0.0",
-      "Microsoft.ApplicationInsights.WindowsApps >= 1.0.0",
-      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
-      "Unity >= 4.0.1"
+      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0"
     ],
     "UAP,Version=v10.0": []
   }

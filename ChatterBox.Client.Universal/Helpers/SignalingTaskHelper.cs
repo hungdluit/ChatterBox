@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
-using ChatterBox.Client.Tasks.Signaling.Universal;
+using ChatterBox.Client.Universal.Tasks.Signaling;
 
 namespace ChatterBox.Client.Universal.Helpers
 {
@@ -24,11 +24,8 @@ namespace ChatterBox.Client.Universal.Helpers
                     {
                         return signalingTaskRegistration;
                     }
-                    else
-                    {
-                        signalingTaskRegistration.Unregister(true);
-                        signalingTaskRegistration = null;
-                    }
+                    signalingTaskRegistration.Unregister(true);
+                    signalingTaskRegistration = null;
                 }
 
                 var signalingTaskBuilder = new BackgroundTaskBuilder

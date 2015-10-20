@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -10,13 +9,14 @@ using Windows.UI.Xaml.Navigation;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
+using ChatterBox.Client.Settings;
 using ChatterBox.Client.Signaling;
-using ChatterBox.Client.Tasks.Signaling.Universal;
+using ChatterBox.Client.Signaling.Shared;
+using ChatterBox.Client.Universal.Common;
 using ChatterBox.Client.Universal.Helpers;
 using ChatterBox.Client.Universal.Services;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
-using ChatterBox.Client.Settings;
 
 namespace ChatterBox.Client.Universal
 {
@@ -54,9 +54,7 @@ namespace ChatterBox.Client.Universal
                 e.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
                 e.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
-                RegistrationSettings.Name = string.Empty;
-                RegistrationSettings.Domain = string.Empty;
-                RegistrationSettings.UserId = Guid.NewGuid().ToString();
+                RegistrationSettings.Reset();
                 registerAgain = true;
             }
 
@@ -69,16 +67,19 @@ namespace ChatterBox.Client.Universal
                 return;
             }
 
-            signalingTask.Completed +=
-                (reg, completedArgs) => { Container.Resolve<ISignalingUpdateService>().RaiseUpdate(); };
-
             Container
+                .RegisterType<ForegroundAppServiceClient>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISignaledDataUpdateNotifier, NoActionSignaledDataUpdateNotifier>()
                 .RegisterType<ISignalingSocketService, SignalingSocketService>(
                     new ContainerControlledLifetimeManager(), new InjectionConstructor(signalingTask.TaskId))
                 .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
 
+
+            var client = Container.Resolve<ForegroundAppServiceClient>();
+            await client.Connect();
+
             var rootFrame = Window.Current.Content as Frame;
-                        
+
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
@@ -95,7 +96,7 @@ namespace ChatterBox.Client.Universal
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>());
+                rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>());
             }
             // Ensure the current window is active
             Window.Current.Activate();

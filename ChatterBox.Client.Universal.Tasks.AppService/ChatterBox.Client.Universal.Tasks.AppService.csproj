@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EFAFA5BA-4640-4474-A4E7-12CC44750CE9}</ProjectGuid>
+    <ProjectGuid>{F7F24556-927F-4F02-A116-EBAA7FAE69F3}</ProjectGuid>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChatterBox.Client.Tasks.Signaling.Universal</RootNamespace>
-    <AssemblyName>ChatterBox.Client.Tasks.Signaling.Universal</AssemblyName>
+    <RootNamespace>ChatterBox.Client.Universal.Tasks.AppService</RootNamespace>
+    <AssemblyName>ChatterBox.Client.Universal.Tasks.AppService</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
@@ -108,26 +108,26 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackgroundTaskDeferralWrapper.cs" />
+    <Compile Include="AppServiceConnectionHub.cs" />
+    <Compile Include="SignalingAppServiceTask.cs" />
+    <Compile Include="ForegroundAppServiceTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignalingSocketService.cs" />
-    <Compile Include="SignalingTask.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChatterBox.Client.Notifications\ChatterBox.Client.Notifications.csproj">
-      <Project>{D33CFF24-8FAE-4637-B4E5-4C7EDB972A64}</Project>
-      <Name>ChatterBox.Client.Notifications</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Settings\ChatterBox.Client.Settings.csproj">
-      <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
+      <Project>{EB86884C-1E6E-4E5E-ADE9-1A4EBF44F5ED}</Project>
       <Name>ChatterBox.Client.Settings</Name>
     </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj">
       <Project>{a286773b-ac8e-4990-abdf-4017cc9ff29d}</Project>
       <Name>ChatterBox.Client.Signaling</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Universal.Common\ChatterBox.Client.Universal.Common.csproj">
+      <Project>{916AA413-7819-4210-9C8C-FB48FA996247}</Project>
+      <Name>ChatterBox.Client.Universal.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
-      <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
+      <Project>{5EE2034E-0977-42B0-8F9D-5F65BDACCFF4}</Project>
       <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
   </ItemGroup>

@@ -1,6 +1,6 @@
-﻿using ChatterBox.Client.Presentation.Shared.MVVM;
+﻿using System;
+using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Settings;
-using System;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -13,9 +13,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             CloseCommand = new DelegateCommand(CloseExecute);
         }
 
-        public string RegisteredName
+        public DelegateCommand CloseCommand
         {
-            get { return RegistrationSettings.Name; }
+            get { return _closeCommand; }
+            set { SetProperty(ref _closeCommand, value); }
         }
 
         public string RegisteredDomain
@@ -23,17 +24,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return RegistrationSettings.Domain; }
         }
 
-        public DelegateCommand CloseCommand
+        public string RegisteredName
         {
-            get { return _closeCommand; }
-            set { SetProperty(ref _closeCommand, value); }
+            get { return RegistrationSettings.Name; }
         }
+
+        public event Action Close;
 
         private void CloseExecute()
         {
             Close?.Invoke();
         }
-
-        public event Action Close;
     }
 }

@@ -50,7 +50,7 @@ namespace ChatterBox.Client.Win8dot1
                 (reg, completedArgs) => { Container.Resolve<ISignalingUpdateService>().RaiseUpdate(); };
 
             var socketService = new SignalingSocketService(signalingTaskHelper.ControlChannelTrigger);
-            _signalingClient = new SignalingClient(socketService);
+            _signalingClient = new SignalingClient(socketService, null);
 
             Container.RegisterInstance(typeof (ISignalingSocketService), socketService)
                 .RegisterInstance(typeof (SignalingSocketService), socketService)

@@ -21,12 +21,23 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Tasks.Signaling.Universal.SignalingTask">
+        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Tasks.Voip.VoipTask">
+          <BackgroundTasks>
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="ChatterBox.Client.Universal.Tasks.AppService.SignalingAppServiceTask">
+          <uap:AppService Name="SignalingAppServiceTask" ServerName="OutOfProcessHost" />
+        </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Tasks.Signaling.SignalingTask">
           <BackgroundTasks>
             <Task Type="systemEvent" />
             <uap:Task Type="chatMessageNotification" />
           </BackgroundTasks>
         </Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="ChatterBox.Client.Universal.Tasks.AppService.ForegroundAppServiceTask">
+          <uap:AppService Name="ForegroundAppServiceTask" ServerName="OutOfProcessHost" />
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -39,4 +50,13 @@
     <DeviceCapability Name="webcam" />
     <DeviceCapability Name="microphone" />
   </Capabilities>
+  <Extensions>
+    <Extension Category="windows.activatableClass.outOfProcessServer">
+      <OutOfProcessServer ServerName="OutOfProcessHost">
+        <Path>ChatterBox.Client.Universal.OutOfProcessHost.exe</Path>
+        <Instancing>singleInstance</Instancing>
+        <ActivatableClass ActivatableClassId="ChatterBox.Client.Universal.OutOfProcessHost.Dummy" />
+      </OutOfProcessServer>
+    </Extension>
+  </Extensions>
 </Package>

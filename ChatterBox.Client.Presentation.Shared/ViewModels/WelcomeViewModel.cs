@@ -64,6 +64,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             OnCompleted?.Invoke();
         }
 
+        public event Action OnCompleted;
+
         private bool ValidateStrings(params string[] strings)
         {
             if (strings == null) return false;
@@ -75,7 +77,5 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             return true;
         }
-
-        public event Action OnCompleted;
     }
 }
