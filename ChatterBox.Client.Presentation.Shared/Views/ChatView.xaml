@@ -130,7 +130,7 @@
 
         </Grid>
         <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
-                 Margin="12,5"
+                 Margin="12,5" BorderThickness="0"
                  Background="Transparent"
                  ItemContainerStyleSelector="{StaticResource InstantMessageStyleSelector}" />
 

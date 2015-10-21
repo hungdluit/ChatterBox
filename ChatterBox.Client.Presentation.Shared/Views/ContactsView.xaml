@@ -65,7 +65,7 @@
                        Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Button HorizontalAlignment="Right" FontFamily="Segoe UI Symbol" Content="&#xE115;"
                     Margin="5" Command="{Binding ShowSettings}"/>
-            <ListBox Grid.Row="1"
+            <ListBox Grid.Row="1" BorderThickness="0"
                      Margin="12,5"
                      ItemsSource="{Binding Conversations}"
                      SelectedItem="{Binding SelectedConversation, Mode=TwoWay}"
@@ -97,7 +97,7 @@
         <Grid Grid.Column="1"
               Visibility="{Binding SelectedConversation, Converter={StaticResource NullToVisibilityConverter}}">
             <ListBox ItemsSource="{Binding Conversations}" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                     SelectedItem="{Binding SelectedConversation, Mode=OneWay}"
+                     SelectedItem="{Binding SelectedConversation, Mode=OneWay}" BorderThickness="0"
                      Background="{ThemeResource ListBoxBackgroundThemeBrush}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>

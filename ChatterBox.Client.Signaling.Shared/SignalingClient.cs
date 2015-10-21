@@ -218,6 +218,7 @@ namespace ChatterBox.Client.Signaling
                     writer.WriteString($"{message}{Environment.NewLine}");
                     await writer.StoreAsync();
                     await writer.FlushAsync();
+                    writer.DetachStream();
                 }
                 _signalingSocketService.HandoffSocket(socket);
             }

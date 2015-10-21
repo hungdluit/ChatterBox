@@ -77,6 +77,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             Status = "Registering with the server...";
             _signalingClient.RegisterUsingSettings();
+            if (connected)
+            {
+                ConnectionEstablished?.Invoke();
+            }
         }
 
         private bool OnConnectCommandCanExecute()

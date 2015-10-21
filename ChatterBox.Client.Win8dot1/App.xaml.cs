@@ -8,9 +8,10 @@ using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
 using ChatterBox.Client.Signaling;
-using ChatterBox.Client.Tasks.Signaling.Win8dot1;
 using ChatterBox.Client.Win8dot1.Services;
 using Microsoft.Practices.Unity;
+using ChatterBox.Client.Win8dot1.Helpers;
+using ChatterBox.Client.Settings;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -43,18 +44,19 @@ namespace ChatterBox.Client.Win8dot1
         {
             Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
 
-            var signalingTaskHelper = new SignalingTaskHelper();
-            var signalingTask = await signalingTaskHelper.RegisterTask();
+            var registerAgain = false;
+            if (args.PreviousExecutionState == ApplicationExecutionState.ClosedByUser ||
+                args.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
+                args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            {
+                RegistrationSettings.Name = string.Empty;
+                RegistrationSettings.Domain = string.Empty;
+                RegistrationSettings.UserId = Guid.NewGuid().ToString();
+                registerAgain = true;
+            }
 
-            signalingTask.Completed +=
-                (reg, completedArgs) => { Container.Resolve<ISignalingUpdateService>().RaiseUpdate(); };
-
-            var socketService = new SignalingSocketService(signalingTaskHelper.ControlChannelTrigger);
-            _signalingClient = new SignalingClient(socketService);
-
-            Container.RegisterInstance(typeof (ISignalingSocketService), socketService)
-                .RegisterInstance(typeof (SignalingSocketService), socketService)
-                .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ISignalingSocketService, SignalingSocketService>(new ContainerControlledLifetimeManager())
+                     .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -75,7 +77,7 @@ namespace ChatterBox.Client.Win8dot1
                 // indicating an alternate launch (e.g.: via toast or secondary tile), 
                 // navigate to the appropriate page, configuring the new page by passing required 
                 // information as a navigation parameter
-                if (!rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>()))
+                if (!rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>()))
                 {
                     throw new Exception("Failed to create initial page");
                 }
@@ -95,6 +97,12 @@ namespace ChatterBox.Client.Win8dot1
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             deferral.Complete();
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            LayoutService.Instance.LayoutRoot = args.Window;
+            base.OnWindowCreated(args);
         }
     }
 }
