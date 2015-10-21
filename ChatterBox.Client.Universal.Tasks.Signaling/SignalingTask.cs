@@ -4,9 +4,11 @@ using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Notifications;
 using ChatterBox.Client.Signaling;
+using ChatterBox.Client.Universal.Common;
+using ChatterBox.Client.Universal.Common.DeferralWrappers;
 using Buffer = Windows.Storage.Streams.Buffer;
 
-namespace ChatterBox.Client.Tasks.Signaling.Universal
+namespace ChatterBox.Client.Universal.Tasks.Signaling
 {
     public sealed class SignalingTask : IBackgroundTask
     {
@@ -21,8 +23,9 @@ namespace ChatterBox.Client.Tasks.Signaling.Universal
                     {
                         return;
                     }
+
                     var signalingSocketService = new SignalingSocketService(taskInstance.InstanceId);
-                    var client = new SignalingClient(signalingSocketService);
+                    var client = new SignalingClient(signalingSocketService, new AppServiceSignaledDataUpdateNotifier());
 
                     switch (details.Reason)
                     {

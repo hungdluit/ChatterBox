@@ -12,6 +12,7 @@ using ChatterBox.Client.Win8dot1.Services;
 using Microsoft.Practices.Unity;
 using ChatterBox.Client.Win8dot1.Helpers;
 using ChatterBox.Client.Settings;
+using ChatterBox.Client.Signaling.Shared;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -56,7 +57,8 @@ namespace ChatterBox.Client.Win8dot1
             }
 
             Container.RegisterType<ISignalingSocketService, SignalingSocketService>(new ContainerControlledLifetimeManager())
-                     .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
+                     .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager())
+                     .RegisterType<ISignaledDataUpdateNotifier, NoActionSignaledDataUpdateNotifier>();
 
             var rootFrame = Window.Current.Content as Frame;
 

@@ -8,6 +8,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Notifications;
 using ChatterBox.Client.Settings;
+using ChatterBox.Client.Signaling.Shared;
 using ChatterBox.Client.Signaling.Shared.Avatars;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
@@ -21,11 +22,14 @@ namespace ChatterBox.Client.Signaling
 {
     public sealed class SignalingClient : IClientChannel, IServerChannel
     {
+        private readonly ISignaledDataUpdateNotifier _signaledDataUpdateNotifier;
         private readonly ISignalingSocketService _signalingSocketService;
 
-        public SignalingClient(ISignalingSocketService signalingSocketService)
+        public SignalingClient(ISignalingSocketService signalingSocketService,
+            ISignaledDataUpdateNotifier signaledDataUpdateNotifier)
         {
             _signalingSocketService = signalingSocketService;
+            _signaledDataUpdateNotifier = signaledDataUpdateNotifier;
             ServerChannelInvoker = new ChannelInvoker(this);
         }
 
@@ -64,6 +68,7 @@ namespace ChatterBox.Client.Signaling
             {
                 SignaledPeerData.AddOrUpdate(peerStatus);
             }
+            _signaledDataUpdateNotifier?.RaiseSignaledDataUpdated();
         }
 
         public void OnPeerPresence(PeerUpdate peer)
@@ -78,6 +83,7 @@ namespace ChatterBox.Client.Signaling
                     AvatarLink.For(peer.PeerData.Avatar),
                     peer.PeerData.IsOnline);
             }
+            _signaledDataUpdateNotifier?.RaiseSignaledDataUpdated();
         }
 
         public void OnRegistrationConfirmation(RegisteredReply reply)
@@ -86,6 +92,7 @@ namespace ChatterBox.Client.Signaling
             SignalingStatus.IsRegistered = true;
             SignalingStatus.Avatar = reply.Avatar;
             GetPeerList(new Message());
+            _signaledDataUpdateNotifier?.RaiseSignaledDataUpdated();
         }
 
         public void ServerConfirmation(Confirmation confirmation)
@@ -115,6 +122,7 @@ namespace ChatterBox.Client.Signaling
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,
                     AvatarLink.For(message.FromAvatar), message.Payload);
             }
+            _signaledDataUpdateNotifier?.RaiseSignaledDataUpdated();
         }
 
         private IAsyncOperation<bool> BufferFileExists()

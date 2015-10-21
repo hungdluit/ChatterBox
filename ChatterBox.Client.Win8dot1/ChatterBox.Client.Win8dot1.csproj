@@ -38,6 +38,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\NoActionSignaledDataUpdateNotifier.cs" />
     <Compile Include="Services\SignalingUpdateService.cs" />
   </ItemGroup>
   <ItemGroup>

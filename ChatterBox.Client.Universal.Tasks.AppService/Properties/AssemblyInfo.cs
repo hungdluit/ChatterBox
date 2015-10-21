@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("ChatterBox.Client.Tasks.Signaling.Universal")]
+[assembly: AssemblyTitle("ChatterBox.Client.Universal.Tasks.AppService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ChatterBox.Client.Tasks.Signaling.Universal")]
+[assembly: AssemblyProduct("ChatterBox.Client.Universal.Tasks.AppService")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

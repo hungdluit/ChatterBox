@@ -7,8 +7,10 @@ namespace ChatterBox.Client.Universal.Services
 {
     public sealed class SignalingUpdateService : DispatcherBindableBase, ISignalingUpdateService
     {
-        public SignalingUpdateService(CoreDispatcher uiDispatcher) : base(uiDispatcher)
+        public SignalingUpdateService(ForegroundAppServiceClient foregroundAppServiceClient, CoreDispatcher uiDispatcher)
+            : base(uiDispatcher)
         {
+            foregroundAppServiceClient.OnSignlingDataUpdated += OnSignlingDataUpdated;
         }
 
         public event Action OnUpdate;
@@ -16,6 +18,11 @@ namespace ChatterBox.Client.Universal.Services
         public void RaiseUpdate()
         {
             RunOnUiThread(() => { OnUpdate?.Invoke(); });
+        }
+
+        private void OnSignlingDataUpdated()
+        {
+            RaiseUpdate();
         }
     }
 }

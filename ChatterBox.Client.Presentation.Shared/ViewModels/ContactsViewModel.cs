@@ -14,9 +14,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private readonly Func<ConversationViewModel> _contactFactory;
         private bool _isConversationsListVisible;
         private bool _isSeparatorVisible;
+        private bool _isSettingsVisible;
         private ConversationViewModel _selectedConversation;
         private SettingsViewModel _settingsViewModel;
-        private bool _isSettingsVisible;
         private DelegateCommand _showSettings;
 
         public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
@@ -29,7 +29,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             signalingUpdateService.OnUpdate += OnSignalingUpdate;
             LayoutService.Instance.LayoutChanged += LayoutChanged;
             ShowSettings = new DelegateCommand(ShowSettingsExecute);
-        }        
+        }
 
         public ObservableCollection<ConversationViewModel> Conversations { get; } =
             new ObservableCollection<ConversationViewModel>();
@@ -44,6 +44,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _isSeparatorVisible; }
             set { SetProperty(ref _isSeparatorVisible, value); }
+        }
+
+        public bool IsSettingsVisible
+        {
+            get { return _isSettingsVisible; }
+            set { SetProperty(ref _isSettingsVisible, value); }
         }
 
         public ConversationViewModel SelectedConversation
@@ -64,25 +70,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _showSettings, value); }
         }
 
-        public bool IsSettingsVisible
-        {
-            get { return _isSettingsVisible; }
-            set { SetProperty(ref _isSettingsVisible, value); }
-        }
-
-        private void ShowSettingsExecute()
-        {
-            IsSettingsVisible = true;
-        }
-
         private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
             SelectedConversation = null;
-        }
-
-        private void Settings_OnClose()
-        {
-            IsSettingsVisible = false;
         }
 
         private void LayoutChanged(LayoutType layout)
@@ -109,6 +99,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
 
             UpdateSelection();
+        }
+
+        private void Settings_OnClose()
+        {
+            IsSettingsVisible = false;
+        }
+
+        private void ShowSettingsExecute()
+        {
+            IsSettingsVisible = true;
         }
 
         private void UpdateSelection()

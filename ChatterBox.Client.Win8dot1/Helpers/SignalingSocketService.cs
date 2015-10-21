@@ -20,7 +20,7 @@ namespace ChatterBox.Client.Win8dot1.Helpers
 
         public SignalingSocketService(ISignalingUpdateService signalingUpdateService)
         {
-            _signalingClient = new SignalingClient(this);
+            _signalingClient = new SignalingClient(this, null);
             _signalingUpdateService = signalingUpdateService;
         }
 
