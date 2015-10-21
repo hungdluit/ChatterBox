@@ -38,7 +38,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\NoActionSignaledDataUpdateNotifier.cs" />
     <Compile Include="Services\SignalingUpdateService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,17 +52,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChatterBox.Client.Notifications\ChatterBox.Client.Notifications.csproj">
-      <Project>{d33cff24-8fae-4637-b4e5-4c7edb972a64}</Project>
-      <Name>ChatterBox.Client.Notifications</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ChatterBox.Client.Settings\ChatterBox.Client.Settings.csproj">
-      <Project>{eb86884c-1e6e-4e5e-ade9-1a4ebf44f5ed}</Project>
-      <Name>ChatterBox.Client.Settings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ChatterBox.Client.Signaling\ChatterBox.Client.Signaling.csproj">
-      <Project>{a286773b-ac8e-4990-abdf-4017cc9ff29d}</Project>
-      <Name>ChatterBox.Client.Signaling</Name>
+    <ProjectReference Include="..\ChatterBox.Client.Common\ChatterBox.Client.Common.csproj">
+      <Project>{9e96f63a-7e37-4f90-b9a2-93da25e663a1}</Project>
+      <Name>ChatterBox.Client.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>

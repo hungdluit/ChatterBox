@@ -1,13 +1,10 @@
 ﻿using ChatterBox.Client.Presentation.Shared.Services;
-using ChatterBox.Client.Signaling;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using ChatterBox.Client.Common.Signaling;
 
 namespace ChatterBox.Client.Win8dot1.Helpers
 {
@@ -56,12 +53,16 @@ namespace ChatterBox.Client.Win8dot1.Helpers
                     var request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
                     dataReader.DetachStream();
                     _signalingClient.HandleRequest(request);
-                    _signalingUpdateService.RaiseUpdate();
                 }
             }
             catch (Exception ex)
             {
             }
+        }
+
+        public bool Connect()
+        {
+            throw new NotImplementedException();
         }
 
         public StreamSocket GetSocket()

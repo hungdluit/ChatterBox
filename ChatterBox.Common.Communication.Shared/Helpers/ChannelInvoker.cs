@@ -14,7 +14,7 @@ namespace ChatterBox.Common.Communication.Helpers
 
         private object Handler { get; }
 
-        public bool ProcessRequest(string request)
+        public InvocationResult ProcessRequest(string request)
         {
             try
             {
@@ -34,12 +34,19 @@ namespace ChatterBox.Common.Communication.Helpers
                     argument = JsonConvert.Deserialize(serializedParameter, parameters.Single().ParameterType);
                 }
 
-                method.Invoke(Handler, argument == null ? null : new[] {argument});
-                return true;
+                var result = method.Invoke(Handler, argument == null ? null : new[] {argument});
+                return new InvocationResult
+                {
+                    Invoked = true,
+                    Result = result
+                };
             }
             catch
             {
-                return false;
+                return new InvocationResult
+                {
+                    Invoked = false
+                };
             }
         }
     }

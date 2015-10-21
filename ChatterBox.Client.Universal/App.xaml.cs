@@ -6,14 +6,11 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ChatterBox.Client.Common.Communication.Signaling;
+using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
-using ChatterBox.Client.Settings;
-using ChatterBox.Client.Signaling;
-using ChatterBox.Client.Signaling.Shared;
-using ChatterBox.Client.Universal.Common;
-using ChatterBox.Client.Universal.Helpers;
 using ChatterBox.Client.Universal.Services;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
@@ -58,8 +55,8 @@ namespace ChatterBox.Client.Universal
                 registerAgain = true;
             }
 
-            var helper = new SignalingTaskHelper();
-            var signalingTask = await helper.GetSignalingTaskRegistration(registerAgain);
+            var helper = new TaskHelper();
+            var signalingTask = await helper.RegisterSignalingTask(registerAgain);
             if (signalingTask == null)
             {
                 var message = new MessageDialog("The signaling task is required.");
@@ -69,12 +66,12 @@ namespace ChatterBox.Client.Universal
 
             Container
                 .RegisterType<ForegroundAppServiceClient>(new ContainerControlledLifetimeManager())
-                .RegisterType<ISignaledDataUpdateNotifier, NoActionSignaledDataUpdateNotifier>()
-                .RegisterType<ISignalingSocketService, SignalingSocketService>(
-                    new ContainerControlledLifetimeManager(), new InjectionConstructor(signalingTask.TaskId))
-                .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager());
+                .RegisterInstance<ISignalingUpdateService>(Container.Resolve<ForegroundAppServiceClient>(),
+                    new ContainerControlledLifetimeManager())
+                .RegisterInstance<ISignalingCommunicationChannel>(Container.Resolve<ForegroundAppServiceClient>(),
+                    new ContainerControlledLifetimeManager());
 
-
+          
             var client = Container.Resolve<ForegroundAppServiceClient>();
             await client.Connect();
 

@@ -102,7 +102,7 @@ namespace ChatterBox.Server
                 var reader = new StreamReader(TcpClient.GetStream());
                 var clientChannelProxy = new ChannelInvoker(this);
                 var message = await reader.ReadLineAsync();
-                if (!clientChannelProxy.ProcessRequest(message))
+                if (!clientChannelProxy.ProcessRequest(message).Invoked)
                 {
                     OnInvalidRequest(InvalidMessage.For(message));
                 }

@@ -215,7 +215,7 @@ namespace ChatterBox.Server
                         var message = await reader.ReadLineAsync();
                         if (message == null) break;
                         Logger.Trace($">> {message}");
-                        if (!ClientReadProxy.ProcessRequest(message))
+                        if (!ClientReadProxy.ProcessRequest(message).Invoked)
                         {
                             ServerReceivedInvalidMessage(InvalidMessage.For(message));
                         }

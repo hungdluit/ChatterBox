@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IServerChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ChannelInvoker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ChannelWriteHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\InvocationResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Interfaces\IMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Interfaces\IMessageConfirmation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\Interfaces\IMessageReply.cs" />

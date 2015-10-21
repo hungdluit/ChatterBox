@@ -1,6 +1,6 @@
 ﻿using System;
+using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.MVVM;
-using ChatterBox.Client.Settings;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {

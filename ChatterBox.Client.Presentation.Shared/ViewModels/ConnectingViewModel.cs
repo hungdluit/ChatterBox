@@ -1,20 +1,21 @@
 ﻿using System;
+using ChatterBox.Client.Common.Communication.Signaling;
+using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
-using ChatterBox.Client.Signaling;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class ConnectingViewModel : BindableBase
     {
-        private readonly SignalingClient _signalingClient;
+        private readonly ISignalingCommunicationChannel _signalingCommunicationChannel;
         private bool _connectionFailed;
         private bool _isConnecting;
         private string _status;
 
-        public ConnectingViewModel(ISignalingUpdateService signalingUpdateService, SignalingClient signalingClient)
+        public ConnectingViewModel(ISignalingUpdateService signalingUpdateService, ISignalingCommunicationChannel signalingCommunicationChannel)
         {
-            _signalingClient = signalingClient;
+            _signalingCommunicationChannel = signalingCommunicationChannel;
             signalingUpdateService.OnUpdate += SignalingUpdateService_OnUpdate;
             ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
         }
@@ -57,17 +58,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             ConnectionFailed = false;
             IsConnecting = true;
-
-            var isConnected = _signalingClient.CheckConnection();
-            if (isConnected)
+            var connectionStatus = _signalingCommunicationChannel.GetConnectionStatus();
+            if (connectionStatus.IsConnected)
             {
                 ConnectionFailed = false;
                 IsConnecting = false;
                 ConnectionEstablished?.Invoke();
                 return;
             }
-            var connected = _signalingClient.Connect();
-            if (!connected)
+            connectionStatus = _signalingCommunicationChannel.ConnectToSignalingServer(null);
+            if (!connectionStatus.IsConnected)
             {
                 Status = "Failed to connect to the server. Check you settings and try again.";
                 ConnectionFailed = true;
@@ -76,8 +76,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
 
             Status = "Registering with the server...";
-            _signalingClient.RegisterUsingSettings();
-            if (connected)
+            _signalingCommunicationChannel.Register();
+            if (connectionStatus.IsConnected)
             {
                 ConnectionEstablished?.Invoke();
             }

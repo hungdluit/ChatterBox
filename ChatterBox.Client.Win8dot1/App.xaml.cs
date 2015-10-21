@@ -4,15 +4,14 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using ChatterBox.Client.Common.Settings;
+using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
-using ChatterBox.Client.Signaling;
+using ChatterBox.Client.Win8dot1.Helpers;
 using ChatterBox.Client.Win8dot1.Services;
 using Microsoft.Practices.Unity;
-using ChatterBox.Client.Win8dot1.Helpers;
-using ChatterBox.Client.Settings;
-using ChatterBox.Client.Signaling.Shared;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -56,9 +55,7 @@ namespace ChatterBox.Client.Win8dot1
                 registerAgain = true;
             }
 
-            Container.RegisterType<ISignalingSocketService, SignalingSocketService>(new ContainerControlledLifetimeManager())
-                     .RegisterType<ISignalingUpdateService, SignalingUpdateService>(new ContainerControlledLifetimeManager())
-                     .RegisterType<ISignaledDataUpdateNotifier, NoActionSignaledDataUpdateNotifier>();
+            
 
             var rootFrame = Window.Current.Content as Frame;
 
