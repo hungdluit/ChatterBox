@@ -194,8 +194,6 @@ namespace ChatterBox.Client.Common.Signaling
             }
         }
 
-        
-
         private async Task SendToServer(object arg = null, [CallerMemberName] string method = null)
         {
             var message = ClientChannelWriteHelper.FormatOutput(arg, method);

@@ -16,8 +16,8 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             {
                 try
                 {
-                    var details = (SocketActivityTriggerDetails)taskInstance.TriggerDetails;
-                   
+                    var details = (SocketActivityTriggerDetails) taskInstance.TriggerDetails;
+
                     switch (details.Reason)
                     {
                         case SocketActivityTriggerReason.SocketActivity:

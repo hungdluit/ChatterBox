@@ -1,14 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Windows.ApplicationModel.AppService;
-using Windows.Foundation.Collections;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
+using ChatterBox.Client.Universal.Background.Helpers;
 using ChatterBox.Common.Communication.Contracts;
-using ChatterBox.Common.Communication.Helpers;
-using ChatterBox.Common.Communication.Serialization;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -56,40 +52,24 @@ namespace ChatterBox.Client.Universal.Background
         public SignalingClient SignalingClient { get; }
         public SignalingSocketService SignalingSocketService { get; } = new SignalingSocketService();
 
-        private async void HandleForegroundRequest(
+        private void HandleForegroundRequest(
             AppServiceConnection sender,
             AppServiceRequestReceivedEventArgs args)
         {
             using (new AppServiceDeferralWrapper(args.GetDeferral()))
             {
-                var message = args.Request.Message.Single().Value.ToString();
                 var channel = args.Request.Message.Single().Key;
+                var message = args.Request.Message.Single().Value.ToString();
 
                 if (channel == nameof(ISignalingSocketChannel))
                 {
-                    await InvokeOn(args.Request, SignalingSocketService, message);
+                    AppServiceChannelHelper.HandleRequest(args.Request, SignalingSocketService, message);
                 }
                 if (channel == nameof(IClientChannel))
                 {
-                    await InvokeOn(args.Request, SignalingClient, message);
+                    AppServiceChannelHelper.HandleRequest(args.Request, SignalingClient, message);
                 }
             }
-        }
-
-        private async Task InvokeOn(AppServiceRequest request, object handler, string message)
-        {
-            var invoker = new ChannelInvoker(handler);
-            var result = invoker.ProcessRequest(message);
-            await SendResponse(request, result);
-        }
-
-        private async Task SendResponse(AppServiceRequest request, InvocationResult result)
-        {
-            if (result.Result == null) return;
-            await request.SendResponseAsync(new ValueSet
-            {
-                {Guid.NewGuid().ToString(), JsonConvert.Serialize(result.Result)}
-            });
         }
     }
 }

@@ -108,6 +108,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\AppServiceChannelHelper.cs" />
     <Compile Include="ForegroundClient.cs" />
     <Compile Include="Hub.cs" />
     <Compile Include="DeferralWrappers\AppServiceDeferralWrapper.cs" />

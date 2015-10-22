@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
-using Windows.Foundation.Collections;
 using Windows.UI.Core;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Signaling;
@@ -12,12 +11,11 @@ using ChatterBox.Client.Common.Communication.Signaling.Dto;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
+using ChatterBox.Client.Universal.Background.Helpers;
 using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Common.Communication.Contracts;
-using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
-using ChatterBox.Common.Communication.Serialization;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Universal.Services
@@ -38,27 +36,27 @@ namespace ChatterBox.Client.Universal.Services
 
         public void ClientConfirmation(Confirmation confirmation)
         {
-            InvokeOnHub<IClientChannel>(confirmation);
+            InvokeHubChannel<IClientChannel>(confirmation);
         }
 
         public void ClientHeartBeat()
         {
-            InvokeOnHub<IClientChannel>();
+            InvokeHubChannel<IClientChannel>();
         }
 
         public void GetPeerList(Message message)
         {
-            InvokeOnHub<IClientChannel>(message);
+            InvokeHubChannel<IClientChannel>(message);
         }
 
         public void Register(Registration message)
         {
-            InvokeOnHub<IClientChannel>(message);
+            InvokeHubChannel<IClientChannel>(message);
         }
 
         public void Relay(RelayMessage message)
         {
-            InvokeOnHub<IClientChannel>(message);
+            InvokeHubChannel<IClientChannel>(message);
         }
 
         public void OnSignaledDataUpdated()
@@ -68,7 +66,7 @@ namespace ChatterBox.Client.Universal.Services
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
         {
-            return InvokeOnHub<ISignalingSocketChannel, ConnectionStatus>(new ConnectionOwner
+            return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>(new ConnectionOwner
             {
                 OwnerId = _taskHelper.GetSignalingTask().TaskId.ToString()
             });
@@ -76,7 +74,7 @@ namespace ChatterBox.Client.Universal.Services
 
         public ConnectionStatus GetConnectionStatus()
         {
-            return InvokeOnHub<ISignalingSocketChannel, ConnectionStatus>();
+            return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>();
         }
 
         public event Action OnUpdate;
@@ -94,44 +92,23 @@ namespace ChatterBox.Client.Universal.Services
             return status == AppServiceConnectionStatus.Success;
         }
 
-        private ValueSet InvokeOnHub<TContract>(object arg = null, [CallerMemberName] string method = null)
+        private void InvokeHubChannel<TContract>(object arg = null, [CallerMemberName] string method = null)
         {
-            var channelWriteHelper = new ChannelWriteHelper(typeof (TContract));
-            var message = channelWriteHelper.FormatOutput(arg, method);
-            var sendMessageTask =
-                _appConnection.SendMessageAsync(new ValueSet {{typeof (TContract).Name, message}}).AsTask();
-            sendMessageTask.Wait();
-            return sendMessageTask.Result.Status != AppServiceResponseStatus.Success
-                ? null
-                : sendMessageTask.Result.Message;
+            _appConnection.InvokeChannel(typeof (TContract), arg, method);
         }
 
-        private TResult InvokeOnHub<TContract, TResult>(object arg = null, [CallerMemberName] string method = null)
+        private TResult InvokeHubChannel<TContract, TResult>(object arg = null, [CallerMemberName] string method = null)
             where TResult : class
         {
-            var resultMessage = InvokeOnHub<TContract>(arg, method);
-            if (resultMessage == null) return null;
-            if (!resultMessage.Values.Any()) return null;
-            return (TResult) JsonConvert.Deserialize(resultMessage.Values.Single().ToString(), typeof (TResult));
+            return (TResult) _appConnection.InvokeChannel(typeof (TContract), arg, method, typeof (TResult));
         }
 
-        private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             using (new AppServiceDeferralWrapper(args.GetDeferral()))
             {
-                var requestValues = args.Request.Message.ToList();
-                foreach (var valuePair in requestValues)
-                {
-                    var invoker = new ChannelInvoker(this);
-                    var result = invoker.ProcessRequest(valuePair.Value.ToString());
-                    if (result.Result != null)
-                    {
-                        await args.Request.SendResponseAsync(new ValueSet
-                        {
-                            {Guid.NewGuid().ToString(), JsonConvert.Serialize(result.Result)}
-                        });
-                    }
-                }
+                var message = args.Request.Message.Single().Value.ToString();
+                AppServiceChannelHelper.HandleRequest(args.Request, this, message);
             }
         }
 
