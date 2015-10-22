@@ -8,6 +8,8 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Common.Avatars;
 using ChatterBox.Client.Common.Communication.Foreground;
+using ChatterBox.Client.Common.Communication.Voip;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Common.Notifications;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Common.Communication.Contracts;
@@ -24,11 +26,14 @@ namespace ChatterBox.Client.Common.Signaling
     {
         private readonly IForegroundCommunicationChannel _foregroundCommunicationChannel;
         private readonly ISignalingSocketService _signalingSocketService;
+        private readonly IVoipChannel _voipChannel;
 
         public SignalingClient(ISignalingSocketService signalingSocketService,
-            IForegroundCommunicationChannel foregroundCommunicationChannel)
+            IForegroundCommunicationChannel foregroundCommunicationChannel,
+            IVoipChannel voipChannel)
         {
             _signalingSocketService = signalingSocketService;
+            _voipChannel = voipChannel;
             _foregroundCommunicationChannel = foregroundCommunicationChannel;
             ServerChannelInvoker = new ChannelInvoker(this);
         }
@@ -125,6 +130,11 @@ namespace ChatterBox.Client.Common.Signaling
                     AvatarLink.For(message.FromAvatar), message.Payload);
             }
             _foregroundCommunicationChannel?.OnSignaledDataUpdated();
+            if (message.Tag == RelayMessageTags.SdpAnswer)
+            {
+                _voipChannel.HandleSdpAnswer(new SdpAnswer {Answer = message.Payload});
+            }
+
         }
 
         private IAsyncOperation<bool> BufferFileExists()

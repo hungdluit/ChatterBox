@@ -7,6 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ChatterBox.Client.Common.Communication.Signaling;
+using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
@@ -72,6 +73,8 @@ namespace ChatterBox.Client.Universal
                 .RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager())
                 .RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(),
+                    new ContainerControlledLifetimeManager())
+                .RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager());
 
 

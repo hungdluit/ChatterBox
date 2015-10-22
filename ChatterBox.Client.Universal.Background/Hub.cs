@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Windows.ApplicationModel.AppService;
 using ChatterBox.Client.Common.Communication.Signaling;
+using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
 using ChatterBox.Client.Universal.Background.Helpers;
@@ -16,7 +17,8 @@ namespace ChatterBox.Client.Universal.Background
 
         private Hub()
         {
-            SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient);
+            //TODO: Put in handler for the voip channel instead of null
+            SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, null);
         }
 
         public ForegroundClient ForegroundClient { get; } = new ForegroundClient();
@@ -69,7 +71,16 @@ namespace ChatterBox.Client.Universal.Background
                 {
                     AppServiceChannelHelper.HandleRequest(args.Request, SignalingClient, message);
                 }
+
+                if (channel == nameof(IVoipChannel))
+                {
+                    //Todo: Change the handler from null to actual handler
+                    AppServiceChannelHelper.HandleRequest(args.Request, null, message);
+                }
             }
         }
     }
+
+
+
 }

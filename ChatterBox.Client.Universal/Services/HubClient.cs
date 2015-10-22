@@ -6,8 +6,11 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.UI.Core;
 using ChatterBox.Client.Common.Communication.Foreground;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Signaling.Dto;
+using ChatterBox.Client.Common.Communication.Voip;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
@@ -24,6 +27,7 @@ namespace ChatterBox.Client.Universal.Services
         ISignalingUpdateService,
         ISignalingSocketChannel,
         IClientChannel,
+        IVoipChannel,
         IForegroundCommunicationChannel
     {
         private readonly TaskHelper _taskHelper;
@@ -62,6 +66,11 @@ namespace ChatterBox.Client.Universal.Services
         public void OnSignaledDataUpdated()
         {
             RunOnUiThread(() => OnUpdate?.Invoke());
+        }
+
+        public void OnVoipState(VoipState state)
+        {
+            
         }
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
@@ -114,6 +123,11 @@ namespace ChatterBox.Client.Universal.Services
 
         private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
+        }
+
+        public void HandleSdpAnswer(SdpAnswer sdpAnswer)
+        {
+            InvokeHubChannel<IVoipChannel>(sdpAnswer);
         }
     }
 }

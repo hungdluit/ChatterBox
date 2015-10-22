@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using ChatterBox.Client.Common.Communication.Foreground;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Serialization;
 
@@ -14,6 +15,11 @@ namespace ChatterBox.Client.Universal.Background
         public void OnSignaledDataUpdated()
         {
             SendToForeground();
+        }
+
+        public void OnVoipState(VoipState state)
+        {
+            SendToForeground(state);
         }
 
         private ValueSet SendToForeground(object arg = null, [CallerMemberName] string method = null)

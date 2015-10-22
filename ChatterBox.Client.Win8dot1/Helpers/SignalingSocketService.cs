@@ -18,7 +18,7 @@ namespace ChatterBox.Client.Win8dot1.Helpers
 
         public SignalingSocketService(ISignalingUpdateService signalingUpdateService)
         {
-            _signalingClient = new SignalingClient(this, null);
+            _signalingClient = new SignalingClient(this, null, null);
             _signalingUpdateService = signalingUpdateService;
         }
 
@@ -31,10 +31,6 @@ namespace ChatterBox.Client.Win8dot1.Helpers
         {
         }
 
-        public bool Connect()
-        {
-            throw new NotImplementedException();
-        }
 
         public bool Connect(string hostname, int port)
         {
