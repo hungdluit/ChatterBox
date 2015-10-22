@@ -22,9 +22,8 @@ namespace ChatterBox.Client.Common.Signaling
 {
     public sealed class SignalingClient : IClientChannel, IServerChannel
     {
-        
-        private readonly ISignalingSocketService _signalingSocketService;
         private readonly IForegroundCommunicationChannel _foregroundCommunicationChannel;
+        private readonly ISignalingSocketService _signalingSocketService;
 
         public SignalingClient(ISignalingSocketService signalingSocketService,
             IForegroundCommunicationChannel foregroundCommunicationChannel)
@@ -148,14 +147,6 @@ namespace ChatterBox.Client.Common.Signaling
                 _signalingSocketService.HandoffSocket(socket);
             }
             return isConnected;
-        }
-
-        public void Reset()
-        {
-            SignaledPeerData.Reset();
-            SignalingStatus.Reset();
-            SignaledRelayMessages.Reset();
-            
         }
 
         private IAsyncOperation<StorageFile> GetBufferFile()

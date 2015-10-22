@@ -1,24 +1,39 @@
-﻿using ChatterBox.Client.Presentation.Shared.Services;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Common.Signaling;
+using ChatterBox.Client.Presentation.Shared.Services;
+using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace ChatterBox.Client.Win8dot1.Helpers
 {
     public sealed class SignalingSocketService : ISignalingSocketService
     {
-        private bool _isConnected;
-        private StreamSocket _streamSocket;
         private readonly SignalingClient _signalingClient;
         private readonly ISignalingUpdateService _signalingUpdateService;
+        private bool _isConnected;
+        private StreamSocket _streamSocket;
 
         public SignalingSocketService(ISignalingUpdateService signalingUpdateService)
         {
             _signalingClient = new SignalingClient(this, null);
             _signalingUpdateService = signalingUpdateService;
+        }
+
+        public StreamSocket GetSocket()
+        {
+            return _streamSocket;
+        }
+
+        public void HandoffSocket(StreamSocket socket)
+        {
+        }
+
+        public bool Connect()
+        {
+            throw new NotImplementedException();
         }
 
         public bool Connect(string hostname, int port)
@@ -40,6 +55,8 @@ namespace ChatterBox.Client.Win8dot1.Helpers
             }
         }
 
+        public event Action Connected;
+
         private async void Read()
         {
             try
@@ -47,8 +64,9 @@ namespace ChatterBox.Client.Win8dot1.Helpers
                 while (_isConnected)
                 {
                     const uint length = 65536;
-                    var readBuf = new Windows.Storage.Streams.Buffer(length);
-                    var localBuffer = await _streamSocket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                    var readBuf = new Buffer(length);
+                    var localBuffer =
+                        await _streamSocket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
                     var dataReader = DataReader.FromBuffer(localBuffer);
                     var request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
                     dataReader.DetachStream();
@@ -59,22 +77,5 @@ namespace ChatterBox.Client.Win8dot1.Helpers
             {
             }
         }
-
-        public bool Connect()
-        {
-            throw new NotImplementedException();
-        }
-
-        public StreamSocket GetSocket()
-        {
-            return _streamSocket;
-        }
-
-        public void HandoffSocket(StreamSocket socket)
-        {
-
-        }
-
-        public event Action Connected;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Windows.UI.Core;
 using ChatterBox.Client.Common.Communication.Signaling;
-using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 
@@ -8,18 +7,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public sealed class MainViewModel : DispatcherBindableBase
     {
-        private readonly ISignalingCommunicationChannel _signalingCommunicationChannel;
+        private readonly ISignalingSocketChannel _signalingSocketChannel;
         private bool _isActive;
 
         public MainViewModel(
-            ISignalingCommunicationChannel signalingCommunicationChannel,
+            ISignalingSocketChannel signalingSocketChannel,
             WelcomeViewModel welcomeViewModel,
             ConnectingViewModel connectingViewModel,
             ContactsViewModel contactsViewModel,
             SettingsViewModel settingsViewModel,
             CoreDispatcher uiDispatcher) : base(uiDispatcher)
         {
-            _signalingCommunicationChannel = signalingCommunicationChannel;
+            _signalingSocketChannel = signalingSocketChannel;
             WelcomeViewModel = welcomeViewModel;
             ConnectingViewModel = connectingViewModel;
             ContactsViewModel = contactsViewModel;

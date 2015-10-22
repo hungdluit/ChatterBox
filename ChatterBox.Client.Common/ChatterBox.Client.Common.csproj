@@ -55,7 +55,7 @@
     <Compile Include="Communication\Foreground\IForegroundCommunicationChannel.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionOwner.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionStatus.cs" />
-    <Compile Include="Communication\Signaling\ISignalingCommunicationChannel.cs" />
+    <Compile Include="Communication\Signaling\ISignalingSocketChannel.cs" />
     <Compile Include="Notifications\ToastNotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\RegistrationSettings.cs" />

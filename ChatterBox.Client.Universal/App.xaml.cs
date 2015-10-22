@@ -12,6 +12,7 @@ using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
 using ChatterBox.Client.Universal.Services;
+using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
 
@@ -65,14 +66,16 @@ namespace ChatterBox.Client.Universal
             }
 
             Container
-                .RegisterType<ForegroundAppServiceClient>(new ContainerControlledLifetimeManager())
-                .RegisterInstance<ISignalingUpdateService>(Container.Resolve<ForegroundAppServiceClient>(),
+                .RegisterType<HubClient>(new ContainerControlledLifetimeManager())
+                .RegisterInstance<ISignalingUpdateService>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager())
-                .RegisterInstance<ISignalingCommunicationChannel>(Container.Resolve<ForegroundAppServiceClient>(),
+                .RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),
+                    new ContainerControlledLifetimeManager())
+                .RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager());
 
-          
-            var client = Container.Resolve<ForegroundAppServiceClient>();
+
+            var client = Container.Resolve<HubClient>();
             await client.Connect();
 
             var rootFrame = Window.Current.Content as Frame;

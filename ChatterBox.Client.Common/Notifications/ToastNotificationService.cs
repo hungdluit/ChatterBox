@@ -30,7 +30,8 @@ namespace ChatterBox.Client.Common.Notifications
 
         private static void ShowNotification(XmlDocument toastXml)
         {
-            ToastNotificationManager.CreateToastNotifier().Show(new ToastNotification(toastXml));
+            ToastNotificationManager.CreateToastNotifier("ChatterBoxClientUniversalAppId")
+                .Show(new ToastNotification(toastXml));
         }
 
         public static void ShowPresenceNotification(string name, string imageUri, bool isOnline)

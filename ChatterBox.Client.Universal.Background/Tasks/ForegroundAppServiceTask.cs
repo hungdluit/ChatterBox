@@ -12,7 +12,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             var triggerDetail = (AppServiceTriggerDetails) taskInstance.TriggerDetails;
             _deferral = taskInstance.GetDeferral();
             taskInstance.Canceled += (s, e) => _deferral?.Complete();
-            AppServiceConnectionHub.Instance.ForegroundConnection = triggerDetail.AppServiceConnection;
+            Hub.Instance.ForegroundConnection = triggerDetail.AppServiceConnection;
         }
     }
 }

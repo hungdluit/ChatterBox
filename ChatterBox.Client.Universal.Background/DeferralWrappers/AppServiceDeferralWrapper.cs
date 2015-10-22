@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.ApplicationModel.AppService;
 
-namespace ChatterBox.Client.Universal.Common.DeferralWrappers
+namespace ChatterBox.Client.Universal.Background.DeferralWrappers
 {
     public sealed class AppServiceDeferralWrapper : IDisposable
     {

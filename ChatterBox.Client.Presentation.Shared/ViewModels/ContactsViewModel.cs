@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Common.Avatars;
-using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;

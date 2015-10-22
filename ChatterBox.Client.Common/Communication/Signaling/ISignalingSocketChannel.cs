@@ -2,10 +2,9 @@
 
 namespace ChatterBox.Client.Common.Communication.Signaling
 {
-    public interface ISignalingCommunicationChannel
+    public interface ISignalingSocketChannel
     {
         ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner);
         ConnectionStatus GetConnectionStatus();
-        void Register();
     }
 }

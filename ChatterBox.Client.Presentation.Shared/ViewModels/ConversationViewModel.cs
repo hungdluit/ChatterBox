@@ -5,26 +5,27 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Common.Avatars;
 using ChatterBox.Client.Common.Settings;
-using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
+using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class ConversationViewModel : BindableBase
     {
-        private readonly SignalingClient _signalingClient;
+        private readonly IClientChannel _clientChannel;
         private string _instantMessage;
         private bool _isOnline;
         private string _name;
         private ImageSource _profileSource;
         private string _userId;
 
-        public ConversationViewModel(SignalingClient signalingClient, ISignalingUpdateService signalingUpdateService)
+        public ConversationViewModel(IClientChannel clientChannel,
+            ISignalingUpdateService signalingUpdateService)
         {
-            _signalingClient = signalingClient;
+            _clientChannel = clientChannel;
             signalingUpdateService.OnUpdate += SignalingUpdateService_OnUpdate;
             SendInstantMessageCommand = new DelegateCommand(OnSendInstantMessageCommandExecute,
                 OnSendInstantMessageCommandCanExecute);
@@ -99,7 +100,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 Tag = RelayMessageTags.InstantMessage
             };
             InstantMessage = null;
-            _signalingClient.Relay(message);
+            _clientChannel.Relay(message);
             InstantMessages.Add(new InstantMessageViewModel
             {
                 Message = message.Payload,

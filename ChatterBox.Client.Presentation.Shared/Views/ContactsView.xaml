@@ -64,7 +64,7 @@
             <TextBlock Text="Chatter members" Margin="12,5" HorizontalAlignment="Left" VerticalAlignment="Center"
                        Visibility="{Binding IsConversationsListVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Button HorizontalAlignment="Right" FontFamily="Segoe UI Symbol" Content="&#xE115;"
-                    Margin="5" Command="{Binding ShowSettings}"/>
+                    Margin="5" Command="{Binding ShowSettings}" />
             <ListBox Grid.Row="1" BorderThickness="0"
                      Margin="12,5"
                      ItemsSource="{Binding Conversations}"

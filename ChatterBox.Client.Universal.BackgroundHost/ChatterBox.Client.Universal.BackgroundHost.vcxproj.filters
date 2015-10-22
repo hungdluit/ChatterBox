@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
-      <UniqueIdentifier>a9360f67-d26a-487b-88e9-e50ea11f1434</UniqueIdentifier>
+      <UniqueIdentifier>71603587-cef7-4950-8205-c15fe324587f</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
@@ -10,6 +10,6 @@
     <AppxManifest Include="..\ChatterBox.Client.Universal\package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OutOfProcessHost.cpp" />
+    <ClCompile Include="BackgroundHost.cpp" />
   </ItemGroup>
 </Project>

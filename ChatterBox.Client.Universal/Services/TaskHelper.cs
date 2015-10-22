@@ -11,10 +11,8 @@ namespace ChatterBox.Client.Universal.Services
         public IBackgroundTaskRegistration GetSignalingTask()
         {
             return BackgroundTaskRegistration.AllTasks
-                    .Select(s => s.Value)
-                    .FirstOrDefault(s => s.Name == nameof(SignalingTask));
-
-
+                .Select(s => s.Value)
+                .FirstOrDefault(s => s.Name == nameof(SignalingTask));
         }
 
         public async Task<IBackgroundTaskRegistration> RegisterSignalingTask(bool removeIfRegistered)
@@ -35,7 +33,7 @@ namespace ChatterBox.Client.Universal.Services
             var signalingTaskBuilder = new BackgroundTaskBuilder
             {
                 Name = nameof(SignalingTask),
-                TaskEntryPoint = typeof(SignalingTask).FullName
+                TaskEntryPoint = typeof (SignalingTask).FullName
             };
             var trigger = new SocketActivityTrigger();
             signalingTaskBuilder.SetTrigger(trigger);

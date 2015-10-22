@@ -9,8 +9,6 @@ using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
-using ChatterBox.Client.Win8dot1.Helpers;
-using ChatterBox.Client.Win8dot1.Services;
 using Microsoft.Practices.Unity;
 
 namespace ChatterBox.Client.Win8dot1
@@ -55,7 +53,6 @@ namespace ChatterBox.Client.Win8dot1
                 registerAgain = true;
             }
 
-            
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -76,7 +73,7 @@ namespace ChatterBox.Client.Win8dot1
                 // indicating an alternate launch (e.g.: via toast or secondary tile), 
                 // navigate to the appropriate page, configuring the new page by passing required 
                 // information as a navigation parameter
-                if (!rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>()))
+                if (!rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>()))
                 {
                     throw new Exception("Failed to create initial page");
                 }
