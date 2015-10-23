@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>66496392-9237-4c6d-a9d2-f64f7cb46715</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>ChatterBox.Client.Voip</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)States\Active.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\Base.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\EstablishIncoming.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\EstablishOutgoing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\HangingUp.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\Idle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\LocalRinging.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\RemoteRinging.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VoipChannel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VoipContext.cs" />
+  </ItemGroup>
+</Project>

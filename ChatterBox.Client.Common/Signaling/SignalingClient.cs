@@ -130,9 +130,35 @@ namespace ChatterBox.Client.Common.Signaling
                     AvatarLink.For(message.FromAvatar), message.Payload);
             }
             _foregroundCommunicationChannel?.OnSignaledDataUpdated();
-            if (message.Tag == RelayMessageTags.SdpAnswer)
+
+            // Handle Voip tags
+            if (message.Tag == RelayMessageTags.VoipCall)
             {
-                _voipChannel.HandleSdpAnswer(new SdpAnswer {Answer = message.Payload});
+                _voipChannel.OnIncomingCall(message);
+            }
+            else if (message.Tag == RelayMessageTags.VoipAnswer)
+            {
+                _voipChannel.OnOutgoingCallAccepted(message);
+            }
+            else if (message.Tag == RelayMessageTags.VoipReject)
+            {
+                _voipChannel.OnOutgoingCallRejected(message);
+            }
+            else if (message.Tag == RelayMessageTags.SdpOffer)
+            {
+                _voipChannel.OnSdpOffer(message);
+            }
+            else if (message.Tag == RelayMessageTags.SdpAnswer)
+            {
+                _voipChannel.OnSdpAnswer(message);
+            }
+            else if (message.Tag == RelayMessageTags.IceCandidate)
+            {
+                _voipChannel.OnIceCandidate(message);
+            }
+            else if (message.Tag == RelayMessageTags.VoipHangup)
+            {
+                _voipChannel.OnRemoteHangup(message);
             }
 
         }

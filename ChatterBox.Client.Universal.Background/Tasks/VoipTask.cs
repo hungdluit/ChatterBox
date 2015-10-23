@@ -11,15 +11,17 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
+            if (Hub.Instance.VoipTaskInstance != null)
+                return;
+
             _deferral = taskInstance.GetDeferral();
             taskInstance.Canceled += (s, e) => _deferral.Complete();
+        }
 
-            //Hub.Instance.SignalingClient.Relay(new RelayMessage
-            //{
-            //    FromUserId = RegistrationSettings.UserId,
-            //    ToUserId = "",
-            //    Tag = RelayMessageTags.InstantMessage,
-            //});
+        public void CloseVoipTask()
+        {
+            Hub.Instance.VoipTaskInstance = null;
+            _deferral.Complete();
         }
     }
 }

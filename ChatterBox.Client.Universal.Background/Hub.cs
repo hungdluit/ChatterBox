@@ -6,6 +6,8 @@ using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
 using ChatterBox.Client.Universal.Background.Helpers;
 using ChatterBox.Common.Communication.Contracts;
+using Windows.ApplicationModel.Background;
+using ChatterBox.Client.Universal.Background.Tasks;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -18,7 +20,7 @@ namespace ChatterBox.Client.Universal.Background
         private Hub()
         {
             //TODO: Put in handler for the voip channel instead of null
-            SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, null);
+            SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, VoipChannel);
         }
 
         public ForegroundClient ForegroundClient { get; } = new ForegroundClient();
@@ -53,6 +55,9 @@ namespace ChatterBox.Client.Universal.Background
 
         public SignalingClient SignalingClient { get; }
         public SignalingSocketService SignalingSocketService { get; } = new SignalingSocketService();
+        public IVoipChannel VoipChannel { get; } = new VoipChannel();
+        public ApplicationTrigger WebRtcTaskTrigger { get; set; }
+        public VoipTask VoipTaskInstance { get; set; }
 
         private void HandleForegroundRequest(
             AppServiceConnection sender,
@@ -75,7 +80,7 @@ namespace ChatterBox.Client.Universal.Background
                 if (channel == nameof(IVoipChannel))
                 {
                     //Todo: Change the handler from null to actual handler
-                    AppServiceChannelHelper.HandleRequest(args.Request, null, message);
+                    AppServiceChannelHelper.HandleRequest(args.Request, VoipChannel, message);
                 }
             }
         }

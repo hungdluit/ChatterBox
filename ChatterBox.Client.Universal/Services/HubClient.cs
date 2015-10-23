@@ -125,9 +125,61 @@ namespace ChatterBox.Client.Universal.Services
         {
         }
 
-        public void HandleSdpAnswer(SdpAnswer sdpAnswer)
+        #region IVoipChannel implementation
+        public void Call(OutgoingCallRequest request)
         {
-            InvokeHubChannel<IVoipChannel>(sdpAnswer);
+            InvokeHubChannel<IVoipChannel>(request);
         }
+
+        public void OnOutgoingCallAccepted(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void OnOutgoingCallRejected(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void OnIncomingCall(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void Answer()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void Reject(IncomingCallReject reason)
+        {
+            InvokeHubChannel<IVoipChannel>(reason);
+        }
+
+        public void Hangup()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void OnRemoteHangup(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void OnSdpAnswer(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void OnSdpOffer(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void OnIceCandidate(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+        #endregion
     }
 }

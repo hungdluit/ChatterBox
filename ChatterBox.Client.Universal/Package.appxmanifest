@@ -22,7 +22,7 @@
       </uap:VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.VoipTask">
-          <BackgroundTasks>
+          <BackgroundTasks ServerName="OutOfProcessHost">
             <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>

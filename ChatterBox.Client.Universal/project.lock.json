@@ -1587,6 +1587,14 @@
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
         }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
@@ -3264,6 +3272,17 @@
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
         }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-arm/native/webrtc_winrt_api.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
@@ -4912,6 +4931,17 @@
         "runtime": {
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
+        }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-arm/native/webrtc_winrt_api.dll": {}
         }
       }
     },
@@ -6595,6 +6625,17 @@
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
         }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x64/native/webrtc_winrt_api.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
@@ -8243,6 +8284,17 @@
         "runtime": {
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
+        }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x64/native/webrtc_winrt_api.dll": {}
         }
       }
     },
@@ -9926,6 +9978,17 @@
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
         }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x86/native/webrtc_winrt_api.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
@@ -11574,6 +11637,17 @@
         "runtime": {
           "lib/win8/Microsoft.Practices.Unity.dll": {},
           "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll": {}
+        }
+      },
+      "WebRTC/1.1.71": {
+        "compile": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/webrtc_winrt_api.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x86/native/webrtc_winrt_api.dll": {}
         }
       }
     }
@@ -15019,6 +15093,30 @@
         "Unity.nuspec",
         "UnityConfiguration30.xsd"
       ]
+    },
+    "WebRTC/1.1.71": {
+      "sha512": "yShxLzP/ErTL4CLfHZ2Nl6p+4l+0gMmKgYZFmMpZRAB9Ik9EeLuzG6kaVeRqO9tGG8Q5FNNoS5H3WCbNMt1/8w==",
+      "type": "Package",
+      "files": [
+        "[Content_Types].xml",
+        "_rels/.rels",
+        "build/native/WebRTC.targets",
+        "build/netcore45/WebRTC.targets",
+        "build/netcore45/x64/webrtc_winrt_api.dll",
+        "build/netcore45/x64/webrtc_winrt_api.winmd",
+        "build/netcore45/x86/webrtc_winrt_api.dll",
+        "build/netcore45/x86/webrtc_winrt_api.winmd",
+        "lib/netcore45/webrtc_winrt_api.dll",
+        "lib/netcore45/webrtc_winrt_api.winmd",
+        "lib/portable-wpa81/webrtc_winrt_api.dll",
+        "lib/portable-wpa81/webrtc_winrt_api.winmd",
+        "lib/uap10.0/webrtc_winrt_api.winmd",
+        "package/services/metadata/core-properties/aebb5ddd1f6e464aa051736fa0e45969.psmdcp",
+        "runtimes/win10-arm/native/webrtc_winrt_api.dll",
+        "runtimes/win10-x64/native/webrtc_winrt_api.dll",
+        "runtimes/win10-x86/native/webrtc_winrt_api.dll",
+        "WebRTC.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -15027,7 +15125,8 @@
       "Microsoft.ApplicationInsights.PersistenceChannel >= 1.0.0",
       "Microsoft.ApplicationInsights.WindowsApps >= 1.0.0",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.0.0",
-      "Unity >= 4.0.1"
+      "Unity >= 4.0.1",
+      "WebRTC >= 1.1.71"
     ],
     "UAP,Version=v10.0": []
   }

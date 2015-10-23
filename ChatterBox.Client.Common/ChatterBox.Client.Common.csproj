@@ -57,7 +57,7 @@
     <Compile Include="Communication\Signaling\Dto\ConnectionOwner.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionStatus.cs" />
     <Compile Include="Communication\Signaling\ISignalingSocketChannel.cs" />
-    <Compile Include="Communication\Voip\Dto\SdpAnswer.cs" />
+    <Compile Include="Communication\Voip\Dto\Dtos.cs" />
     <Compile Include="Communication\Voip\IVoipChannel.cs" />
     <Compile Include="Notifications\ToastNotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,7 +77,6 @@
       <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

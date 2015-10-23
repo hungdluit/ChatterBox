@@ -129,6 +129,7 @@
       <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

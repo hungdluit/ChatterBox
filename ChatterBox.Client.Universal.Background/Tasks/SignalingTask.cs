@@ -35,14 +35,14 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                             Hub.Instance.SignalingClient.ClientHeartBeat();
                             break;
                         case SocketActivityTriggerReason.SocketClosed:
-                            ToastNotificationService.ShowToastNotification("Disconnected.");
+                            //ToastNotificationService.ShowToastNotification("Disconnected.");
                             break;
                     }
                 }
                 catch (Exception exception)
                 {
-                    ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}",
-                        exception.Message));
+                    //ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}",
+                    //    exception.Message));
                 }
             }
         }
