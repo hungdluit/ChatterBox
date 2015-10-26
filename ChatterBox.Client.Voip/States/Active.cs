@@ -21,7 +21,10 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-            Context.SendToPeer(_peerId, RelayMessageTags.IceCandidate, candidate.Candidate);
+            if (candidate != null)
+            {
+                Context.SendToPeer(_peerId, RelayMessageTags.IceCandidate, candidate.Candidate);
+            }
         }
 
         public override async void OnIceCandidate(RelayMessage message)
@@ -30,6 +33,11 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         }
 
         public override void Hangup()
+        {
+            Context.SwitchState(new VoipState_HangingUp(_peerId));
+        }
+
+        public override void OnRemoteHangup(RelayMessage message)
         {
             Context.SwitchState(new VoipState_HangingUp(_peerId));
         }

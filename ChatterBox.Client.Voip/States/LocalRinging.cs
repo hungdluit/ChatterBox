@@ -20,6 +20,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public override void OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
+            Context.InitializeWebRTC();
 
             // TODO: Visual ringing on the UI
         }

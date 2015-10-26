@@ -22,6 +22,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Debug.Assert(Context.PeerConnection == null);
 
             Context.SendToPeer(_request.PeerUserId, RelayMessageTags.VoipCall, "");
+            Context.InitializeWebRTC();
             // TODO: Feedback on the UI
         }
 

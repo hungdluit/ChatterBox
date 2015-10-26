@@ -8,36 +8,58 @@ namespace ChatterBox.Client.Universal.Services
 {
     public class TaskHelper
     {
-        public IBackgroundTaskRegistration GetSignalingTask()
+        public IBackgroundTaskRegistration GetTask(string name)
         {
             return BackgroundTaskRegistration.AllTasks
                 .Select(s => s.Value)
-                .FirstOrDefault(s => s.Name == nameof(SignalingTask));
+                .FirstOrDefault(s => s.Name == name);
         }
 
-        public async Task<IBackgroundTaskRegistration> RegisterSignalingTask(bool removeIfRegistered)
+        public async Task<IBackgroundTaskRegistration> RegisterTask(string name, string entrypoint, IBackgroundTrigger trigger, bool removeIfRegistered)
         {
-            var signalingTaskRegistration = GetSignalingTask();
-            if (signalingTaskRegistration != null)
+            var taskRegistration = GetTask(name);
+            if (taskRegistration != null)
             {
                 if (removeIfRegistered)
                 {
-                    signalingTaskRegistration.Unregister(true);
+                    taskRegistration.Unregister(true);
                 }
                 else
                 {
-                    return signalingTaskRegistration;
+                    return taskRegistration;
                 }
             }
             var status = await BackgroundExecutionManager.RequestAccessAsync();
-            var signalingTaskBuilder = new BackgroundTaskBuilder
+            var taskBuilder = new BackgroundTaskBuilder
             {
-                Name = nameof(SignalingTask),
-                TaskEntryPoint = typeof (SignalingTask).FullName
+                Name = name,
+                TaskEntryPoint = entrypoint
             };
-            var trigger = new SocketActivityTrigger();
-            signalingTaskBuilder.SetTrigger(trigger);
-            return signalingTaskBuilder.Register();
+            taskBuilder.SetTrigger(trigger);
+            return taskBuilder.Register();
+        }
+
+        public IBackgroundTaskRegistration GetSignalingTask()
+        {
+            return GetTask(nameof(SignalingTask));
+        }
+
+        public Task<IBackgroundTaskRegistration> RegisterSignalingTask(bool removeIfRegistered)
+        {
+            return RegisterTask(
+                nameof(SignalingTask),
+                typeof(SignalingTask).FullName,
+                new SocketActivityTrigger(),
+                removeIfRegistered);
+        }
+
+        public Task<IBackgroundTaskRegistration> RegisterVoipTask(bool removeIfRegistered)
+        {
+            return RegisterTask(
+                nameof(VoipTask),
+                typeof(VoipTask).FullName,
+                new ApplicationTrigger(),
+                removeIfRegistered);
         }
     }
 }

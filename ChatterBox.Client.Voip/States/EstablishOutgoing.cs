@@ -44,13 +44,16 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             var sdpOffer = await Context.PeerConnection.CreateOffer();
             await Context.PeerConnection.SetLocalDescription(sdpOffer);
 
-            Context.SendToPeer(_request.PeerUserId, sdpOffer.Sdp, "");
+            Context.SendToPeer(_request.PeerUserId, RelayMessageTags.SdpOffer, sdpOffer.Sdp);
         }
 
         internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-            // TODO: Pass mid and index.
-            Context.SendToPeer(_request.PeerUserId, RelayMessageTags.IceCandidate, candidate.Candidate);
+            if (candidate != null)
+            {
+                // TODO: Pass mid and index.
+                Context.SendToPeer(_request.PeerUserId, RelayMessageTags.IceCandidate, candidate.Candidate);
+            }
         }
 
         public override async void OnIceCandidate(RelayMessage message)

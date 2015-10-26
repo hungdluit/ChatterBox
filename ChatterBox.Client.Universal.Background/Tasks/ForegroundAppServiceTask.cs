@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 
@@ -17,17 +18,37 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
             if (Hub.Instance.WebRtcTaskTrigger == null)
             {
-                Hub.Instance.WebRtcTaskTrigger = new ApplicationTrigger();
+                string taskName = nameof(VoipTask);
+                string taskEntryPoint = typeof(VoipTask).FullName;
 
-                //await BackgroundExecutionManager.RequestAccessAsync();
+                IBackgroundTaskRegistration2 registration = null;
 
-                var builder = new BackgroundTaskBuilder()
+                foreach (var cur in BackgroundTaskRegistration.AllTasks)
                 {
-                    Name = "WebRTC",
-                    TaskEntryPoint = "ChatterBox.Client.Universal.Background.Tasks.VoipTask",
-                };
-                builder.SetTrigger(Hub.Instance.WebRtcTaskTrigger);
-                BackgroundTaskRegistration task = builder.Register();
+                    if (cur.Value.Name == taskName)
+                    {
+                        registration = cur.Value as IBackgroundTaskRegistration2;
+                    }
+                }
+
+                if (registration != null)
+                {
+                    Debug.WriteLine("Found old VoipTask.");
+                    Hub.Instance.WebRtcTaskTrigger = registration.Trigger as ApplicationTrigger;
+                }
+                else
+                {
+                    // TODO: Determine if we can get rid of this code.
+                    Hub.Instance.WebRtcTaskTrigger = new ApplicationTrigger();
+                    var builder = new BackgroundTaskBuilder()
+                    {
+                        Name = taskName,
+                        TaskEntryPoint = taskEntryPoint,
+                    };
+                    builder.SetTrigger(Hub.Instance.WebRtcTaskTrigger);
+                    var taskRegistration = builder.Register();
+                    Debug.WriteLine($"VoipTask registered.");
+                }
             }
         }
     }

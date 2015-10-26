@@ -239,8 +239,6 @@ namespace ChatterBox.Client.Common.Signaling
                     }
                 }
             }
-
-            
         }
     }
 }

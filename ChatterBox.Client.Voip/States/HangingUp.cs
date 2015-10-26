@@ -19,8 +19,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void OnEnteringState()
         {
-            Debug.Assert(Context.PeerConnection != null);
-
             Context.SendToPeer(_peerId, RelayMessageTags.VoipHangup, "");
             if (Context.PeerConnection != null)
             {

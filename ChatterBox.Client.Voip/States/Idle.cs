@@ -28,7 +28,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             // Trigger the VoipTask to prevent this background task from terminating.
             if (Hub.Instance.VoipTaskInstance == null)
             {
-                await Hub.Instance.WebRtcTaskTrigger.RequestAsync();
+                var ret = await Hub.Instance.WebRtcTaskTrigger.RequestAsync();
+                Debug.WriteLine($"VoipTask Trigger -> {ret}");
             }
         }
 

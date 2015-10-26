@@ -10,12 +10,15 @@ using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Client.Common.Communication.Voip;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class ConversationViewModel : BindableBase
     {
         private readonly IClientChannel _clientChannel;
+        private readonly IVoipChannel _voipChannel;
         private string _instantMessage;
         private bool _isOnline;
         private string _name;
@@ -23,12 +26,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private string _userId;
 
         public ConversationViewModel(IClientChannel clientChannel,
-            ISignalingUpdateService signalingUpdateService)
+            ISignalingUpdateService signalingUpdateService,
+            IVoipChannel voipChannel)
         {
             _clientChannel = clientChannel;
+            _voipChannel = voipChannel;
             signalingUpdateService.OnUpdate += SignalingUpdateService_OnUpdate;
             SendInstantMessageCommand = new DelegateCommand(OnSendInstantMessageCommandExecute,
                 OnSendInstantMessageCommandCanExecute);
+            CallCommand = new DelegateCommand(OnCallCommandExecute, OnCallCommandCanExecute);
+            HangupCommand = new DelegateCommand(OnHangupCommandExecute, OnHangupCommandCanExecute);
+            AnswerCommand = new DelegateCommand(OnAnswerCommandExecute, OnAnswerCommandCanExecute);
+            RejectCommand = new DelegateCommand(OnRejectCommandExecute, OnRejectCommandCanExecute);
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
         }
 
@@ -70,6 +79,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public DelegateCommand SendInstantMessageCommand { get; }
+        public DelegateCommand CallCommand { get; }
+        public DelegateCommand HangupCommand { get; }
+        public DelegateCommand AnswerCommand { get; }
+        public DelegateCommand RejectCommand { get; }
 
         public string UserId
         {
@@ -107,6 +120,52 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 DateTime = message.SentDateTimeUtc.LocalDateTime,
                 IsSender = true,
                 Sender = RegistrationSettings.Name
+            });
+        }
+
+        private bool OnCallCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnCallCommandExecute()
+        {
+            _voipChannel.Call(new OutgoingCallRequest
+            {
+                PeerUserId = UserId,
+            });
+        }
+
+        private bool OnAnswerCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnAnswerCommandExecute()
+        {
+            _voipChannel.Answer();
+        }
+
+        private bool OnHangupCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnHangupCommandExecute()
+        {
+            _voipChannel.Hangup();
+        }
+
+        private bool OnRejectCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnRejectCommandExecute()
+        {
+            _voipChannel.Reject(new IncomingCallReject
+            {
+                Reason = "Rejected",
             });
         }
 

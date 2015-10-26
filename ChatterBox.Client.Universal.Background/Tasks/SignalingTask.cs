@@ -21,17 +21,23 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                     {
                         case SocketActivityTriggerReason.SocketActivity:
 
-                            string request;
+                            string request = null;
                             using (var socketOperation = Hub.Instance.SignalingSocketService.SocketOperation)
                             {
-                                var socket = socketOperation.Socket;
-                                const uint length = 65536;
-                                var readBuf = new Buffer(length);
-                                var localBuffer = await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
-                                var dataReader = DataReader.FromBuffer(localBuffer);
-                                request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                                if (socketOperation.Socket != null)
+                                {
+                                    var socket = socketOperation.Socket;
+                                    const uint length = 65536;
+                                    var readBuf = new Buffer(length);
+                                    var localBuffer = await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                                    var dataReader = DataReader.FromBuffer(localBuffer);
+                                    request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                                }
                             }
-                            Hub.Instance.SignalingClient.HandleRequest(request);
+                            if (request != null)
+                            {
+                                Hub.Instance.SignalingClient.HandleRequest(request);
+                            }
                             break;
                         case SocketActivityTriggerReason.KeepAliveTimerExpired:
                             Hub.Instance.SignalingClient.ClientHeartBeat();
