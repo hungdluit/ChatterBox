@@ -11,7 +11,6 @@ namespace ChatterBox.Client.Universal.Background
 {
     public sealed class SignalingSocketService : ISignalingSocketService, ISignalingSocketChannel
     {
-        private static readonly string SignalingSocketId = nameof(SignalingSocketId);
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
         {
@@ -21,7 +20,6 @@ namespace ChatterBox.Client.Universal.Background
                 SignalingStatus.Reset();
                 SignaledRelayMessages.Reset();
 
-
                 var socket = new StreamSocket();
                 socket.EnableTransferOwnership(Guid.Parse(connectionOwner.OwnerId),
                     SocketActivityConnectedStandbyAction.Wake);
@@ -29,7 +27,7 @@ namespace ChatterBox.Client.Universal.Background
                     SignalingSettings.SignalingServerPort, SocketProtectionLevel.PlainSocket)
                     .AsTask()
                     .Wait();
-                HandoffSocket(socket);
+                socket.TransferOwnership(SignalingSocketOperation.SignalingSocketId);
                 return new ConnectionStatus
                 {
                     IsConnected = true
@@ -46,23 +44,18 @@ namespace ChatterBox.Client.Universal.Background
 
         public ConnectionStatus GetConnectionStatus()
         {
-            return new ConnectionStatus
+            using (var socketOperation = SocketOperation)
             {
-                IsConnected = GetSocket() != null
-            };
+                return new ConnectionStatus
+                {
+                    IsConnected = socketOperation.Socket != null
+                };
+            }
+
+
         }
 
-        public StreamSocket GetSocket()
-        {
-            SocketActivityInformation socketInformation;
-            return SocketActivityInformation.AllSockets.TryGetValue(SignalingSocketId, out socketInformation)
-                ? socketInformation.StreamSocket
-                : null;
-        }
 
-        public void HandoffSocket(StreamSocket socket)
-        {
-            socket.TransferOwnership(SignalingSocketId);
-        }
+        public ISignalingSocketOperation SocketOperation => new SignalingSocketOperation();
     }
 }

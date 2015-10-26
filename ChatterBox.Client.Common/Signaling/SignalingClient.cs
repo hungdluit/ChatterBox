@@ -174,16 +174,7 @@ namespace ChatterBox.Client.Common.Signaling
                     }).AsAsyncOperation();
         }
 
-        public bool CheckConnection()
-        {
-            var socket = _signalingSocketService.GetSocket();
-            var isConnected = socket != null;
-            if (socket != null)
-            {
-                _signalingSocketService.HandoffSocket(socket);
-            }
-            return isConnected;
-        }
+        
 
         private IAsyncOperation<StorageFile> GetBufferFile()
         {
@@ -233,18 +224,23 @@ namespace ChatterBox.Client.Common.Signaling
         private async Task SendToServer(object arg = null, [CallerMemberName] string method = null)
         {
             var message = ClientChannelWriteHelper.FormatOutput(arg, method);
-            var socket = _signalingSocketService.GetSocket();
-            if (socket != null)
+
+            using (var socketOperation = _signalingSocketService.SocketOperation)
             {
-                using (var writer = new DataWriter(socket.OutputStream))
+                var socket = socketOperation.Socket;
+                if (socket != null)
                 {
-                    writer.WriteString($"{message}{Environment.NewLine}");
-                    await writer.StoreAsync();
-                    await writer.FlushAsync();
-                    writer.DetachStream();
+                    using (var writer = new DataWriter(socket.OutputStream))
+                    {
+                        writer.WriteString($"{message}{Environment.NewLine}");
+                        await writer.StoreAsync();
+                        await writer.FlushAsync();
+                        writer.DetachStream();
+                    }
                 }
-                _signalingSocketService.HandoffSocket(socket);
             }
+
+            
         }
     }
 }

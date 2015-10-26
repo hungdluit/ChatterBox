@@ -16,19 +16,21 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             {
                 try
                 {
-                    var details = (SocketActivityTriggerDetails) taskInstance.TriggerDetails;
-
+                    var details = (SocketActivityTriggerDetails)taskInstance.TriggerDetails;
                     switch (details.Reason)
                     {
                         case SocketActivityTriggerReason.SocketActivity:
-                            const uint length = 65536;
-                            var socket = Hub.Instance.SignalingSocketService.GetSocket();
-                            var readBuf = new Buffer(length);
-                            var localBuffer = await socket.InputStream
-                                .ReadAsync(readBuf, length, InputStreamOptions.Partial);
-                            var dataReader = DataReader.FromBuffer(localBuffer);
-                            var request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
-                            Hub.Instance.SignalingSocketService.HandoffSocket(socket);
+
+                            string request;
+                            using (var socketOperation = Hub.Instance.SignalingSocketService.SocketOperation)
+                            {
+                                var socket = socketOperation.Socket;
+                                const uint length = 65536;
+                                var readBuf = new Buffer(length);
+                                var localBuffer = await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                                var dataReader = DataReader.FromBuffer(localBuffer);
+                                request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                            }
                             Hub.Instance.SignalingClient.HandleRequest(request);
                             break;
                         case SocketActivityTriggerReason.KeepAliveTimerExpired:
@@ -41,8 +43,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                 }
                 catch (Exception exception)
                 {
-                    //ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}",
-                    //    exception.Message));
+                    ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}", exception.Message));
                 }
             }
         }
