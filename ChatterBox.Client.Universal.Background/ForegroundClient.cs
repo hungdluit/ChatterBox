@@ -12,6 +12,30 @@ namespace ChatterBox.Client.Universal.Background
 {
     public sealed class ForegroundClient : IForegroundChannel
     {
+        #region IForegroundChannel Members
+
+        public void OnSignaledPeerDataUpdated()
+        {
+            SendToForeground();
+        }
+
+        public void OnSignaledRegistrationStatusUpdated()
+        {
+            SendToForeground();
+        }
+
+        public void OnSignaledRelayMessagesUpdated()
+        {
+            SendToForeground();
+        }
+
+        public void OnVoipState(VoipState state)
+        {
+            SendToForeground(state);
+        }
+
+        #endregion
+
         private ValueSet SendToForeground(object arg = null, [CallerMemberName] string method = null)
         {
             var channelWriteHelper = new ChannelWriteHelper(typeof (IForegroundChannel));
@@ -34,29 +58,5 @@ namespace ChatterBox.Client.Universal.Background
             if (!resultMessage.Values.Any()) return null;
             return (TResult) JsonConvert.Deserialize(resultMessage.Values.Single().ToString(), typeof (TResult));
         }
-
-        
-
-        public void OnSignaledPeerDataUpdated()
-        {
-            SendToForeground();
-        }
-
-        public void OnSignaledRegistrationStatusUpdated()
-        {
-            SendToForeground();
-        }
-
-        public void OnSignaledRelayMessagesUpdated()
-        {
-            SendToForeground();
-        }
-
-        public void OnVoipState(VoipState state)
-        {
-            SendToForeground(state);
-        }
-
-        
     }
 }

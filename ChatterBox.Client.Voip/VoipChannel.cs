@@ -20,7 +20,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
         }
 
-        
+        #region IVoipChannel Members
 
         public void Answer()
         {
@@ -91,6 +91,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Context.State.Reject(reason);
         }
 
-        
+        #endregion
     }
 }

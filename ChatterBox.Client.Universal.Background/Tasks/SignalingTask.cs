@@ -10,8 +10,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 {
     public sealed class SignalingTask : IBackgroundTask
     {
-
-        
+        #region IBackgroundTask Members
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -59,8 +58,6 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             }
         }
 
-        
-
-        
+        #endregion
     }
 }

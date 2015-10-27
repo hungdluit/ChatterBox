@@ -7,8 +7,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
     {
         private BackgroundTaskDeferral _deferral;
 
-
-        
+        #region IBackgroundTask Members
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -24,9 +23,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             taskInstance.Canceled += (s, e) => CloseVoipTask();
         }
 
-        
-
-        
+        #endregion
 
         public void CloseVoipTask()
         {

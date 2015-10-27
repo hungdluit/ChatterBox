@@ -8,8 +8,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
     {
         private BackgroundTaskDeferral _deferral;
 
-
-        
+        #region IBackgroundTask Members
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -54,8 +53,6 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             }
         }
 
-        
-
-        
+        #endregion
     }
 }

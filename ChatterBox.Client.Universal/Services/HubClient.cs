@@ -38,51 +38,7 @@ namespace ChatterBox.Client.Universal.Services
             _taskHelper = taskHelper;
         }
 
-        public async Task<bool> Connect()
-        {
-            _appConnection = new AppServiceConnection
-            {
-                AppServiceName = nameof(ForegroundAppServiceTask),
-                PackageFamilyName = Package.Current.Id.FamilyName
-            };
-            _appConnection.ServiceClosed += OnServiceClosed;
-            _appConnection.RequestReceived += OnRequestReceived;
-            var status = await _appConnection.OpenAsync();
-            return status == AppServiceConnectionStatus.Success;
-        }
-
-        private void InvokeHubChannel<TContract>(object arg = null, [CallerMemberName] string method = null)
-        {
-            _appConnection.InvokeChannel(typeof (TContract), arg, method);
-        }
-
-        private TResult InvokeHubChannel<TContract, TResult>(object arg = null, [CallerMemberName] string method = null)
-            where TResult : class
-        {
-            return (TResult) _appConnection.InvokeChannel(typeof (TContract), arg, method, typeof (TResult));
-        }
-
-        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
-        {
-            using (new AppServiceDeferralWrapper(args.GetDeferral()))
-            {
-                var message = args.Request.Message.Single().Value.ToString();
-                AppServiceChannelHelper.HandleRequest(args.Request, this, message);
-            }
-        }
-
-        private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
-        {
-        }
-
-        public void OnSignaledDataUpdated()
-        {
-            RunOnUiThread(() => OnUpdate?.Invoke());
-        }
-
-        public event Action OnUpdate;
-
-        
+        #region IClientChannel Members
 
         public void ClientConfirmation(Confirmation confirmation)
         {
@@ -109,9 +65,9 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IClientChannel>(message);
         }
 
-        
+        #endregion
 
-        
+        #region IForegroundChannel Members
 
         public void OnSignaledPeerDataUpdated()
         {
@@ -132,9 +88,9 @@ namespace ChatterBox.Client.Universal.Services
         {
         }
 
-        
+        #endregion
 
-        
+        #region ISignalingSocketChannel Members
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
         {
@@ -149,17 +105,17 @@ namespace ChatterBox.Client.Universal.Services
             return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>();
         }
 
-        
+        #endregion
 
-        
+        #region ISignalingUpdateService Members
 
         public event Action OnPeerDataUpdated;
         public event Action OnRegistrationStatusUpdated;
         public event Action OnRelayMessagesUpdated;
 
-        
+        #endregion
 
-        
+        #region IVoipChannel Members
 
         public void Answer()
         {
@@ -216,6 +172,50 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(reason);
         }
 
-        
+        #endregion
+
+        public async Task<bool> Connect()
+        {
+            _appConnection = new AppServiceConnection
+            {
+                AppServiceName = nameof(ForegroundAppServiceTask),
+                PackageFamilyName = Package.Current.Id.FamilyName
+            };
+            _appConnection.ServiceClosed += OnServiceClosed;
+            _appConnection.RequestReceived += OnRequestReceived;
+            var status = await _appConnection.OpenAsync();
+            return status == AppServiceConnectionStatus.Success;
+        }
+
+        private void InvokeHubChannel<TContract>(object arg = null, [CallerMemberName] string method = null)
+        {
+            _appConnection.InvokeChannel(typeof (TContract), arg, method);
+        }
+
+        private TResult InvokeHubChannel<TContract, TResult>(object arg = null, [CallerMemberName] string method = null)
+            where TResult : class
+        {
+            return (TResult) _appConnection.InvokeChannel(typeof (TContract), arg, method, typeof (TResult));
+        }
+
+        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            using (new AppServiceDeferralWrapper(args.GetDeferral()))
+            {
+                var message = args.Request.Message.Single().Value.ToString();
+                AppServiceChannelHelper.HandleRequest(args.Request, this, message);
+            }
+        }
+
+        private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+        }
+
+        public void OnSignaledDataUpdated()
+        {
+            RunOnUiThread(() => OnUpdate?.Invoke());
+        }
+
+        public event Action OnUpdate;
     }
 }

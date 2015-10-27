@@ -12,8 +12,7 @@ namespace ChatterBox.Client.Universal.Background.DeferralWrappers
             _deferral = deferral;
         }
 
-
-        
+        #region IDisposable Members
 
         public void Dispose()
         {
@@ -21,8 +20,6 @@ namespace ChatterBox.Client.Universal.Background.DeferralWrappers
             _deferral = null;
         }
 
-        
-
-        
+        #endregion
     }
 }

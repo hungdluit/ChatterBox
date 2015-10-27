@@ -38,8 +38,7 @@ namespace ChatterBox.Client.Universal.Background
             }
         }
 
-
-        
+        #region IDisposable Members
 
         public void Dispose()
         {
@@ -48,8 +47,6 @@ namespace ChatterBox.Client.Universal.Background
             Debug.WriteLine("SignalingSocketOperation - Dispose");
         }
 
-        
-
-        
+        #endregion
     }
 }
