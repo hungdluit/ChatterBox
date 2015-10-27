@@ -172,6 +172,11 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(reason);
         }
 
+        public VoipState GetVoipState()
+        {
+            return InvokeHubChannel<IVoipChannel, VoipState>();
+        }
+
         #endregion
 
         public async Task<bool> Connect()

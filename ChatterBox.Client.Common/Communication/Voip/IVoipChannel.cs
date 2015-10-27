@@ -1,4 +1,5 @@
-﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
+﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip
@@ -20,5 +21,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void OnSdpAnswer(RelayMessage message);
         void OnSdpOffer(RelayMessage message);
         void Reject(IncomingCallReject reason);
+
+        VoipState GetVoipState();
     }
 }

@@ -1,21 +1,27 @@
-﻿using System;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
+using ChatterBox.Client.Common.Settings;
+using ChatterBox.Client.Universal.Background;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_ActiveCall : BaseVoipState
     {
-        private readonly string _peerId;
-
-        public VoipState_ActiveCall(string peerId)
+        public VoipState_ActiveCall()
         {
-            _peerId = peerId;
         }
 
-        public override void Hangup()
+        internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-            Context.SwitchState(new VoipState_HangingUp(_peerId));
+            if (candidate != null)
+            {
+                Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
+            }
         }
 
         public override async void OnIceCandidate(RelayMessage message)
@@ -23,17 +29,15 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             await Context.PeerConnection.AddIceCandidate(new RTCIceCandidate(message.Payload, "", 0 /*TODO*/));
         }
 
-        public override void OnRemoteHangup(RelayMessage message)
+        public override void Hangup()
         {
-            Context.SwitchState(new VoipState_HangingUp(_peerId));
+            Context.SwitchState(new VoipState_HangingUp());
         }
 
-        internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public override void OnRemoteHangup(RelayMessage message)
         {
-            if (candidate != null)
-            {
-                Context.SendToPeer(_peerId, RelayMessageTags.IceCandidate, candidate.Candidate);
-            }
+            Context.SwitchState(new VoipState_HangingUp());
         }
     }
+
 }

@@ -1,31 +1,33 @@
-﻿using System.Diagnostics;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_RemoteRinging : BaseVoipState
     {
-        private readonly OutgoingCallRequest _request;
-
         public VoipState_RemoteRinging(OutgoingCallRequest request)
         {
             _request = request;
         }
 
-        public override void Hangup()
-        {
-            Context.SwitchState(new VoipState_HangingUp(_request.PeerUserId));
-        }
+        private OutgoingCallRequest _request;
 
         public override void OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
 
-            Context.SendToPeer(_request.PeerUserId, RelayMessageTags.VoipCall, "");
+            Context.PeerId = _request.PeerUserId;
+
+            Context.SendToPeer(RelayMessageTags.VoipCall, "");
             Context.InitializeWebRTC();
             // TODO: Feedback on the UI
         }
+
 
         public override void OnOutgoingCallAccepted(RelayMessage message)
         {
@@ -35,6 +37,11 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public override void OnOutgoingCallRejected(RelayMessage message)
         {
             Context.SwitchState(new VoipState_Idle());
+        }
+
+        public override void Hangup()
+        {
+            Context.SwitchState(new VoipState_HangingUp());
         }
     }
 }

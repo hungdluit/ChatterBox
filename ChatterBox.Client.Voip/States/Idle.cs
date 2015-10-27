@@ -1,16 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Universal.Background;
+using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using webrtc_winrt_api;
+using Windows.ApplicationModel.Calls;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_Idle : BaseVoipState
     {
-        public override void Call(OutgoingCallRequest request)
+        public VoipState_Idle()
         {
-            Context.SwitchState(new VoipState_RemoteRinging(request));
         }
 
         public override void OnEnteringState()
@@ -18,22 +22,54 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             // Entering idle state.
             // Close the VoipTask so this process can end if needed.
             Hub.Instance.VoipTaskInstance?.CloseVoipTask();
-        }
 
-        public override void OnIncomingCall(RelayMessage message)
-        {
-            Context.SwitchState(new VoipState_LocalRinging(message));
+            // Make sure the context is sane.
+            Context.PeerConnection = null;
+            Context.PeerId = null;
         }
 
         public override async void OnLeavingState()
         {
             // Leaving the idle state means there's a call that's happening.
             // Trigger the VoipTask to prevent this background task from terminating.
+#if false // VoipCallCoordinator support
+            const int RTcTaskAlreadyRuningErrorCode = -2147024713;
             if (Hub.Instance.VoipTaskInstance == null)
             {
-                var ret = await Hub.Instance.WebRtcTaskTrigger.RequestAsync();
-                Debug.WriteLine($"VoipTask Trigger -> {ret}");
+                var vcc = VoipCallCoordinator.GetDefault();
+                var voipEntryPoint = typeof(VoipTask).FullName;
+                Debug.WriteLine($"ReserveCallResourcesAsync {voipEntryPoint}");
+                try
+                {
+                    var status = await vcc.ReserveCallResourcesAsync(voipEntryPoint);
+                    Debug.WriteLine($"ReserveCallResourcesAsync result -> {status}");
+                }
+                catch (Exception ex)
+                {
+                    if (ex.HResult == RTcTaskAlreadyRuningErrorCode)
+                    {
+                        Debug.WriteLine("VoipTask already running");
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"ReserveCallResourcesAsync error -> {ex.HResult} : {ex.Message}");
+                    }
+                }
             }
+#else
+            var ret = await Hub.Instance.WebRtcTaskTrigger.RequestAsync();
+            Debug.WriteLine($"VoipTask Trigger -> {ret}");
+#endif
+        }
+
+        public override void Call(OutgoingCallRequest request)
+        {
+            Context.SwitchState(new VoipState_RemoteRinging(request));
+        }
+
+        public override void OnIncomingCall(RelayMessage message)
+        {
+            Context.SwitchState(new VoipState_LocalRinging(message));
         }
     }
 }
