@@ -41,6 +41,8 @@ namespace ChatterBox.Server
         public string UserId { get; set; }
         private ConcurrentQueue<string> WriteQueue { get; set; } = new ConcurrentQueue<string>();
 
+        #region IClientChannel Members
+
         public void ClientConfirmation(Confirmation confirmation)
         {
             var message = MessageQueue.SingleOrDefault(s => s.Message.Id == confirmation.ConfirmationFor);
@@ -66,6 +68,10 @@ namespace ChatterBox.Server
             ServerConfirmation(Confirmation.For(message));
             OnRelayMessage?.Invoke(this, message);
         }
+
+        #endregion
+
+        #region IServerChannel Members
 
         public void OnPeerList(PeerList peerList)
         {
@@ -107,6 +113,8 @@ namespace ChatterBox.Server
         {
             EnqueueMessage(message);
         }
+
+        #endregion
 
         private void EnqueueMessage(IMessage message, [CallerMemberName] string method = null)
         {

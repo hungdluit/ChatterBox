@@ -11,7 +11,11 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
     /// </summary>
     public abstract class BindableBase : INotifyPropertyChanged
     {
+        #region INotifyPropertyChanged Members
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
 
         /// <summary>
         ///     Returns the name of a property identified by a lambda expression.

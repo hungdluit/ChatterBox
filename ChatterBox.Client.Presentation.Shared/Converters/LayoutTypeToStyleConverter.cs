@@ -10,6 +10,8 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         public Style OverlayStyle { get; set; }
         public Style ParallelStyle { get; set; }
 
+        #region IValueConverter Members
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var newState = (LayoutType) value;
@@ -28,5 +30,7 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

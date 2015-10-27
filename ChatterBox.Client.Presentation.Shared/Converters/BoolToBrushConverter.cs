@@ -10,6 +10,8 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         public Color ColorForFalse { get; set; }
         public Color ColorForTrue { get; set; }
 
+        #region IValueConverter Members
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var boolValue = (bool) value;
@@ -23,5 +25,7 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

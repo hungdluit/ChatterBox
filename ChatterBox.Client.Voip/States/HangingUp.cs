@@ -1,21 +1,15 @@
-﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using webrtc_winrt_api;
+﻿using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_HangingUp : BaseVoipState
     {
+        private readonly string _peerId;
+
         public VoipState_HangingUp(string peerId)
         {
             _peerId = peerId;
         }
-
-        private string _peerId;
 
         public override void OnEnteringState()
         {

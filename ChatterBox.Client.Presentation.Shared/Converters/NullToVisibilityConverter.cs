@@ -8,6 +8,8 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
     {
         public bool Inverted { get; set; }
 
+        #region IValueConverter Members
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var booleanValue = (value != null);
@@ -21,5 +23,7 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

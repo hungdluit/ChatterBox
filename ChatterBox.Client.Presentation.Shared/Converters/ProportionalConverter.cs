@@ -10,6 +10,8 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         /// </summary>
         public int DownscalingFactor { get; set; } = 25;
 
+        #region IValueConverter Members
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var refDimension = (double) value;
@@ -21,5 +23,7 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

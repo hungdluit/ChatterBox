@@ -5,8 +5,8 @@ namespace ChatterBox.Common.Communication.Messages.Standard
 {
     public sealed class Confirmation : IMessageConfirmation
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string ConfirmationFor { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public static Confirmation For(IMessage message)
         {

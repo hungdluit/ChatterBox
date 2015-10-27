@@ -12,10 +12,17 @@ namespace ChatterBox.Client.Universal.Background.DeferralWrappers
             _deferral = deferral;
         }
 
+
+        
+
         public void Dispose()
         {
             _deferral.Complete();
             _deferral = null;
         }
+
+        
+
+        
     }
 }

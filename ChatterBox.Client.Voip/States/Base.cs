@@ -1,18 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using webrtc_winrt_api;
-using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class BaseVoipState : IVoipChannel
     {
-        public BaseVoipState()
+        public VoipContext Context { get; private set; }
+
+        #region IVoipChannel Members
+
+        public virtual void Answer()
         {
         }
+
+        public virtual void Call(OutgoingCallRequest request)
+        {
+        }
+
+        public virtual void Hangup()
+        {
+        }
+
+        public virtual void OnIceCandidate(RelayMessage message)
+        {
+        }
+
+        public virtual void OnIncomingCall(RelayMessage message)
+        {
+        }
+
+        public virtual void OnOutgoingCallAccepted(RelayMessage message)
+        {
+        }
+
+        public virtual void OnOutgoingCallRejected(RelayMessage message)
+        {
+        }
+
+        public virtual void OnRemoteHangup(RelayMessage message)
+        {
+        }
+
+        public virtual void OnSdpAnswer(RelayMessage message)
+        {
+        }
+
+        public virtual void OnSdpOffer(RelayMessage message)
+        {
+        }
+
+        public virtual void Reject(IncomingCallReject reason)
+        {
+        }
+
+        #endregion
 
         public void EnterState(VoipContext context)
         {
@@ -20,42 +62,22 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             OnEnteringState();
         }
 
-        public virtual void OnEnteringState() { }
-
         public void LeaveState()
         {
             OnLeavingState();
             Context = null;
         }
 
-        public virtual void OnLeavingState() { }
+        public virtual void OnEnteringState()
+        {
+        }
 
-        #region IVoipChannel implementation
-        public virtual void Call(OutgoingCallRequest request) { }
+        public virtual void OnLeavingState()
+        {
+        }
 
-        public virtual void OnOutgoingCallAccepted(RelayMessage message) { }
-
-        public virtual void OnOutgoingCallRejected(RelayMessage message) { }
-
-        public virtual void OnIncomingCall(RelayMessage message) { }
-
-        public virtual void Answer() { }
-
-        public virtual void Reject(IncomingCallReject reason) { }
-
-        public virtual void Hangup() { }
-
-        public virtual void OnRemoteHangup(RelayMessage message) { }
-
-        public virtual void OnSdpAnswer(RelayMessage message) { }
-
-        public virtual void OnSdpOffer(RelayMessage message) { }
-
-        public virtual void OnIceCandidate(RelayMessage message) { }
-        #endregion
-
-        internal virtual void SendLocalIceCandidate(RTCIceCandidate candidate) { }
-
-        public VoipContext Context { get; private set; }
+        internal virtual void SendLocalIceCandidate(RTCIceCandidate candidate)
+        {
+        }
     }
 }

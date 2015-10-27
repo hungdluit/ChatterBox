@@ -7,6 +7,8 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
     {
         public string Format { get; set; }
 
+        #region IValueConverter Members
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null) return null;
@@ -19,5 +21,7 @@ namespace ChatterBox.Client.Presentation.Shared.Converters
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

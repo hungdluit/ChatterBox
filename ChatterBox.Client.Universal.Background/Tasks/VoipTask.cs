@@ -1,14 +1,14 @@
-﻿using Windows.ApplicationModel.Background;
-using ChatterBox.Client.Common.Settings;
-using ChatterBox.Common.Communication.Serialization;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Windows.ApplicationModel.Background;
 
 namespace ChatterBox.Client.Universal.Background.Tasks
 {
     public sealed class VoipTask : IBackgroundTask
     {
         private BackgroundTaskDeferral _deferral;
+
+
+        
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -23,6 +23,10 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             Debug.WriteLine("VoipTask started.");
             taskInstance.Canceled += (s, e) => CloseVoipTask();
         }
+
+        
+
+        
 
         public void CloseVoipTask()
         {

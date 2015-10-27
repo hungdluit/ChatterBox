@@ -10,13 +10,16 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 {
     public sealed class SignalingTask : IBackgroundTask
     {
+
+        
+
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             using (new BackgroundTaskDeferralWrapper(taskInstance.GetDeferral()))
             {
                 try
                 {
-                    var details = (SocketActivityTriggerDetails)taskInstance.TriggerDetails;
+                    var details = (SocketActivityTriggerDetails) taskInstance.TriggerDetails;
                     switch (details.Reason)
                     {
                         case SocketActivityTriggerReason.SocketActivity:
@@ -29,7 +32,8 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                                     var socket = socketOperation.Socket;
                                     const uint length = 65536;
                                     var readBuf = new Buffer(length);
-                                    var localBuffer = await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
+                                    var localBuffer =
+                                        await socket.InputStream.ReadAsync(readBuf, length, InputStreamOptions.Partial);
                                     var dataReader = DataReader.FromBuffer(localBuffer);
                                     request = dataReader.ReadString(dataReader.UnconsumedBufferLength);
                                 }
@@ -49,9 +53,14 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                 }
                 catch (Exception exception)
                 {
-                    ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}", exception.Message));
+                    ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}",
+                        exception.Message));
                 }
             }
         }
+
+        
+
+        
     }
 }

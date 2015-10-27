@@ -38,71 +38,6 @@ namespace ChatterBox.Client.Universal.Services
             _taskHelper = taskHelper;
         }
 
-        public void ClientConfirmation(Confirmation confirmation)
-        {
-            InvokeHubChannel<IClientChannel>(confirmation);
-        }
-
-        public void ClientHeartBeat()
-        {
-            InvokeHubChannel<IClientChannel>();
-        }
-
-        public void GetPeerList(Message message)
-        {
-            InvokeHubChannel<IClientChannel>(message);
-        }
-
-        public void Register(Registration message)
-        {
-            InvokeHubChannel<IClientChannel>(message);
-        }
-
-        public void Relay(RelayMessage message)
-        {
-            InvokeHubChannel<IClientChannel>(message);
-        }
-
-        public void OnSignaledDataUpdated()
-        {
-            RunOnUiThread(() => OnUpdate?.Invoke());
-        }
-
-        public void OnSignaledRegistrationStatusUpdated()
-        {
-            RunOnUiThread(() => OnRegistrationStatusUpdated?.Invoke());
-        }
-
-        public void OnSignaledPeerDataUpdated()
-        {
-            RunOnUiThread(() => OnPeerDataUpdated?.Invoke());
-        }
-
-        public void OnSignaledRelayMessagesUpdated()
-        {
-            RunOnUiThread(() => OnRelayMessagesUpdated?.Invoke());
-        }
-
-        public void OnVoipState(VoipState state)
-        {
-            
-        }
-
-        public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
-        {
-            return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>(new ConnectionOwner
-            {
-                OwnerId = _taskHelper.GetSignalingTask().TaskId.ToString()
-            });
-        }
-
-        public ConnectionStatus GetConnectionStatus()
-        {
-            return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>();
-        }
-
-        public event Action OnUpdate;
-
         public async Task<bool> Connect()
         {
             _appConnection = new AppServiceConnection
@@ -140,10 +75,115 @@ namespace ChatterBox.Client.Universal.Services
         {
         }
 
-        #region IVoipChannel implementation
+        public void OnSignaledDataUpdated()
+        {
+            RunOnUiThread(() => OnUpdate?.Invoke());
+        }
+
+        public event Action OnUpdate;
+
+        
+
+        public void ClientConfirmation(Confirmation confirmation)
+        {
+            InvokeHubChannel<IClientChannel>(confirmation);
+        }
+
+        public void ClientHeartBeat()
+        {
+            InvokeHubChannel<IClientChannel>();
+        }
+
+        public void GetPeerList(Message message)
+        {
+            InvokeHubChannel<IClientChannel>(message);
+        }
+
+        public void Register(Registration message)
+        {
+            InvokeHubChannel<IClientChannel>(message);
+        }
+
+        public void Relay(RelayMessage message)
+        {
+            InvokeHubChannel<IClientChannel>(message);
+        }
+
+        
+
+        
+
+        public void OnSignaledPeerDataUpdated()
+        {
+            RunOnUiThread(() => OnPeerDataUpdated?.Invoke());
+        }
+
+        public void OnSignaledRegistrationStatusUpdated()
+        {
+            RunOnUiThread(() => OnRegistrationStatusUpdated?.Invoke());
+        }
+
+        public void OnSignaledRelayMessagesUpdated()
+        {
+            RunOnUiThread(() => OnRelayMessagesUpdated?.Invoke());
+        }
+
+        public void OnVoipState(VoipState state)
+        {
+        }
+
+        
+
+        
+
+        public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
+        {
+            return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>(new ConnectionOwner
+            {
+                OwnerId = _taskHelper.GetSignalingTask().TaskId.ToString()
+            });
+        }
+
+        public ConnectionStatus GetConnectionStatus()
+        {
+            return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>();
+        }
+
+        
+
+        
+
+        public event Action OnPeerDataUpdated;
+        public event Action OnRegistrationStatusUpdated;
+        public event Action OnRelayMessagesUpdated;
+
+        
+
+        
+
+        public void Answer()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
         public void Call(OutgoingCallRequest request)
         {
             InvokeHubChannel<IVoipChannel>(request);
+        }
+
+        public void Hangup()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void OnIceCandidate(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
+        }
+
+        public void OnIncomingCall(RelayMessage message)
+        {
+            InvokeHubChannel<IVoipChannel>(message);
         }
 
         public void OnOutgoingCallAccepted(RelayMessage message)
@@ -154,26 +194,6 @@ namespace ChatterBox.Client.Universal.Services
         public void OnOutgoingCallRejected(RelayMessage message)
         {
             InvokeHubChannel<IVoipChannel>(message);
-        }
-
-        public void OnIncomingCall(RelayMessage message)
-        {
-            InvokeHubChannel<IVoipChannel>(message);
-        }
-
-        public void Answer()
-        {
-            InvokeHubChannel<IVoipChannel>();
-        }
-
-        public void Reject(IncomingCallReject reason)
-        {
-            InvokeHubChannel<IVoipChannel>(reason);
-        }
-
-        public void Hangup()
-        {
-            InvokeHubChannel<IVoipChannel>();
         }
 
         public void OnRemoteHangup(RelayMessage message)
@@ -191,14 +211,11 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(message);
         }
 
-        public void OnIceCandidate(RelayMessage message)
+        public void Reject(IncomingCallReject reason)
         {
-            InvokeHubChannel<IVoipChannel>(message);
+            InvokeHubChannel<IVoipChannel>(reason);
         }
-        #endregion
 
-        public event Action OnRegistrationStatusUpdated;
-        public event Action OnPeerDataUpdated;
-        public event Action OnRelayMessagesUpdated;
+        
     }
 }

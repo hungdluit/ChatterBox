@@ -8,14 +8,29 @@ namespace ChatterBox.Client.Universal.Services
 {
     public class TaskHelper
     {
-        public IBackgroundTaskRegistration GetTask(string name)
+        public IBackgroundTaskRegistration GetSignalingTask()
+        {
+            return GetTask(nameof(SignalingTask));
+        }
+
+        private IBackgroundTaskRegistration GetTask(string name)
         {
             return BackgroundTaskRegistration.AllTasks
                 .Select(s => s.Value)
                 .FirstOrDefault(s => s.Name == name);
         }
 
-        public async Task<IBackgroundTaskRegistration> RegisterTask(string name, string entrypoint, IBackgroundTrigger trigger, bool removeIfRegistered)
+        public Task<IBackgroundTaskRegistration> RegisterSignalingTask(bool removeIfRegistered)
+        {
+            return RegisterTask(
+                nameof(SignalingTask),
+                typeof (SignalingTask).FullName,
+                new SocketActivityTrigger(),
+                removeIfRegistered);
+        }
+
+        private async Task<IBackgroundTaskRegistration> RegisterTask(string name, string entrypoint,
+            IBackgroundTrigger trigger, bool removeIfRegistered)
         {
             var taskRegistration = GetTask(name);
             if (taskRegistration != null)
@@ -39,25 +54,11 @@ namespace ChatterBox.Client.Universal.Services
             return taskBuilder.Register();
         }
 
-        public IBackgroundTaskRegistration GetSignalingTask()
-        {
-            return GetTask(nameof(SignalingTask));
-        }
-
-        public Task<IBackgroundTaskRegistration> RegisterSignalingTask(bool removeIfRegistered)
-        {
-            return RegisterTask(
-                nameof(SignalingTask),
-                typeof(SignalingTask).FullName,
-                new SocketActivityTrigger(),
-                removeIfRegistered);
-        }
-
         public Task<IBackgroundTaskRegistration> RegisterVoipTask(bool removeIfRegistered)
         {
             return RegisterTask(
                 nameof(VoipTask),
-                typeof(VoipTask).FullName,
+                typeof (VoipTask).FullName,
                 new ApplicationTrigger(),
                 removeIfRegistered);
         }

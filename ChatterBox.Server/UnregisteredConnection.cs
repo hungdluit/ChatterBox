@@ -28,6 +28,8 @@ namespace ChatterBox.Server
         private ILog Logger => LogManager.GetLogger(ToString());
         public TcpClient TcpClient { get; set; }
 
+        #region IClientChannel Members
+
         public void ClientConfirmation(Confirmation confirmation)
         {
         }
@@ -49,6 +51,10 @@ namespace ChatterBox.Server
         public void Relay(RelayMessage message)
         {
         }
+
+        #endregion
+
+        #region IServerChannel Members
 
         public void OnPeerList(PeerList peerList)
         {
@@ -83,6 +89,8 @@ namespace ChatterBox.Server
         public void ServerRelay(RelayMessage message)
         {
         }
+
+        #endregion
 
         public void OnInvalidRequest(InvalidMessage reply)
         {

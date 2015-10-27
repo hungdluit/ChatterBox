@@ -11,6 +11,9 @@ namespace ChatterBox.Client.Universal.Background
 {
     public sealed class SignalingSocketService : ISignalingSocketService, ISignalingSocketChannel
     {
+        public ISignalingSocketOperation SocketOperation => new SignalingSocketOperation();
+
+        #region ISignalingSocketChannel Members
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
         {
@@ -51,11 +54,8 @@ namespace ChatterBox.Client.Universal.Background
                     IsConnected = socketOperation.Socket != null
                 };
             }
-
-
         }
 
-
-        public ISignalingSocketOperation SocketOperation => new SignalingSocketOperation();
+        #endregion
     }
 }

@@ -36,6 +36,8 @@ namespace ChatterBox.Client.Console
         private TcpClient TcpClient { get; } = new TcpClient();
         private ConcurrentQueue<string> WriteQueue { get; } = new ConcurrentQueue<string>();
 
+        #region IClientChannel Members
+
         public void ClientConfirmation(Confirmation confirmation)
         {
             SendToServer(confirmation);
@@ -61,6 +63,10 @@ namespace ChatterBox.Client.Console
         {
             SendToServer(message);
         }
+
+        #endregion
+
+        #region IServerChannel Members
 
         public void OnPeerList(PeerList peerList)
         {
@@ -116,6 +122,8 @@ namespace ChatterBox.Client.Console
                 });
             }
         }
+
+        #endregion
 
         public void Connect(string host = "localhost", int port = 50000)
         {

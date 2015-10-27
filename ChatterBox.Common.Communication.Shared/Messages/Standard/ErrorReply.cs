@@ -7,8 +7,8 @@ namespace ChatterBox.Common.Communication.Messages.Standard
     {
         public string ErrorMessage { get; set; }
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public DateTimeOffset SentDateTimeUtc { get; set; }
         public string ReplyFor { get; set; }
+        public DateTimeOffset SentDateTimeUtc { get; set; }
 
         public static ErrorReply For(IMessage message)
         {

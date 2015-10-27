@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
 using ChatterBox.Client.Universal.Background.Helpers;
-using ChatterBox.Common.Communication.Contracts;
-using Windows.ApplicationModel.Background;
 using ChatterBox.Client.Universal.Background.Tasks;
+using ChatterBox.Common.Communication.Contracts;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -56,8 +56,8 @@ namespace ChatterBox.Client.Universal.Background
         public SignalingClient SignalingClient { get; }
         public SignalingSocketService SignalingSocketService { get; } = new SignalingSocketService();
         public IVoipChannel VoipChannel { get; } = new VoipChannel();
-        public ApplicationTrigger WebRtcTaskTrigger { get; set; }
         public VoipTask VoipTaskInstance { get; set; }
+        public ApplicationTrigger WebRtcTaskTrigger { get; set; }
 
         private void HandleForegroundRequest(
             AppServiceConnection sender,
@@ -85,7 +85,4 @@ namespace ChatterBox.Client.Universal.Background
             }
         }
     }
-
-
-
 }

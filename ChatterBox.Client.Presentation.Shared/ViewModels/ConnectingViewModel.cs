@@ -58,8 +58,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _status, value); }
         }
 
-        public event Action OnRegistered;
-
         public void EstablishConnection()
         {
             ConnectionFailed = false;
@@ -73,7 +71,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 if (SignalingStatus.IsRegistered)
                 {
                     OnRegistered?.Invoke();
-                    return;
                 }
             }
             else
@@ -107,6 +104,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             EstablishConnection();
         }
+
+        public event Action OnRegistered;
 
         private void OnRegistrationStatusUpdated()
         {

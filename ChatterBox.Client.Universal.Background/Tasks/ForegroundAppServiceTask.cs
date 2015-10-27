@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 
@@ -8,6 +7,9 @@ namespace ChatterBox.Client.Universal.Background.Tasks
     public sealed class ForegroundAppServiceTask : IBackgroundTask
     {
         private BackgroundTaskDeferral _deferral;
+
+
+        
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -18,8 +20,8 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
             if (Hub.Instance.WebRtcTaskTrigger == null)
             {
-                string taskName = nameof(VoipTask);
-                string taskEntryPoint = typeof(VoipTask).FullName;
+                var taskName = nameof(VoipTask);
+                var taskEntryPoint = typeof (VoipTask).FullName;
 
                 IBackgroundTaskRegistration2 registration = null;
 
@@ -40,10 +42,10 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                 {
                     // TODO: Determine if we can get rid of this code.
                     Hub.Instance.WebRtcTaskTrigger = new ApplicationTrigger();
-                    var builder = new BackgroundTaskBuilder()
+                    var builder = new BackgroundTaskBuilder
                     {
                         Name = taskName,
-                        TaskEntryPoint = taskEntryPoint,
+                        TaskEntryPoint = taskEntryPoint
                     };
                     builder.SetTrigger(Hub.Instance.WebRtcTaskTrigger);
                     var taskRegistration = builder.Register();
@@ -51,5 +53,9 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                 }
             }
         }
+
+        
+
+        
     }
 }

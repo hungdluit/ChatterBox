@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ChatterBox.Client.Common.Communication.Voip.Dto
+﻿namespace ChatterBox.Client.Common.Communication.Voip.Dto
 {
     public sealed class OutgoingCallRequest
     {

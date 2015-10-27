@@ -20,6 +20,8 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
             _canExecute = canExecute;
         }
 
+        #region ICommand Members
+
         public bool CanExecute(object parameter)
         {
             return _canExecute == null || _canExecute();
@@ -31,6 +33,8 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
         {
             _execute();
         }
+
+        #endregion
 
         public void RaiseCanExecuteChanged()
         {
@@ -55,6 +59,8 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
             _canExecute = canExecute;
         }
 
+        #region ICommand Members
+
         public bool CanExecute(object parameter)
         {
             return _canExecute == null || _canExecute((T) parameter);
@@ -66,6 +72,8 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
         {
             _execute((T) parameter);
         }
+
+        #endregion
 
         public void RaiseCanExecuteChanged()
         {

@@ -40,6 +40,8 @@ namespace ChatterBox.Client.Common.Signaling
         private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IClientChannel));
         private ChannelInvoker ServerChannelInvoker { get; }
 
+        #region IClientChannel Members
+
         public async void ClientConfirmation(Confirmation confirmation)
         {
             await SendToServer(confirmation);
@@ -66,6 +68,10 @@ namespace ChatterBox.Client.Common.Signaling
         {
             await SendToServer(message);
         }
+
+        #endregion
+
+        #region IServerChannel Members
 
         public void OnPeerList(PeerList peerList)
         {
@@ -159,8 +165,9 @@ namespace ChatterBox.Client.Common.Signaling
             {
                 _voipChannel.OnRemoteHangup(message);
             }
-
         }
+
+        #endregion
 
         private IAsyncOperation<bool> BufferFileExists()
         {
@@ -172,8 +179,6 @@ namespace ChatterBox.Client.Common.Signaling
                             (await ApplicationData.Current.LocalFolder.GetFilesAsync()).Any(s => s.Name == "BufferFile");
                     }).AsAsyncOperation();
         }
-
-        
 
         private IAsyncOperation<StorageFile> GetBufferFile()
         {

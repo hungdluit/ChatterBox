@@ -8,6 +8,7 @@ namespace ChatterBox.Client.Universal.Background
     public sealed class SignalingSocketOperation : ISignalingSocketOperation
     {
         private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
+        private StreamSocket _socket;
 
         internal SignalingSocketOperation()
         {
@@ -15,18 +16,7 @@ namespace ChatterBox.Client.Universal.Background
             Debug.WriteLine("SignalingSocketOperation - Create");
         }
 
-
-        private StreamSocket _socket;
         public static string SignalingSocketId { get; } = nameof(SignalingSocketId);
-
-
-        public void Dispose()
-        {
-            _socket?.TransferOwnership(SignalingSocketId);
-            SemaphoreSlim.Release();
-            Debug.WriteLine("SignalingSocketOperation - Dispose");
-        }
-        
 
         public StreamSocket Socket
         {
@@ -47,5 +37,19 @@ namespace ChatterBox.Client.Universal.Background
                 return _socket;
             }
         }
+
+
+        
+
+        public void Dispose()
+        {
+            _socket?.TransferOwnership(SignalingSocketId);
+            SemaphoreSlim.Release();
+            Debug.WriteLine("SignalingSocketOperation - Dispose");
+        }
+
+        
+
+        
     }
 }

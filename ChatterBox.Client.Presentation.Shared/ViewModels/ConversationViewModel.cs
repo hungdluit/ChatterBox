@@ -4,14 +4,14 @@ using System.Linq;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Common.Avatars;
+using ChatterBox.Client.Common.Communication.Voip;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
-using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -41,7 +41,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
         }
 
+        public DelegateCommand AnswerCommand { get; }
+        public DelegateCommand CallCommand { get; }
         public DelegateCommand CloseConversationCommand { get; }
+        public DelegateCommand HangupCommand { get; }
 
         public string InstantMessage
         {
@@ -78,11 +81,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _profileSource, value); }
         }
 
-        public DelegateCommand SendInstantMessageCommand { get; }
-        public DelegateCommand CallCommand { get; }
-        public DelegateCommand HangupCommand { get; }
-        public DelegateCommand AnswerCommand { get; }
         public DelegateCommand RejectCommand { get; }
+        public DelegateCommand SendInstantMessageCommand { get; }
 
         public string UserId
         {
@@ -90,11 +90,74 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _userId, value); }
         }
 
+        private bool OnAnswerCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnAnswerCommandExecute()
+        {
+            _voipChannel.Answer();
+        }
+
+        private bool OnCallCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnCallCommandExecute()
+        {
+            _voipChannel.Call(new OutgoingCallRequest
+            {
+                PeerUserId = UserId
+            });
+        }
+
         public event Action<ConversationViewModel> OnCloseConversation;
 
         private void OnCloseConversationCommandExecute()
         {
             OnCloseConversation?.Invoke(this);
+        }
+
+        private bool OnHangupCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnHangupCommandExecute()
+        {
+            _voipChannel.Hangup();
+        }
+
+        private bool OnRejectCommandCanExecute()
+        {
+            return true;
+        }
+
+        private void OnRejectCommandExecute()
+        {
+            _voipChannel.Reject(new IncomingCallReject
+            {
+                Reason = "Rejected"
+            });
+        }
+
+        private void OnRelayMessagesUpdated()
+        {
+            var newMessages = SignaledRelayMessages.Messages
+                .Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId).ToList();
+            foreach (var message in newMessages)
+            {
+                InstantMessages.Add(new InstantMessageViewModel
+                {
+                    Message = message.Payload,
+                    DateTime = message.SentDateTimeUtc.LocalDateTime,
+                    Sender = Name,
+                    IsSender = false
+                });
+                SignaledRelayMessages.Delete(message.Id);
+            }
         }
 
         private bool OnSendInstantMessageCommandCanExecute()
@@ -121,69 +184,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 IsSender = true,
                 Sender = RegistrationSettings.Name
             });
-        }
-
-        private bool OnCallCommandCanExecute()
-        {
-            return true;
-        }
-
-        private void OnCallCommandExecute()
-        {
-            _voipChannel.Call(new OutgoingCallRequest
-            {
-                PeerUserId = UserId,
-            });
-        }
-
-        private bool OnAnswerCommandCanExecute()
-        {
-            return true;
-        }
-
-        private void OnAnswerCommandExecute()
-        {
-            _voipChannel.Answer();
-        }
-
-        private bool OnHangupCommandCanExecute()
-        {
-            return true;
-        }
-
-        private void OnHangupCommandExecute()
-        {
-            _voipChannel.Hangup();
-        }
-
-        private bool OnRejectCommandCanExecute()
-        {
-            return true;
-        }
-
-        private void OnRejectCommandExecute()
-        {
-            _voipChannel.Reject(new IncomingCallReject
-            {
-                Reason = "Rejected",
-            });
-        }
-
-        private void OnRelayMessagesUpdated()
-        {
-            var newMessages = SignaledRelayMessages.Messages
-                .Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId).ToList();
-            foreach (var message in newMessages)
-            {
-                InstantMessages.Add(new InstantMessageViewModel
-                {
-                    Message = message.Payload,
-                    DateTime = message.SentDateTimeUtc.LocalDateTime,
-                    Sender = Name,
-                    IsSender = false
-                });
-                SignaledRelayMessages.Delete(message.Id);
-            }
         }
 
         public override string ToString()
