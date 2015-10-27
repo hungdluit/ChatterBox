@@ -10,9 +10,19 @@ using ChatterBox.Common.Communication.Serialization;
 
 namespace ChatterBox.Client.Universal.Background
 {
-    public sealed class ForegroundClient : IForegroundCommunicationChannel
+    public sealed class ForegroundClient : IForegroundChannel
     {
-        public void OnSignaledDataUpdated()
+        public void OnSignaledRegistrationStatusUpdated()
+        {
+            SendToForeground();
+        }
+
+        public void OnSignaledPeerDataUpdated()
+        {
+            SendToForeground();
+        }
+
+        public void OnSignaledRelayMessagesUpdated()
         {
             SendToForeground();
         }
@@ -24,11 +34,11 @@ namespace ChatterBox.Client.Universal.Background
 
         private ValueSet SendToForeground(object arg = null, [CallerMemberName] string method = null)
         {
-            var channelWriteHelper = new ChannelWriteHelper(typeof (IForegroundCommunicationChannel));
+            var channelWriteHelper = new ChannelWriteHelper(typeof (IForegroundChannel));
             var message = channelWriteHelper.FormatOutput(arg, method);
             var sendMessageTask = Hub.Instance.ForegroundConnection.SendMessageAsync(new ValueSet
             {
-                {typeof (IForegroundCommunicationChannel).Name, message}
+                {typeof (IForegroundChannel).Name, message}
             }).AsTask();
             sendMessageTask.Wait();
             return sendMessageTask.Result.Status != AppServiceResponseStatus.Success

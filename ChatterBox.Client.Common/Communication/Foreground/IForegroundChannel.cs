@@ -2,9 +2,11 @@
 
 namespace ChatterBox.Client.Common.Communication.Foreground
 {
-    public interface IForegroundCommunicationChannel
+    public interface IForegroundChannel
     {
-        void OnSignaledDataUpdated();
+        void OnSignaledRegistrationStatusUpdated();
+        void OnSignaledPeerDataUpdated();
+        void OnSignaledRelayMessagesUpdated();
 
         void OnVoipState(VoipState state);
     }

@@ -4,6 +4,8 @@ namespace ChatterBox.Client.Presentation.Shared.Services
 {
     public interface ISignalingUpdateService
     {
-        event Action OnUpdate;
+        event Action OnRegistrationStatusUpdated;
+        event Action OnPeerDataUpdated;
+        event Action OnRelayMessagesUpdated;
     }
 }

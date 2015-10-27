@@ -22,7 +22,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _clientChannel = clientChannel;
             _signalingSocketChannel = signalingSocketChannel;
-            signalingUpdateService.OnUpdate += SignalingUpdateService_OnUpdate;
+            signalingUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
             ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
         }
 
@@ -58,7 +58,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _status, value); }
         }
 
-        public event Action ConnectionEstablished;
+        public event Action OnRegistered;
 
         public void EstablishConnection()
         {
@@ -69,29 +69,32 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 ConnectionFailed = false;
                 IsConnecting = false;
-                ConnectionEstablished?.Invoke();
-                return;
-            }
-            connectionStatus = _signalingSocketChannel.ConnectToSignalingServer(null);
-            if (!connectionStatus.IsConnected)
-            {
-                Status = "Failed to connect to the server. Check you settings and try again.";
-                ConnectionFailed = true;
-                IsConnecting = false;
-                return;
-            }
 
-            Status = "Registering with the server...";
-            _clientChannel.Register(new Registration
+                if (SignalingStatus.IsRegistered)
+                {
+                    OnRegistered?.Invoke();
+                    return;
+                }
+            }
+            else
             {
-                Name = RegistrationSettings.Name,
-                UserId = RegistrationSettings.UserId,
-                Domain = RegistrationSettings.Domain,
-                PushToken = RegistrationSettings.UserId
-            });
-            if (connectionStatus.IsConnected)
-            {
-                ConnectionEstablished?.Invoke();
+                connectionStatus = _signalingSocketChannel.ConnectToSignalingServer(null);
+                if (!connectionStatus.IsConnected)
+                {
+                    Status = "Failed to connect to the server. Check you settings and try again.";
+                    ConnectionFailed = true;
+                    IsConnecting = false;
+                    return;
+                }
+
+                Status = "Registering with the server...";
+                _clientChannel.Register(new Registration
+                {
+                    Name = RegistrationSettings.Name,
+                    UserId = RegistrationSettings.UserId,
+                    Domain = RegistrationSettings.Domain,
+                    PushToken = RegistrationSettings.UserId
+                });
             }
         }
 
@@ -105,9 +108,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             EstablishConnection();
         }
 
-        private void SignalingUpdateService_OnUpdate()
+        private void OnRegistrationStatusUpdated()
         {
-            if (SignalingStatus.IsRegistered) ConnectionEstablished?.Invoke();
+            if (SignalingStatus.IsRegistered) OnRegistered?.Invoke();
         }
     }
 }

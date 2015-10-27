@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communication\Foreground\Dto\VoipState.cs" />
-    <Compile Include="Communication\Foreground\IForegroundCommunicationChannel.cs" />
+    <Compile Include="Communication\Foreground\IForegroundChannel.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionOwner.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionStatus.cs" />
     <Compile Include="Communication\Signaling\ISignalingSocketChannel.cs" />

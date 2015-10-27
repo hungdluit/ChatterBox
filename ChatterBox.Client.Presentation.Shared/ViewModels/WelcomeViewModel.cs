@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 
@@ -13,10 +14,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public WelcomeViewModel()
         {
             CompleteCommand = new DelegateCommand(OnCompleteCommandExecute, CanCompleteCommandExecute);
-            IsCompleted = ValidateStrings(Name, Domain);
 
             Domain = RegistrationSettings.Domain;
             Name = RegistrationSettings.Name;
+
+            IsCompleted = ValidateStrings(Name, Domain);
         }
 
         public DelegateCommand CompleteCommand { get; }
@@ -68,14 +70,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool ValidateStrings(params string[] strings)
         {
-            if (strings == null) return false;
-            foreach (var @string in strings)
-            {
-                if (string.IsNullOrWhiteSpace(@string) ||
-                    string.IsNullOrEmpty(@string))
-                    return false;
-            }
-            return true;
+            return strings != null &&
+                   strings.All(@string => !string.IsNullOrWhiteSpace(@string) && !string.IsNullOrEmpty(@string));
         }
     }
 }

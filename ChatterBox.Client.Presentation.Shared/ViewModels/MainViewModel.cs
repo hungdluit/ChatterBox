@@ -25,7 +25,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SettingsViewModel = settingsViewModel;
 
             WelcomeViewModel.OnCompleted += WelcomeCompleted;
-            ConnectingViewModel.ConnectionEstablished += ConnectingViewModel_ConnectionEstablished;
+            ConnectingViewModel.OnRegistered += ConnectingViewModel_ConnectionEstablished;
         }
 
         public ConnectingViewModel ConnectingViewModel { get; }

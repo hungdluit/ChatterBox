@@ -31,7 +31,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _clientChannel = clientChannel;
             _voipChannel = voipChannel;
-            signalingUpdateService.OnUpdate += SignalingUpdateService_OnUpdate;
+            signalingUpdateService.OnRelayMessagesUpdated += OnRelayMessagesUpdated;
             SendInstantMessageCommand = new DelegateCommand(OnSendInstantMessageCommandExecute,
                 OnSendInstantMessageCommandCanExecute);
             CallCommand = new DelegateCommand(OnCallCommandExecute, OnCallCommandCanExecute);
@@ -169,7 +169,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             });
         }
 
-        private void SignalingUpdateService_OnUpdate()
+        private void OnRelayMessagesUpdated()
         {
             var newMessages = SignaledRelayMessages.Messages
                 .Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId).ToList();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
@@ -26,7 +27,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _contactFactory = contactFactory;
             settingsViewModel.Close += Settings_OnClose;
             SettingsViewModel = settingsViewModel;
-            signalingUpdateService.OnUpdate += OnSignalingUpdate;
+
+            signalingUpdateService.OnPeerDataUpdated += OnPeerDataUpdated;
+            OnPeerDataUpdated();
+
             LayoutService.Instance.LayoutChanged += LayoutChanged;
             ShowSettings = new DelegateCommand(ShowSettingsExecute);
         }
@@ -80,7 +84,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             UpdateSelection();
         }
 
-        private void OnSignalingUpdate()
+        private void OnPeerDataUpdated()
         {
             var peers = SignaledPeerData.Peers;
             foreach (var peer in peers)
@@ -93,7 +97,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact.UserId = peer.UserId;
                     contact.ProfileSource = new BitmapImage(new Uri(AvatarLink.For(peer.Avatar)));
                     contact.OnCloseConversation += Contact_OnCloseConversation;
-                    Conversations.Add(contact);
+                    var sortList = Conversations.ToList();
+                    sortList.Add(contact);
+                    sortList = sortList.OrderBy(s => s.Name).ToList();
+                    Conversations.Insert(sortList.IndexOf(contact), contact);
                 }
                 contact.IsOnline = peer.IsOnline;
             }

@@ -28,7 +28,7 @@ namespace ChatterBox.Client.Universal.Services
         ISignalingSocketChannel,
         IClientChannel,
         IVoipChannel,
-        IForegroundCommunicationChannel
+        IForegroundChannel
     {
         private readonly TaskHelper _taskHelper;
         private AppServiceConnection _appConnection;
@@ -66,6 +66,21 @@ namespace ChatterBox.Client.Universal.Services
         public void OnSignaledDataUpdated()
         {
             RunOnUiThread(() => OnUpdate?.Invoke());
+        }
+
+        public void OnSignaledRegistrationStatusUpdated()
+        {
+            RunOnUiThread(() => OnRegistrationStatusUpdated?.Invoke());
+        }
+
+        public void OnSignaledPeerDataUpdated()
+        {
+            RunOnUiThread(() => OnPeerDataUpdated?.Invoke());
+        }
+
+        public void OnSignaledRelayMessagesUpdated()
+        {
+            RunOnUiThread(() => OnRelayMessagesUpdated?.Invoke());
         }
 
         public void OnVoipState(VoipState state)
@@ -181,5 +196,9 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(message);
         }
         #endregion
+
+        public event Action OnRegistrationStatusUpdated;
+        public event Action OnPeerDataUpdated;
+        public event Action OnRelayMessagesUpdated;
     }
 }

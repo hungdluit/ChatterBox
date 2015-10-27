@@ -49,8 +49,7 @@ namespace ChatterBox.Client.Universal
             Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
 
             var registerAgain = false;
-            if (e.PreviousExecutionState == ApplicationExecutionState.ClosedByUser ||
-                e.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
+            if (e.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
                 e.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
                 RegistrationSettings.Reset();

@@ -9,7 +9,6 @@ using Windows.Storage.Streams;
 using ChatterBox.Client.Common.Avatars;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Common.Notifications;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Common.Communication.Contracts;
@@ -24,17 +23,17 @@ namespace ChatterBox.Client.Common.Signaling
 {
     public sealed class SignalingClient : IClientChannel, IServerChannel
     {
-        private readonly IForegroundCommunicationChannel _foregroundCommunicationChannel;
+        private readonly IForegroundChannel _foregroundChannel;
         private readonly ISignalingSocketService _signalingSocketService;
         private readonly IVoipChannel _voipChannel;
 
         public SignalingClient(ISignalingSocketService signalingSocketService,
-            IForegroundCommunicationChannel foregroundCommunicationChannel,
+            IForegroundChannel foregroundChannel,
             IVoipChannel voipChannel)
         {
             _signalingSocketService = signalingSocketService;
             _voipChannel = voipChannel;
-            _foregroundCommunicationChannel = foregroundCommunicationChannel;
+            _foregroundChannel = foregroundChannel;
             ServerChannelInvoker = new ChannelInvoker(this);
         }
 
@@ -75,7 +74,7 @@ namespace ChatterBox.Client.Common.Signaling
             {
                 SignaledPeerData.AddOrUpdate(peerStatus);
             }
-            _foregroundCommunicationChannel?.OnSignaledDataUpdated();
+            _foregroundChannel?.OnSignaledPeerDataUpdated();
         }
 
         public void OnPeerPresence(PeerUpdate peer)
@@ -90,7 +89,7 @@ namespace ChatterBox.Client.Common.Signaling
                     AvatarLink.For(peer.PeerData.Avatar),
                     peer.PeerData.IsOnline);
             }
-            _foregroundCommunicationChannel?.OnSignaledDataUpdated();
+            _foregroundChannel?.OnSignaledPeerDataUpdated();
         }
 
         public void OnRegistrationConfirmation(RegisteredReply reply)
@@ -99,7 +98,7 @@ namespace ChatterBox.Client.Common.Signaling
             SignalingStatus.IsRegistered = true;
             SignalingStatus.Avatar = reply.Avatar;
             GetPeerList(new Message());
-            _foregroundCommunicationChannel?.OnSignaledDataUpdated();
+            _foregroundChannel?.OnSignaledRegistrationStatusUpdated();
         }
 
         public void ServerConfirmation(Confirmation confirmation)
@@ -129,7 +128,7 @@ namespace ChatterBox.Client.Common.Signaling
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,
                     AvatarLink.For(message.FromAvatar), message.Payload);
             }
-            _foregroundCommunicationChannel?.OnSignaledDataUpdated();
+            _foregroundChannel?.OnSignaledRelayMessagesUpdated();
 
             // Handle Voip tags
             if (message.Tag == RelayMessageTags.VoipCall)
