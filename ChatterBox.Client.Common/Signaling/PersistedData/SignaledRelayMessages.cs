@@ -62,5 +62,10 @@ namespace ChatterBox.Client.Common.Signaling.PersistedData
         {
             ApplicationData.Current.LocalSettings.DeleteContainer(nameof(RelayMessageContainer));
         }
+
+        public static Boolean IsMessageReceived(string messageId)
+        {
+            return RelayMessageContainer.Containers.ContainsKey(messageId);
+        }
     }
 }

@@ -14,6 +14,7 @@ using ChatterBox.Common.Communication.Messages.Standard;
 using ChatterBox.Common.Communication.Shared.Messages.Registration;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using Common.Logging;
+using System.Collections.Generic;
 
 namespace ChatterBox.Server
 {
@@ -125,7 +126,11 @@ namespace ChatterBox.Server
                 Message = message,
                 Method = method
             };
-            MessageQueue.Enqueue(queueItem);
+
+            if (ActiveConnection == null)
+                PushNotificationSender.SendNotification(PushToken, queueItem);
+
+            MessageQueue.Enqueue(queueItem);   
         }
 
         private void EnqueueOutput(object message = null, [CallerMemberName] string method = null)
@@ -138,12 +143,22 @@ namespace ChatterBox.Server
         public event Action<RegisteredClient, IMessage> OnGetPeerList;
         public event Action<RegisteredClient, RelayMessage> OnRelayMessage;
 
-        private void OnTcpClientDisconnected()
+        private void OnTcpClientDisconnected(Guid oldConnectionID)
         {
-            ActiveConnection = null;
-            if (!IsOnline) return;
-            IsOnline = false;
-            OnDisconnected?.Invoke(this);
+            if (oldConnectionID == ConnectionId)
+            {
+                List<RegisteredClientMessageQueueItem> itemsToSend = MessageQueue.ToList();
+
+                ActiveConnection = null;
+                if (!IsOnline) return;
+                IsOnline = false;
+                OnDisconnected?.Invoke(this);
+                
+                foreach (RegisteredClientMessageQueueItem item in itemsToSend)
+                {
+                    PushNotificationSender.SendNotification(PushToken, item);
+                }
+            }
         }
 
         private void ResetQueues()
@@ -177,8 +192,8 @@ namespace ChatterBox.Server
             ResetQueues();
             StartReading();
             StartWriting();
-            StartMessageQueueProcessing();
             IsOnline = true;
+            StartMessageQueueProcessing();
             OnConnected?.Invoke(this);
         }
 
@@ -186,7 +201,7 @@ namespace ChatterBox.Server
         {
             Task.Run(async () =>
             {
-                while (true)
+                while (true && IsOnline)
                 {
                     while (!MessageQueue.IsEmpty)
                     {
@@ -232,7 +247,7 @@ namespace ChatterBox.Server
                 catch (Exception exception)
                 {
                     Logger.Warn($"[READ] Disconnected. Reason: {exception.Message}");
-                    OnTcpClientDisconnected();
+                    OnTcpClientDisconnected(connectionId);
                 }
             });
         }
@@ -264,7 +279,7 @@ namespace ChatterBox.Server
                 catch (Exception exception)
                 {
                     Logger.Warn($"[WRITE] Disconnected. Reason: {exception.Message}");
-                    OnTcpClientDisconnected();
+                    OnTcpClientDisconnected(connectionId);
                 }
             });
         }

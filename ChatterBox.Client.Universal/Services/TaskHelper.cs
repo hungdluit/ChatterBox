@@ -62,5 +62,21 @@ namespace ChatterBox.Client.Universal.Services
                 new ApplicationTrigger(),
                 removeIfRegistered);
         }
+
+        public IBackgroundTaskRegistration GetPushNotificationTask()
+        {
+            return BackgroundTaskRegistration.AllTasks
+                .Select(s => s.Value)
+                .FirstOrDefault(s => s.Name == nameof(PushNotificationTask));
+        }
+
+        public Task<IBackgroundTaskRegistration> RegisterPushNotificationTask(bool removeIfRegistered)
+        {
+            return RegisterTask(
+                nameof(PushNotificationTask),
+                typeof(PushNotificationTask).FullName,
+                new PushNotificationTrigger(),
+                removeIfRegistered);
+        }
     }
 }

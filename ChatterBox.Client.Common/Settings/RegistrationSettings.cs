@@ -46,11 +46,25 @@ namespace ChatterBox.Client.Common.Settings
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(UserId), value); }
         }
 
+        public static string ChannelURI
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(ChannelURI)))
+                {
+                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(ChannelURI)];
+                }
+                return null;
+            }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(ChannelURI), value); }
+        }
+
         public static void Reset()
         {
             ApplicationData.Current.LocalSettings.Values.Remove(nameof(Domain));
             ApplicationData.Current.LocalSettings.Values.Remove(nameof(Name));
             ApplicationData.Current.LocalSettings.Values.Remove(nameof(UserId));
+            ApplicationData.Current.LocalSettings.Values.Remove(nameof(ChannelURI));
         }
     }
 }

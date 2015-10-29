@@ -90,7 +90,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     Name = RegistrationSettings.Name,
                     UserId = RegistrationSettings.UserId,
                     Domain = RegistrationSettings.Domain,
-                    PushToken = RegistrationSettings.UserId
+                    PushToken = RegistrationSettings.ChannelURI
                 });
             }
         }
