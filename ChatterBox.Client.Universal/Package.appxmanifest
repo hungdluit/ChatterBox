@@ -35,6 +35,7 @@
         <uap:Extension Category="windows.appService" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.ForegroundAppServiceTask">
           <uap:AppService Name="ForegroundAppServiceTask" ServerName="BackgroundHost" />
         </uap:Extension>
+        <uap:Extension Category="windows.voipCall" />
       </Extensions>
     </Application>
   </Applications>

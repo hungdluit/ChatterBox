@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Text;
 using webrtc_winrt_api;
 using Windows.ApplicationModel.Calls;
+using Windows.Foundation.Metadata;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -32,9 +33,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             // Leaving the idle state means there's a call that's happening.
             // Trigger the VoipTask to prevent this background task from terminating.
-#if false // VoipCallCoordinator support
-            const int RTcTaskAlreadyRuningErrorCode = -2147024713;
-            if (Hub.Instance.VoipTaskInstance == null)
+#if true // VoipCallCoordinator support
+            if (Hub.Instance.VoipTaskInstance == null &&
+                ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1))
             {
                 var vcc = VoipCallCoordinator.GetDefault();
                 var voipEntryPoint = typeof(VoipTask).FullName;
@@ -46,6 +47,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
                 }
                 catch (Exception ex)
                 {
+                    const int RTcTaskAlreadyRuningErrorCode = -2147024713;
                     if (ex.HResult == RTcTaskAlreadyRuningErrorCode)
                     {
                         Debug.WriteLine("VoipTask already running");

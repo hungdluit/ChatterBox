@@ -9,6 +9,7 @@ using System.Text;
 using webrtc_winrt_api;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Calls;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -32,7 +33,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     // We'll forward them to the state.
                     _peerConnection.OnIceCandidate += evt =>
                     {
-                        State.SendLocalIceCandidate(evt.Candidate);
+                        if (evt.Candidate != null)
+                        {
+                            State.SendLocalIceCandidate(evt.Candidate);
+                        }
                     };
                 }
             }
@@ -81,6 +85,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         public BaseVoipState State { get; private set; }
+        public VoipPhoneCall VoipCall { get; internal set; }
 
         public void SendToPeer(string tag, string payload)
         {

@@ -65,14 +65,6 @@ namespace ChatterBox.Client.Universal
                 return;
             }
 
-            var voipTask = await helper.RegisterVoipTask(true);
-            if (voipTask == null)
-            {
-                var message = new MessageDialog("The voip task is required.");
-                await message.ShowAsync();
-                return;
-            }
-
             Container
                 .RegisterType<HubClient>(new ContainerControlledLifetimeManager())
                 .RegisterInstance<ISignalingUpdateService>(Container.Resolve<HubClient>(),

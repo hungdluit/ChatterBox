@@ -9,6 +9,7 @@
     <Import_RootNamespace>ChatterBox.Client.Voip</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Dto\IceCandidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\Active.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\Base.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\EstablishIncoming.cs" />

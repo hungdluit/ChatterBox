@@ -53,14 +53,5 @@ namespace ChatterBox.Client.Universal.Services
             taskBuilder.SetTrigger(trigger);
             return taskBuilder.Register();
         }
-
-        public Task<IBackgroundTaskRegistration> RegisterVoipTask(bool removeIfRegistered)
-        {
-            return RegisterTask(
-                nameof(VoipTask),
-                typeof (VoipTask).FullName,
-                new ApplicationTrigger(),
-                removeIfRegistered);
-        }
     }
 }

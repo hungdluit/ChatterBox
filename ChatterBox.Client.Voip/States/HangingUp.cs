@@ -23,6 +23,11 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
                 Context.PeerConnection = null;
                 Context.PeerId = null;
             }
+
+            if (Context.VoipCall != null)
+            {
+                Context.VoipCall.NotifyCallEnded();
+            }
             Context.SwitchState(new VoipState_Idle());
         }
     }
