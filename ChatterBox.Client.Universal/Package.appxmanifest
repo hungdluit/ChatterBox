@@ -23,7 +23,7 @@
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.VoipTask">
           <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
+            <uap:Task Type="phoneCall" />
           </BackgroundTasks>
         </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.SignalingTask">

@@ -24,6 +24,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.PeerId = _message.FromUserId;
             Context.InitializeWebRTC();
 
+            // TODO: Detect if UI is visible, and use an outgoing call if it is
+            //       so there's not popup and we can answer on the UI.
+
             var vCC = VoipCallCoordinator.GetDefault();
             VoipPhoneCall call = vCC.RequestNewIncomingCall(
                 _message.FromUserId, _message.FromName, _message.FromUserId,
