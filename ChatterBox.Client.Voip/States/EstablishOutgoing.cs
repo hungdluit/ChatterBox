@@ -1,4 +1,6 @@
 ﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
+using ChatterBox.Client.Voip.Dto;
+using ChatterBox.Common.Communication.Serialization;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using System;
 using System.Collections.Generic;
@@ -49,16 +51,15 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-            if (candidate != null)
-            {
-                // TODO: Pass mid and index.
-                Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
-            }
+            //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
+            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoIceCandidate.ToDto(candidate)));
         }
 
         public override async void OnIceCandidate(RelayMessage message)
         {
-            await Context.PeerConnection.AddIceCandidate(new RTCIceCandidate(message.Payload, "", 0 /*TODO*/));
+            //var candidate = new RTCIceCandidate { Candidate = message.Payload };
+            var candidate = DtoIceCandidate.FromDto((DtoIceCandidate)JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate)));
+            await Context.PeerConnection.AddIceCandidate(candidate);
         }
 
         public override void Hangup()

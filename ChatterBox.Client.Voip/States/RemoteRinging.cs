@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using webrtc_winrt_api;
+using Windows.ApplicationModel.Calls;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -25,9 +26,41 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             Context.SendToPeer(RelayMessageTags.VoipCall, "");
             Context.InitializeWebRTC();
-            // TODO: Feedback on the UI
+
+            var vCC = VoipCallCoordinator.GetDefault();
+            VoipPhoneCall call = vCC.RequestNewOutgoingCall(_request.PeerUserId, _request.PeerUserId, "ChatterBox Universal", VoipPhoneCallMedia.Audio);
+            if (call != null)
+            {
+                call.EndRequested += Call_EndRequested;
+                call.HoldRequested += Call_HoldRequested;
+                call.RejectRequested += Call_RejectRequested;
+                call.ResumeRequested += Call_ResumeRequested;
+
+                call.NotifyCallActive();
+
+                Context.VoipCall = call;
+            }
         }
 
+        private void Call_ResumeRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Call_RejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Call_HoldRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        {
+            Hangup();
+        }
 
         public override void OnOutgoingCallAccepted(RelayMessage message)
         {

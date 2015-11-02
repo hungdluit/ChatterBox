@@ -13,6 +13,11 @@ namespace ChatterBox.Client.Universal.Services
             return GetTask(nameof(SignalingTask));
         }
 
+		public IBackgroundTaskRegistration GetPushNotificationTask()
+        {
+            return GetTask(nameof(PushNotificationTask));
+        }
+		
         private IBackgroundTaskRegistration GetTask(string name)
         {
             return BackgroundTaskRegistration.AllTasks
@@ -29,6 +34,15 @@ namespace ChatterBox.Client.Universal.Services
                 removeIfRegistered);
         }
 
+		public Task<IBackgroundTaskRegistration> RegisterPushNotificationTask(bool removeIfRegistered)
+        {
+            return RegisterTask(
+                nameof(PushNotificationTask),
+                typeof(PushNotificationTask).FullName,
+                new PushNotificationTrigger(),
+                removeIfRegistered);
+        }
+		
         private async Task<IBackgroundTaskRegistration> RegisterTask(string name, string entrypoint,
             IBackgroundTrigger trigger, bool removeIfRegistered)
         {
@@ -52,31 +66,6 @@ namespace ChatterBox.Client.Universal.Services
             };
             taskBuilder.SetTrigger(trigger);
             return taskBuilder.Register();
-        }
-
-        public Task<IBackgroundTaskRegistration> RegisterVoipTask(bool removeIfRegistered)
-        {
-            return RegisterTask(
-                nameof(VoipTask),
-                typeof (VoipTask).FullName,
-                new ApplicationTrigger(),
-                removeIfRegistered);
-        }
-
-        public IBackgroundTaskRegistration GetPushNotificationTask()
-        {
-            return BackgroundTaskRegistration.AllTasks
-                .Select(s => s.Value)
-                .FirstOrDefault(s => s.Name == nameof(PushNotificationTask));
-        }
-
-        public Task<IBackgroundTaskRegistration> RegisterPushNotificationTask(bool removeIfRegistered)
-        {
-            return RegisterTask(
-                nameof(PushNotificationTask),
-                typeof(PushNotificationTask).FullName,
-                new PushNotificationTrigger(),
-                removeIfRegistered);
         }
     }
 }

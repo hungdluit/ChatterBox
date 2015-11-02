@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Windows.ApplicationModel.Background;
 
 namespace ChatterBox.Client.Universal.Background.Tasks
@@ -19,7 +20,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
             _deferral = taskInstance.GetDeferral();
             Hub.Instance.VoipTaskInstance = this;
-            Debug.WriteLine("VoipTask started.");
+            Debug.WriteLine($"{DateTime.Now} VoipTask started.");
             taskInstance.Canceled += (s, e) => CloseVoipTask();
         }
 
@@ -27,7 +28,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
         public void CloseVoipTask()
         {
-            Debug.WriteLine("VoipTask closed.");
+            Debug.WriteLine($"{DateTime.Now} VoipTask closed.");
             Hub.Instance.VoipTaskInstance = null;
             _deferral.Complete();
         }

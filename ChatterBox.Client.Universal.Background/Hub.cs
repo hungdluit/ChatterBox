@@ -57,7 +57,6 @@ namespace ChatterBox.Client.Universal.Background
         public SignalingSocketService SignalingSocketService { get; } = new SignalingSocketService();
         public IVoipChannel VoipChannel { get; } = new VoipChannel();
         public VoipTask VoipTaskInstance { get; set; }
-        public ApplicationTrigger WebRtcTaskTrigger { get; set; }
 
         private void HandleForegroundRequest(
             AppServiceConnection sender,
