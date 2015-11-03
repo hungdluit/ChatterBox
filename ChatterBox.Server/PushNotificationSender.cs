@@ -13,12 +13,12 @@ namespace ChatterBox.Server
 {
     public class PushNotificationSender
     {
-        public static void SendNotification(string chanellURI, RegisteredClientMessageQueueItem message)
+        public static void SendNotification(string chanellURI, string message)
         {
             if (Regex.Match(chanellURI, "^https://db5.notify.windows.com").Success)
             {
                 IRawNotificationContent notificationContent = RawContentFactory.CreateRaw();
-                notificationContent.Content = message.SerializedMessage;
+                notificationContent.Content = message;
                 var result = notificationContent.Send(new Uri(chanellURI), WNSAuthentication.Instance.GetAccessTokenProvider());
                 if (result.Exception != null)
                 {

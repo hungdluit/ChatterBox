@@ -46,17 +46,17 @@ namespace ChatterBox.Client.Common.Settings
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(UserId), value); }
         }
 
-        public static string ChannelURI
+        public static string PushNotificationChannelURI
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(ChannelURI)))
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(PushNotificationChannelURI)))
                 {
-                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(ChannelURI)];
+                    return (string)ApplicationData.Current.LocalSettings.Values[nameof(PushNotificationChannelURI)];
                 }
                 return null;
             }
-            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(ChannelURI), value); }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(PushNotificationChannelURI), value); }
         }
 
         public static void Reset()
@@ -64,7 +64,7 @@ namespace ChatterBox.Client.Common.Settings
             ApplicationData.Current.LocalSettings.Values.Remove(nameof(Domain));
             ApplicationData.Current.LocalSettings.Values.Remove(nameof(Name));
             ApplicationData.Current.LocalSettings.Values.Remove(nameof(UserId));
-            ApplicationData.Current.LocalSettings.Values.Remove(nameof(ChannelURI));
+            ApplicationData.Current.LocalSettings.Values.Remove(nameof(PushNotificationChannelURI));
         }
     }
 }

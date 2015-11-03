@@ -16,7 +16,7 @@ namespace ChatterBox.Client.Universal.Services
             PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
             if (channel != null)
             {
-                RegistrationSettings.ChannelURI = channel.Uri;
+                RegistrationSettings.PushNotificationChannelURI = channel.Uri;
                 Debug.WriteLine($"Push token chanell URI: {channel.Uri}");
             }
         }

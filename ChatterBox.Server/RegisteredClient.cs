@@ -38,7 +38,7 @@ namespace ChatterBox.Server
             new ConcurrentQueue<RegisteredClientMessageQueueItem>();
 
         public string Name { get; set; }
-        public string PushToken { get; set; }
+        public string PushNotificationChannelURI { get; set; }
         public string UserId { get; set; }
         private ConcurrentQueue<string> WriteQueue { get; set; } = new ConcurrentQueue<string>();
 
@@ -128,7 +128,7 @@ namespace ChatterBox.Server
             };
 
             if (ActiveConnection == null)
-                PushNotificationSender.SendNotification(PushToken, queueItem);
+                PushNotificationSender.SendNotification(PushNotificationChannelURI, queueItem.SerializedMessage);
 
             MessageQueue.Enqueue(queueItem);   
         }
@@ -156,7 +156,7 @@ namespace ChatterBox.Server
                 
                 foreach (RegisteredClientMessageQueueItem item in itemsToSend)
                 {
-                    PushNotificationSender.SendNotification(PushToken, item);
+                    PushNotificationSender.SendNotification(PushNotificationChannelURI, item.SerializedMessage);
                 }
             }
         }
@@ -201,7 +201,7 @@ namespace ChatterBox.Server
         {
             Task.Run(async () =>
             {
-                while (true && IsOnline)
+                while (IsOnline)
                 {
                     while (!MessageQueue.IsEmpty)
                     {
