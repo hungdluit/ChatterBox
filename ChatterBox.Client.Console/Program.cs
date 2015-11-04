@@ -19,7 +19,7 @@ namespace ChatterBox.Client.Console
                     Domain = "chatterbox.microsoft.com",
                     Name = userId,
                     UserId = userId,
-                    PushToken = userId
+                    PushNotificationChannelURI = userId
                 });
             });
 
