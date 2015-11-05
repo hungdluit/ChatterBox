@@ -122,7 +122,6 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         Grid.Column="2">
-                <TextBlock Text="{Binding IsInCallMode}" Width="70" />
                 <Button Command="{Binding CallCommand}" Margin="5"
                         Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE13A;" />
                 <Button Command="{Binding VideoCallCommand}" Margin="5"

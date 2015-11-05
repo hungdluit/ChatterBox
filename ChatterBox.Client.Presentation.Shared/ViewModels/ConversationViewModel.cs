@@ -29,6 +29,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private string _name;
         private ImageSource _profileSource;
         private string _userId;
+        private bool _isOtherConversationInCallMode;
 
         public ConversationViewModel(IClientChannel clientChannel,
             IForegroundUpdateService foregroundUpdateService,
@@ -113,6 +114,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
+        public bool IsOtherConversationInCallMode
+        {
+            get { return _isOtherConversationInCallMode; }
+            set {
+                if (SetProperty(ref _isOtherConversationInCallMode, value))
+                    UpdateCommandStates();
+            }
+        }
+
         public string Name
         {
             get { return _name; }
@@ -154,7 +164,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool OnCallCommandCanExecute()
         {
-            return true;
+            return !IsInCallMode && !IsOtherConversationInCallMode;
         }
 
         private void OnCallCommandExecute()
@@ -247,6 +257,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     IsLocalRinging = false;
                     IsRemoteRinging = false;
                     IsCallConnected = false;
+                    IsOtherConversationInCallMode = false;
                     break;
                 case VoipStateEnum.LocalRinging:
                     if (voipState.PeerId == UserId)
@@ -255,6 +266,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = true;
                         IsRemoteRinging = false;
                         IsCallConnected = false;
+                    }
+                    else
+                    {
+                        IsOtherConversationInCallMode = true;
                     }
                     break;
                 case VoipStateEnum.RemoteRinging:
@@ -265,6 +280,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = true;
                         IsCallConnected = false;
                     }
+                    else
+                    {
+                        IsOtherConversationInCallMode = true;
+                    }
                     break;
                 case VoipStateEnum.EstablishOutgoing:
                     if (voipState.PeerId == UserId)
@@ -273,6 +292,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
+                    }
+                    else
+                    {
+                        IsOtherConversationInCallMode = true;
                     }
                     break;
                 case VoipStateEnum.EstablishIncoming:
@@ -283,6 +306,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = false;
                         IsCallConnected = true;
                     }
+                    else
+                    {
+                        IsOtherConversationInCallMode = true;
+                    }
                     break;
                 case VoipStateEnum.HangingUp:
                     if (voipState.PeerId == UserId)
@@ -292,6 +319,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = false;
                         IsCallConnected = true;
                     }
+                    else
+                    {
+                        IsOtherConversationInCallMode = true;
+                    }
                     break;
                 case VoipStateEnum.ActiveCall:
                     if (voipState.PeerId == UserId)
@@ -300,6 +331,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
+                    }
+                    else
+                    {
+                        IsOtherConversationInCallMode = true;
                     }
                     break;
                 default:

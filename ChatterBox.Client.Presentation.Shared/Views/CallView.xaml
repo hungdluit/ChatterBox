@@ -31,7 +31,7 @@
                           VerticalAlignment="Stretch" />
             <Image Name="PeerPlaceholder"
                    Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
-                   Source="{Binding PeerPlaceholderImage}"
+                   Source="{Binding ProfileSource}"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
             <MediaElement Name="SelfVideo"
@@ -41,7 +41,7 @@
                           VerticalAlignment="Bottom" />
             <Image Name="SelfPlaceholder"
                    Margin="5"
-                   Source="{Binding SelfPlaceholderImage}"
+                   Source="{Binding OwnProfileSource}"
                    Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom" />
