@@ -24,7 +24,7 @@ using ChatterBox.Common.Communication.Shared.Messages.Relay;
 namespace ChatterBox.Client.Universal.Services
 {
     public class HubClient : DispatcherBindableBase,
-        ISignalingUpdateService,
+        IForegroundUpdateService,
         ISignalingSocketChannel,
         IClientChannel,
         IVoipChannel,
@@ -86,7 +86,17 @@ namespace ChatterBox.Client.Universal.Services
 
         public void OnVoipState(VoipState state)
         {
+            RunOnUiThread(() => OnVoipStateUpdate?.Invoke(state));
         }
+
+        #endregion
+
+        #region IForegroundUpdateService Members
+
+        public event Action OnPeerDataUpdated;
+        public event Action OnRegistrationStatusUpdated;
+        public event Action OnRelayMessagesUpdated;
+        public event Action<VoipState> OnVoipStateUpdate;
 
         #endregion
 
@@ -107,14 +117,6 @@ namespace ChatterBox.Client.Universal.Services
 
         #endregion
 
-        #region ISignalingUpdateService Members
-
-        public event Action OnPeerDataUpdated;
-        public event Action OnRegistrationStatusUpdated;
-        public event Action OnRelayMessagesUpdated;
-
-        #endregion
-
         #region IVoipChannel Members
 
         public void Answer()
@@ -125,6 +127,11 @@ namespace ChatterBox.Client.Universal.Services
         public void Call(OutgoingCallRequest request)
         {
             InvokeHubChannel<IVoipChannel>(request);
+        }
+
+        public VoipState GetVoipState()
+        {
+            return InvokeHubChannel<IVoipChannel, VoipState>();
         }
 
         public void Hangup()
@@ -170,11 +177,6 @@ namespace ChatterBox.Client.Universal.Services
         public void Reject(IncomingCallReject reason)
         {
             InvokeHubChannel<IVoipChannel>(reason);
-        }
-
-        public VoipState GetVoipState()
-        {
-            return InvokeHubChannel<IVoipChannel, VoipState>();
         }
 
         #endregion

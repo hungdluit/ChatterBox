@@ -4,6 +4,7 @@ using System.Linq;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using ChatterBox.Client.Common.Avatars;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Common.Settings;
@@ -20,18 +21,23 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private readonly IClientChannel _clientChannel;
         private readonly IVoipChannel _voipChannel;
         private string _instantMessage;
+        private bool _isCallConnected;
+        private bool _isInCallMode;
+        private bool _isLocalRinging;
         private bool _isOnline;
+        private bool _isRemoteRinging;
         private string _name;
         private ImageSource _profileSource;
         private string _userId;
 
         public ConversationViewModel(IClientChannel clientChannel,
-            ISignalingUpdateService signalingUpdateService,
+            IForegroundUpdateService foregroundUpdateService,
             IVoipChannel voipChannel)
         {
             _clientChannel = clientChannel;
             _voipChannel = voipChannel;
-            signalingUpdateService.OnRelayMessagesUpdated += OnRelayMessagesUpdated;
+            foregroundUpdateService.OnRelayMessagesUpdated += OnRelayMessagesUpdated;
+            foregroundUpdateService.OnVoipStateUpdate += OnVoipStateUpdate;
             SendInstantMessageCommand = new DelegateCommand(OnSendInstantMessageCommandExecute,
                 OnSendInstantMessageCommandCanExecute);
             CallCommand = new DelegateCommand(OnCallCommandExecute, OnCallCommandCanExecute);
@@ -61,10 +67,50 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public ObservableCollection<InstantMessageViewModel> InstantMessages { get; } =
             new ObservableCollection<InstantMessageViewModel>();
 
+        public bool IsCallConnected
+        {
+            get { return _isCallConnected; }
+            set
+            {
+                if (SetProperty(ref _isCallConnected, value))
+                    UpdateCommandStates();
+            }
+        }
+
+        public bool IsInCallMode
+        {
+            get { return _isInCallMode; }
+            set
+            {
+                if (SetProperty(ref _isInCallMode, value))
+                    UpdateCommandStates();
+            }
+        }
+
+        public bool IsLocalRinging
+        {
+            get { return _isLocalRinging; }
+            set
+            {
+                if (SetProperty(ref _isLocalRinging, value))
+                    UpdateCommandStates();
+            }
+        }
+
         public bool IsOnline
         {
             get { return _isOnline; }
             set { SetProperty(ref _isOnline, value); }
+        }
+
+        public bool IsRemoteRinging
+        {
+            get { return _isRemoteRinging; }
+            set
+            {
+                if (SetProperty(ref _isRemoteRinging, value))
+                    UpdateCommandStates();
+            }
         }
 
         public string Name
@@ -90,9 +136,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _userId, value); }
         }
 
+        public void Initialize()
+        {
+            var voipState = _voipChannel.GetVoipState();
+            OnVoipStateUpdate(voipState);
+        }
+
         private bool OnAnswerCommandCanExecute()
         {
-            return true;
+            return IsLocalRinging;
         }
 
         private void OnAnswerCommandExecute()
@@ -122,7 +174,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool OnHangupCommandCanExecute()
         {
-            return true;
+            return IsCallConnected || IsRemoteRinging;
         }
 
         private void OnHangupCommandExecute()
@@ -132,7 +184,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool OnRejectCommandCanExecute()
         {
-            return true;
+            return IsLocalRinging;
         }
 
         private void OnRejectCommandExecute()
@@ -186,9 +238,86 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             });
         }
 
+        private void OnVoipStateUpdate(VoipState voipState)
+        {
+            switch (voipState.State)
+            {
+                case VoipStateEnum.Idle:
+                    IsInCallMode = false;
+                    IsLocalRinging = false;
+                    IsRemoteRinging = false;
+                    IsCallConnected = false;
+                    break;
+                case VoipStateEnum.LocalRinging:
+                    if (voipState.PeerId == UserId)
+                    {
+                        IsInCallMode = true;
+                        IsLocalRinging = true;
+                        IsRemoteRinging = false;
+                        IsCallConnected = false;
+                    }
+                    break;
+                case VoipStateEnum.RemoteRinging:
+                    if (voipState.PeerId == UserId)
+                    {
+                        IsInCallMode = true;
+                        IsLocalRinging = false;
+                        IsRemoteRinging = true;
+                        IsCallConnected = false;
+                    }
+                    break;
+                case VoipStateEnum.EstablishOutgoing:
+                    if (voipState.PeerId == UserId)
+                    {
+                        IsInCallMode = true;
+                        IsLocalRinging = false;
+                        IsRemoteRinging = false;
+                        IsCallConnected = true;
+                    }
+                    break;
+                case VoipStateEnum.EstablishIncoming:
+                    if (voipState.PeerId == UserId)
+                    {
+                        IsInCallMode = true;
+                        IsLocalRinging = false;
+                        IsRemoteRinging = false;
+                        IsCallConnected = true;
+                    }
+                    break;
+                case VoipStateEnum.HangingUp:
+                    if (voipState.PeerId == UserId)
+                    {
+                        IsInCallMode = true;
+                        IsLocalRinging = false;
+                        IsRemoteRinging = false;
+                        IsCallConnected = true;
+                    }
+                    break;
+                case VoipStateEnum.ActiveCall:
+                    if (voipState.PeerId == UserId)
+                    {
+                        IsInCallMode = true;
+                        IsLocalRinging = false;
+                        IsRemoteRinging = false;
+                        IsCallConnected = true;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public override string ToString()
         {
             return $"{Name}";
+        }
+
+        private void UpdateCommandStates()
+        {
+            CallCommand.RaiseCanExecuteChanged();
+            AnswerCommand.RaiseCanExecuteChanged();
+            HangupCommand.RaiseCanExecuteChanged();
+            RejectCommand.RaiseCanExecuteChanged();
         }
     }
 }

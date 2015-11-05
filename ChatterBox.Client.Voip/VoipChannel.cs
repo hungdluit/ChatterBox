@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
     internal class VoipChannel : IVoipChannel
     {
+        // Semaphore used to make sure only one call on the channel
+        // is executed at any given time.
+        private readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
         // This variable should not be used outside of the getter below.
         private VoipContext _context;
 
@@ -109,10 +112,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         #endregion
-
-        // Semaphore used to make sure only one call on the channel
-        // is executed at any given time.
-        private SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
 
         private void Post(Action fn)
         {

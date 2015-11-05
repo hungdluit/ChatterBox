@@ -19,7 +19,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private SettingsViewModel _settingsViewModel;
         private DelegateCommand _showSettings;
 
-        public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
+        public ContactsViewModel(IForegroundUpdateService foregroundUpdateService,
             SettingsViewModel settingsViewModel,
             Func<ConversationViewModel> contactFactory)
         {
@@ -27,7 +27,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             settingsViewModel.Close += Settings_OnClose;
             SettingsViewModel = settingsViewModel;
 
-            signalingUpdateService.OnPeerDataUpdated += OnPeerDataUpdated;
+            foregroundUpdateService.OnPeerDataUpdated += OnPeerDataUpdated;
             OnPeerDataUpdated();
 
             LayoutService.Instance.LayoutChanged += LayoutChanged;
@@ -100,6 +100,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     sortList.Add(contact);
                     sortList = sortList.OrderBy(s => s.Name).ToList();
                     Conversations.Insert(sortList.IndexOf(contact), contact);
+                    contact.Initialize();
                 }
                 contact.IsOnline = peer.IsOnline;
             }

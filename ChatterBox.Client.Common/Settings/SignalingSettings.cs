@@ -12,7 +12,7 @@ namespace ChatterBox.Client.Common.Settings
                 {
                     return (string) ApplicationData.Current.LocalSettings.Values[nameof(SignalingServerHost)];
                 }
-                SignalingServerHost = "localhost";
+                SignalingServerHost = "192.168.0.2";
                 return SignalingServerHost;
             }
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(SignalingServerHost), value); }

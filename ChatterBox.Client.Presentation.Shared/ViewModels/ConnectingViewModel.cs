@@ -17,12 +17,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private bool _isConnecting;
         private string _status;
 
-        public ConnectingViewModel(ISignalingUpdateService signalingUpdateService,
+        public ConnectingViewModel(IForegroundUpdateService foregroundUpdateService,
             ISignalingSocketChannel signalingSocketChannel, IClientChannel clientChannel)
         {
             _clientChannel = clientChannel;
             _signalingSocketChannel = signalingSocketChannel;
-            signalingUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
+            foregroundUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
             ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
         }
 

@@ -14,7 +14,6 @@ using ChatterBox.Common.Communication.Messages.Standard;
 using ChatterBox.Common.Communication.Shared.Messages.Registration;
 using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using Common.Logging;
-using System.Collections.Generic;
 
 namespace ChatterBox.Server
 {
@@ -130,7 +129,7 @@ namespace ChatterBox.Server
             if (ActiveConnection == null)
                 PushNotificationSender.SendNotification(PushNotificationChannelURI, queueItem.SerializedMessage);
 
-            MessageQueue.Enqueue(queueItem);   
+            MessageQueue.Enqueue(queueItem);
         }
 
         private void EnqueueOutput(object message = null, [CallerMemberName] string method = null)
@@ -147,14 +146,14 @@ namespace ChatterBox.Server
         {
             if (oldConnectionID == ConnectionId)
             {
-                List<RegisteredClientMessageQueueItem> itemsToSend = MessageQueue.ToList();
+                var itemsToSend = MessageQueue.ToList();
 
                 ActiveConnection = null;
                 if (!IsOnline) return;
                 IsOnline = false;
                 OnDisconnected?.Invoke(this);
-                
-                foreach (RegisteredClientMessageQueueItem item in itemsToSend)
+
+                foreach (var item in itemsToSend)
                 {
                     PushNotificationSender.SendNotification(PushNotificationChannelURI, item.SerializedMessage);
                 }

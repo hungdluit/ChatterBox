@@ -77,7 +77,7 @@ namespace ChatterBox.Client.Universal
 
             Container
                 .RegisterType<HubClient>(new ContainerControlledLifetimeManager())
-                .RegisterInstance<ISignalingUpdateService>(Container.Resolve<HubClient>(),
+                .RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager())
                 .RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager())

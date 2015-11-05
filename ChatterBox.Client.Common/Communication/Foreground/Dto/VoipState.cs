@@ -8,13 +8,13 @@
         EstablishOutgoing,
         EstablishIncoming,
         HangingUp,
-        ActiveCall,
+        ActiveCall
     }
 
     public sealed class VoipState
     {
-        public string PeerId { get; set; }
         public bool HasPeerConnection { get; set; }
+        public string PeerId { get; set; }
         public VoipStateEnum State { get; set; }
     }
 }
