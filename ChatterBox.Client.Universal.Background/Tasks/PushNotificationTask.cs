@@ -41,8 +41,12 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                             showNotification = !SignaledRelayMessages.IsMessageReceived(message.Id);
                         }
 
-                         if (showNotification)
+                        if (showNotification)
+                        {
                             ToastNotificationService.ShowInstantMessageNotification(message.FromName, AvatarLink.For(message.FromAvatar), message.Payload);
+
+                            SignaledRelayMessages.AddPushNotificationMessageID(message.Id);
+                        }
                     }
                 }
                 catch (Exception exception)
