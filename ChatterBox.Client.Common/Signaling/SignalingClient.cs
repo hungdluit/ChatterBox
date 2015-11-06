@@ -128,7 +128,7 @@ namespace ChatterBox.Client.Common.Signaling
         {
             ClientConfirmation(Confirmation.For(message));
             SignaledRelayMessages.Add(message);
-            if (message.Tag == RelayMessageTags.InstantMessage &&
+            if (message.Tag == RelayMessageTags.InstantMessage && SignaledRelayMessages.IsPushNotificationReceived(message.Id) && 
                 (message.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalMinutes < 10))
             {
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,

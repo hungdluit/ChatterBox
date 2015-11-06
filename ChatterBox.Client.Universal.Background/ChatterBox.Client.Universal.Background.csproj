@@ -117,6 +117,7 @@
     <Compile Include="SignalingSocketOperation.cs" />
     <Compile Include="SignalingSocketService.cs" />
     <Compile Include="Tasks\ForegroundAppServiceTask.cs" />
+    <Compile Include="Tasks\PushNotificationTask.cs" />
     <Compile Include="Tasks\SignalingTask.cs" />
     <Compile Include="Tasks\VoipTask.cs" />
   </ItemGroup>

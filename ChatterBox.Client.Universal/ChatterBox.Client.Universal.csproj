@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\HubClient.cs" />
+    <Compile Include="Services\PushNotificationHelper.cs" />
     <Compile Include="Services\TaskHelper.cs" />
   </ItemGroup>
   <ItemGroup>

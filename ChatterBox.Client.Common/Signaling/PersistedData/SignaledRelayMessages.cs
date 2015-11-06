@@ -62,5 +62,44 @@ namespace ChatterBox.Client.Common.Signaling.PersistedData
         {
             ApplicationData.Current.LocalSettings.DeleteContainer(nameof(RelayMessageContainer));
         }
+
+        public static Boolean IsMessageReceived(string messageId)
+        {
+            return RelayMessageContainer.Containers.ContainsKey(messageId);
+        }
+
+        private static ApplicationDataContainer ReceivedPushNotificationsContainer
+        {
+            get
+            {
+                if (!ApplicationData.Current.LocalSettings.Containers.ContainsKey(nameof(ReceivedPushNotificationsContainer)))
+                {
+                    ApplicationData.Current.LocalSettings.CreateContainer(nameof(ReceivedPushNotificationsContainer),
+                        ApplicationDataCreateDisposition.Always);
+                }
+                return ApplicationData.Current.LocalSettings.Containers[nameof(ReceivedPushNotificationsContainer)];
+            }
+        }
+
+        public static void AddPushNotificationMessageID(string messageID)
+        {
+            if (messageID != null)
+            {
+                ReceivedPushNotificationsContainer.CreateContainer(messageID, ApplicationDataCreateDisposition.Always);
+            }
+        }
+
+        public static Boolean IsPushNotificationReceived(string messageID)
+        {
+            Boolean ret = false;
+
+            if (messageID != null)
+            {
+                ret = ReceivedPushNotificationsContainer.Containers.ContainsKey(messageID);
+                if (ret)
+                    ReceivedPushNotificationsContainer.DeleteContainer(messageID);
+            }
+            return ret;
+        }
     }
 }

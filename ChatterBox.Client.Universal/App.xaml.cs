@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -56,7 +57,16 @@ namespace ChatterBox.Client.Universal
                 registerAgain = true;
             }
 
+            PushNotificationHelper.RegisterPushNotificationChannel();
+
             var helper = new TaskHelper();
+
+            var pushNotificationTask = await helper.RegisterPushNotificationTask(false);
+            if (pushNotificationTask == null)
+            {
+                Debug.WriteLine("Push notification background task is not started");
+            }
+
             var signalingTask = await helper.RegisterSignalingTask(registerAgain);
             if (signalingTask == null)
             {

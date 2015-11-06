@@ -21,6 +21,11 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.PushNotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.VoipTask">
           <BackgroundTasks ServerName="BackgroundHost">
             <uap:Task Type="phoneCall" />
