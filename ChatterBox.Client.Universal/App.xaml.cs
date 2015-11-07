@@ -17,6 +17,7 @@ using ChatterBox.Client.Universal.Services;
 using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
+using ChatterBox.Client.Common.Signaling;
 
 namespace ChatterBox.Client.Universal
 {
@@ -36,6 +37,7 @@ namespace ChatterBox.Client.Universal
                 WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
+            Resuming += OnResuming;
         }
 
         public UnityContainer Container { get; } = new UnityContainer();
@@ -47,7 +49,19 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            if (e.PreviousExecutionState == ApplicationExecutionState.Running)
+            {
+                if (Container.IsRegistered(typeof(ISocketConnection)))
+                {
+                    if (!Container.Resolve<ISocketConnection>().IsConnected)
+                        Container.Resolve<ISocketConnection>().Connect();
+                }
+                Window.Current.Activate();
+                return;
+            }
+
             Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
+
 
             var registerAgain = false;
             if (e.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
@@ -86,6 +100,10 @@ namespace ChatterBox.Client.Universal
                 .RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager());
 
+            Container
+                .RegisterType<SocketConnection>(new ContainerControlledLifetimeManager())
+                .RegisterInstance<ISocketConnection>(Container.Resolve<SocketConnection>(),
+                    new ContainerControlledLifetimeManager());
 
             var client = Container.Resolve<HubClient>();
             await client.Connect();
@@ -110,6 +128,7 @@ namespace ChatterBox.Client.Universal
                 // parameter
                 rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>());
             }
+            
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -136,6 +155,16 @@ namespace ChatterBox.Client.Universal
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        private void OnResuming(object sender, object e)
+        {
+            if (Container.IsRegistered(typeof(ISocketConnection)))
+            {
+                if (!Container.Resolve<ISocketConnection>().IsConnected)
+                    Container.Resolve<ISocketConnection>().Connect();
+            }
+            Window.Current.Activate();
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
