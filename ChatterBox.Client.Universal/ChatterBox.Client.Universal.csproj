@@ -22,7 +22,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -134,13 +134,13 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BackgroundHost\BackgroundHost.vcxproj">
+      <Project>{4497e847-8611-4545-bdbe-ce9744c7013c}</Project>
+      <Name>BackgroundHost</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Common\ChatterBox.Client.Common.csproj">
       <Project>{9E96F63A-7E37-4F90-B9A2-93DA25E663A1}</Project>
       <Name>ChatterBox.Client.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ChatterBox.Client.Universal.BackgroundHost\ChatterBox.Client.Universal.BackgroundHost.vcxproj">
-      <Project>{4497e847-8611-4545-bdbe-ce9744c7013c}</Project>
-      <Name>ChatterBox.Client.Universal.BackgroundHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Universal.Background\ChatterBox.Client.Universal.Background.csproj">
       <Project>{626BEE3A-EB2F-415F-9E30-9AAF6B9C430A}</Project>
