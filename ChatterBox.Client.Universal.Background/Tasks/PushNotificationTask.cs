@@ -44,8 +44,11 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                         }
 
                         if (showNotification)
-                            ToastNotificationService.ShowInstantMessageNotification(message.FromName,
-                                AvatarLink.For(message.FromAvatar), message.Payload);
+                        {
+                            ToastNotificationService.ShowInstantMessageNotification(message.FromName, AvatarLink.For(message.FromAvatar), message.Payload);
+
+                            SignaledRelayMessages.AddPushNotificationMessageID(message.Id);
+                        }
                     }
                 }
                 catch (Exception exception)
