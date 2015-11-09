@@ -65,7 +65,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             var vCC = VoipCallCoordinator.GetDefault();
             var call = vCC.RequestNewIncomingCall(
                 _message.FromUserId, _message.FromName, _message.FromUserId,
-                new Uri(AvatarLink.For(_message.FromAvatar), UriKind.RelativeOrAbsolute	),
+                new Uri(AvatarLink.For(_message.FromAvatar), UriKind.RelativeOrAbsolute),
                 "ChatterBox Universal",
                 null,
                 "",

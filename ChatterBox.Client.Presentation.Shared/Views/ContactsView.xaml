@@ -123,9 +123,6 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <Grid Grid.Column="1"
-              Visibility="{Binding IsSettingsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <views:SettingsView DataContext="{Binding SettingsViewModel}" />
-        </Grid>
+
     </ItemsControl>
 </UserControl>

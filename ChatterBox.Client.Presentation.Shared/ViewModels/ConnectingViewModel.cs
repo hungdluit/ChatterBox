@@ -24,6 +24,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _signalingSocketChannel = signalingSocketChannel;
             foregroundUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
             ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
+            ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
         }
 
         public DelegateCommand ConnectCommand { get; }
@@ -51,6 +52,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 }
             }
         }
+
+        public DelegateCommand ShowSettings { get; set; }
 
         public string Status
         {
@@ -111,5 +114,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             if (SignalingStatus.IsRegistered) OnRegistered?.Invoke();
         }
+
+        public event Action OnShowSettings;
     }
 }

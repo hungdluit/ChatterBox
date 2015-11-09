@@ -30,5 +30,9 @@
                 <views:ConnectingView DataContext="{Binding ConnectingViewModel}" />
             </Grid>
         </Grid>
+        <Grid x:Name="SettingsRegion"
+              Visibility="{Binding IsSettingsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <views:SettingsView DataContext="{Binding SettingsViewModel}" />
+        </Grid>
     </Grid>
 </Page>

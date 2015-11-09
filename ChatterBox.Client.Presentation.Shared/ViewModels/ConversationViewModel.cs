@@ -25,11 +25,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private bool _isInCallMode;
         private bool _isLocalRinging;
         private bool _isOnline;
+        private bool _isOtherConversationInCallMode;
         private bool _isRemoteRinging;
         private string _name;
         private ImageSource _profileSource;
         private string _userId;
-        private bool _isOtherConversationInCallMode;
 
         public ConversationViewModel(IClientChannel clientChannel,
             IForegroundUpdateService foregroundUpdateService,
@@ -104,21 +104,22 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isOnline, value); }
         }
 
+        public bool IsOtherConversationInCallMode
+        {
+            get { return _isOtherConversationInCallMode; }
+            set
+            {
+                if (SetProperty(ref _isOtherConversationInCallMode, value))
+                    UpdateCommandStates();
+            }
+        }
+
         public bool IsRemoteRinging
         {
             get { return _isRemoteRinging; }
             set
             {
                 if (SetProperty(ref _isRemoteRinging, value))
-                    UpdateCommandStates();
-            }
-        }
-
-        public bool IsOtherConversationInCallMode
-        {
-            get { return _isOtherConversationInCallMode; }
-            set {
-                if (SetProperty(ref _isOtherConversationInCallMode, value))
                     UpdateCommandStates();
             }
         }

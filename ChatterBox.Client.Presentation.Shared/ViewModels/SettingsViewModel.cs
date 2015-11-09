@@ -6,34 +6,60 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class SettingsViewModel : BindableBase
     {
-        private DelegateCommand _closeCommand;
+        private string _domain;
+        private string _signalingServerHost;
+        private int _signalingServerPort;
 
         public SettingsViewModel()
         {
-            CloseCommand = new DelegateCommand(CloseExecute);
+            CloseCommand = new DelegateCommand(OnCloseCommandExecute);
+            SaveCommand = new DelegateCommand(OnSaveCommandExecute);
+            Reset();
         }
 
-        public DelegateCommand CloseCommand
+        public DelegateCommand CloseCommand { get; set; }
+
+        public string Domain
         {
-            get { return _closeCommand; }
-            set { SetProperty(ref _closeCommand, value); }
+            get { return _domain; }
+            set { SetProperty(ref _domain, value); }
         }
 
-        public string RegisteredDomain
+        public DelegateCommand SaveCommand { get; set; }
+
+        public string SignalingServerHost
         {
-            get { return RegistrationSettings.Domain; }
+            get { return _signalingServerHost; }
+            set { SetProperty(ref _signalingServerHost, value); }
         }
 
-        public string RegisteredName
+        public int SignalingServerPort
         {
-            get { return RegistrationSettings.Name; }
+            get { return _signalingServerPort; }
+            set { SetProperty(ref _signalingServerPort, value); }
         }
 
-        public event Action Close;
+        public event Action OnClose;
 
-        private void CloseExecute()
+        private void OnCloseCommandExecute()
         {
-            Close?.Invoke();
+            Reset();
+            OnClose?.Invoke();
+        }
+
+        private void OnSaveCommandExecute()
+        {
+            SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
+            SignalingSettings.SignalingServerHost = SignalingServerHost;
+            RegistrationSettings.Domain = Domain;
+            OnCloseCommandExecute();
+        }
+
+        private void Reset()
+        {
+            SignalingServerPort = int.Parse(SignalingSettings.SignalingServerPort);
+            SignalingServerHost = SignalingSettings.SignalingServerHost;
+            Domain = RegistrationSettings.Domain;
         }
     }
 }

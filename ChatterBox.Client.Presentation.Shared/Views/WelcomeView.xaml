@@ -47,12 +47,12 @@
                      MinWidth="150" />
         </Grid>
 
-        <Button Content="Next"
-                Margin="15"
-                Grid.Row="1"
-                Command="{Binding CompleteCommand}"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+            <Button HorizontalAlignment="Right" FontFamily="Segoe UI Symbol" Content="&#xE115;"
+                    Margin="5" Command="{Binding ShowSettings}" />
+            <Button Content="Next" Margin="15" Command="{Binding CompleteCommand}" />
+        </StackPanel>
+
 
     </Grid>
 </UserControl>
