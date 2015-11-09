@@ -59,8 +59,25 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.PeerId = _message.FromUserId;
             Context.InitializeWebRTC();
 
+#if true // Temporary workaround for loss of connection between FG/BG.  Don't use OS call prompt.
+
             // TODO: Detect if UI is visible, and use an outgoing call if it is
             //       so there's not popup and we can answer on the UI.
+            var vCC = VoipCallCoordinator.GetDefault();
+            var call = vCC.RequestNewOutgoingCall(_message.FromUserId, _message.FromUserId, "ChatterBox Universal",
+                VoipPhoneCallMedia.Audio);
+            if (call != null)
+            {
+                call.EndRequested += Call_EndRequested;
+                call.HoldRequested += Call_HoldRequested;
+                call.RejectRequested += Call_RejectRequested;
+                call.ResumeRequested += Call_ResumeRequested;
+
+                call.NotifyCallActive();
+
+                Context.VoipCall = call;
+            }
+#else
 
             var vCC = VoipCallCoordinator.GetDefault();
             var call = vCC.RequestNewIncomingCall(
@@ -83,6 +100,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
                 Context.VoipCall = call;
             }
+#endif
         }
 
         public override void OnRemoteHangup(RelayMessage message)
@@ -93,6 +111,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public override void Reject(IncomingCallReject reason)
         {
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
+            Context.VoipCall.NotifyCallEnded();
             Context.SwitchState(new VoipState_Idle());
         }
     }

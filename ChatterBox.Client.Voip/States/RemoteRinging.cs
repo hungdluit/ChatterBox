@@ -72,6 +72,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void OnOutgoingCallRejected(RelayMessage message)
         {
+            Context.VoipCall.NotifyCallEnded();
             Context.SwitchState(new VoipState_Idle());
         }
     }

@@ -17,6 +17,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             if (Context.VoipCall != null)
             {
                 Context.VoipCall.NotifyCallEnded();
+                Context.VoipCall = null;
             }
             Context.SwitchState(new VoipState_Idle());
         }

@@ -44,7 +44,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         public string PeerId { get; set; }
-        public BaseVoipState State { get; private set; }
+        private BaseVoipState State { get; set; }
         public VoipPhoneCall VoipCall { get; internal set; }
 
         internal VoipState GetVoipState()
@@ -89,6 +89,14 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 State.EnterState(this);
 
                 Task.Run(() => Hub.Instance.ForegroundClient.OnVoipState(GetVoipState()));
+            }
+        }
+
+        public void WithState(Action<BaseVoipState> fn)
+        {
+            lock (this)
+            {
+                fn(State);
             }
         }
     }
