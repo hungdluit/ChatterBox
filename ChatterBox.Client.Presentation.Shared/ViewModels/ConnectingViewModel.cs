@@ -19,8 +19,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public ConnectingViewModel(ISignalingUpdateService signalingUpdateService, ISocketConnection socketConnection)
         {
             _connection = socketConnection;
-            _connection.OnConnecting += OnConnecting;
-            _connection.OnConnectionFailed += OnConnectionFailed;
+            _connection.OnConnectingStarted += OnConnectingStarted;
+            _connection.OnConnectingFinished += OnConnectingFinished;
             _connection.OnRegistering += OnRegistering;
 
             signalingUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
@@ -52,7 +52,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool OnConnectCommandCanExecute()
         {
-            return !_connection.IsConnecting && _connection.IsConnectionFailed;
+            return !_connection.IsConnecting && _connection.IsConnectingFailed;
         }
 
         private void OnConnectCommandExecute()
@@ -67,7 +67,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             if (SignalingStatus.IsRegistered) OnRegistered?.Invoke();
         }
 
-        private void OnConnecting(object sender, object e)
+        private void OnConnectingStarted(object sender, object e)
         {
             ConnectCommand.RaiseCanExecuteChanged();
         }
@@ -77,9 +77,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             Status = "Registering with the server...";
         }
 
-        private void OnConnectionFailed(object sender, object e)
+        private void OnConnectingFinished(object sender, object e)
         {
-            Status = "Failed to connect to the server. Check you settings and try again.";
+            if (_connection.IsConnectingFailed)
+                Status = "Failed to connect to the server. Check you settings and try again.";
+
             ConnectCommand.RaiseCanExecuteChanged();
         }
     }

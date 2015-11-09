@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Client.Common.Signaling.PersistedData;
@@ -15,13 +16,17 @@ namespace ChatterBox.Client.Common.Signaling
     {
         private readonly IClientChannel _clientChannel;
         private readonly ISignalingSocketChannel _signalingSocketChannel;
-        private bool _connectionFailed;
+        private bool _connectingFailed;
         private bool _isConnecting;
 
-        public event EventHandler<object> OnConnectionFailed;
-        public event EventHandler<object> OnConnecting;
-        public event EventHandler<object> OnRegistering;
+        private static readonly object _connectingLock = new object();
 
+        private static readonly object _isConnectingLock = new object();
+        private static readonly object _connectionFailedLock = new object();
+
+        public event EventHandler<object> OnConnectingStarted;
+        public event EventHandler<object> OnConnectingFinished;
+        public event EventHandler<object> OnRegistering;
         public SocketConnection(ISignalingSocketChannel signalingSocketChannel, IClientChannel clientChannel)
         {
             _clientChannel = clientChannel;
@@ -31,14 +36,13 @@ namespace ChatterBox.Client.Common.Signaling
         {
             get
             {
-                bool ret = false;
                 if (_signalingSocketChannel != null)
                 {
                     var connectionStatus = _signalingSocketChannel.GetConnectionStatus();
                     if (connectionStatus != null)
-                        ret = connectionStatus.IsConnected;
+                        return connectionStatus.IsConnected;
                 }
-                return ret;
+                return false;
             }
         }
 
@@ -46,32 +50,36 @@ namespace ChatterBox.Client.Common.Signaling
         {
             get
             {
-                return _isConnecting;
+                lock(_isConnectingLock)
+                {
+                    return _isConnecting;
+                }
             }
 
-            set
+            private set
             {
-                if (_isConnecting != value)
+                lock (_isConnectingLock)
                 {
                     _isConnecting = value;
-                    OnConnecting?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
-        public bool IsConnectionFailed
+        public bool IsConnectingFailed
         {
             get
             {
-                return _connectionFailed;
+                lock (_connectionFailedLock)
+                {
+                    return _connectingFailed;
+                }
             }
 
-            set
+            private set
             {
-                if (_connectionFailed != value)
+                lock (_connectionFailedLock)
                 {
-                    _connectionFailed = value;
-                    OnConnectionFailed?.Invoke(this, EventArgs.Empty);
+                    _connectingFailed = value;
                 }
             }
         }
@@ -81,29 +89,39 @@ namespace ChatterBox.Client.Common.Signaling
             throw new NotImplementedException();
         }
 
-        public void Connect()
+        public bool Connect()
         {
-            IsConnectionFailed = false;
-            IsConnecting = true;
-            if (IsConnected)
+            bool ret = false;
+            if (Monitor.TryEnter(_connectingLock))
             {
-                IsConnectionFailed = false;
-                IsConnecting = false;
+                try
+                {
+                    IsConnectingFailed = false;
+                    IsConnecting = true;
+                    OnConnectingStarted?.Invoke(this, EventArgs.Empty);
 
-            }
-            else
-            {
-                _signalingSocketChannel.ConnectToSignalingServer(null);
-                if (IsConnected)
-                {
-                    Register();
+                    if (!IsConnected)
+                    {
+                        _signalingSocketChannel.ConnectToSignalingServer(null);
+                        if (IsConnected)
+                            Register();
+                        else
+                            IsConnectingFailed = true;
+                    }
                 }
-                else
+                catch
                 {
-                    IsConnectionFailed = true;
+                    IsConnectingFailed = true;
+                }
+                finally
+                {
+                    ret = !IsConnectingFailed;
                     IsConnecting = false;
+                    Monitor.Exit(_connectingLock);
+                    OnConnectingFinished?.Invoke(this, EventArgs.Empty);
                 }
             }
+            return ret;
         }
 
         public void Register()

@@ -4,15 +4,15 @@ namespace ChatterBox.Client.Common.Signaling
 {
     public interface ISocketConnection
     {
-        void Connect();
+        bool Connect();
         void Disconnect();
         void Register();
-        bool IsConnecting {get; set;}
-        bool IsConnectionFailed { get; set; }
+        bool IsConnecting {get;}
+        bool IsConnectingFailed { get;}
         bool IsConnected { get; }
 
-        event EventHandler<object> OnConnectionFailed;
-        event EventHandler<object> OnConnecting;
+        event EventHandler<object> OnConnectingStarted;
+        event EventHandler<object> OnConnectingFinished;
         event EventHandler<object> OnRegistering;
     }
 }

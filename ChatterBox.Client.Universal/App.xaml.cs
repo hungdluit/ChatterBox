@@ -51,12 +51,7 @@ namespace ChatterBox.Client.Universal
         {
             if (e.PreviousExecutionState == ApplicationExecutionState.Running)
             {
-                if (Container.IsRegistered(typeof(ISocketConnection)))
-                {
-                    if (!Container.Resolve<ISocketConnection>().IsConnected)
-                        Container.Resolve<ISocketConnection>().Connect();
-                }
-                Window.Current.Activate();
+                Resume();
                 return;
             }
 
@@ -133,6 +128,16 @@ namespace ChatterBox.Client.Universal
             Window.Current.Activate();
         }
 
+        private void Resume()
+        {
+            if (Container.IsRegistered(typeof(ISocketConnection)))
+            {
+                if (!Container.Resolve<ISocketConnection>().IsConnected)
+                    Container.Resolve<ISocketConnection>().Connect();
+            }
+            Window.Current.Activate();
+        }
+
         /// <summary>
         ///     Invoked when Navigation to a certain page fails
         /// </summary>
@@ -159,12 +164,7 @@ namespace ChatterBox.Client.Universal
 
         private void OnResuming(object sender, object e)
         {
-            if (Container.IsRegistered(typeof(ISocketConnection)))
-            {
-                if (!Container.Resolve<ISocketConnection>().IsConnected)
-                    Container.Resolve<ISocketConnection>().Connect();
-            }
-            Window.Current.Activate();
+            Resume();
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
