@@ -5,13 +5,21 @@
     xmlns:local="using:ChatterBox.Client.Presentation.Shared.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Inverted="True" />
+    </UserControl.Resources>
 
     <Grid>
         <Grid>
-            <local:ChatView />
+            <local:ChatView
+                Visibility="{Binding IsInCallMode, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
+            <local:CallView
+                Visibility="{Binding IsInCallMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
 
     </Grid>

@@ -58,14 +58,14 @@ namespace ChatterBox.Client.Common.Signaling.PersistedData
             RelayMessageContainer.DeleteContainer(messageId);
         }
 
+        public static bool IsMessageReceived(string messageId)
+        {
+            return RelayMessageContainer.Containers.ContainsKey(messageId);
+        }
+
         public static void Reset()
         {
             ApplicationData.Current.LocalSettings.DeleteContainer(nameof(RelayMessageContainer));
-        }
-
-        public static Boolean IsMessageReceived(string messageId)
-        {
-            return RelayMessageContainer.Containers.ContainsKey(messageId);
         }
 
         private static ApplicationDataContainer ReceivedPushNotificationsContainer

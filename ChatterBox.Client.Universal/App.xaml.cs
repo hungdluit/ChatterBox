@@ -86,7 +86,7 @@ namespace ChatterBox.Client.Universal
 
             Container
                 .RegisterType<HubClient>(new ContainerControlledLifetimeManager())
-                .RegisterInstance<ISignalingUpdateService>(Container.Resolve<HubClient>(),
+                .RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager())
                 .RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager())
@@ -95,10 +95,7 @@ namespace ChatterBox.Client.Universal
                 .RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),
                     new ContainerControlledLifetimeManager());
 
-            Container
-                .RegisterType<SocketConnection>(new ContainerControlledLifetimeManager())
-                .RegisterInstance<ISocketConnection>(Container.Resolve<SocketConnection>(),
-                    new ContainerControlledLifetimeManager());
+            Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
 
             var client = Container.Resolve<HubClient>();
             await client.Connect();

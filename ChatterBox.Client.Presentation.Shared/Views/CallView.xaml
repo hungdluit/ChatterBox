@@ -2,7 +2,6 @@
     x:Class="ChatterBox.Client.Presentation.Shared.Views.CallView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ChatterBox.Client.Presentation.Shared.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
@@ -11,8 +10,8 @@
     d:DesignWidth="400">
     <UserControl.Resources>
         <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForTrue="Green" ColorForFalse="Red" />
-        <converters:BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InvertedBoolToVisConverter" Inverted="True" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Inverted="True" />
         <converters:ProportionalConverter x:Key="ProportionalConverter" DownscalingFactor="20" />
     </UserControl.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -27,45 +26,43 @@
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
             <MediaElement Name="PeerVideo"
-                          Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BoolToVisConverter}}"
+                          Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch" />
             <Image Name="PeerPlaceholder"
-                   Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBoolToVisConverter}}"
-                   Source="{Binding PeerPlaceholderImage}"
+                   Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                   Source="{Binding ProfileSource}"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
             <MediaElement Name="SelfVideo"
                           Margin="5"
-                          Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource BoolToVisConverter}}"
+                          Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Bottom" />
             <Image Name="SelfPlaceholder"
                    Margin="5"
-                   Source="{Binding SelfPlaceholderImage}"
-                   Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource InvertedBoolToVisConverter}}"
+                   Source="{Binding OwnProfileSource}"
+                   Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom" />
         </Grid>
-        <StackPanel Grid.Row="1"
-                    Margin="12,5"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center">
-            <Button Command="{Binding SwitchMic}"
-                    Margin="5"
-                    Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
-                    FontFamily="Segoe UI Symbol"
-                    Content="&#xE1D6;" />
-            <Button Command="{Binding SwitchVideo}"
-                    Margin="5"
-                    Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}"
-                    FontFamily="Segoe UI Symbol"
-                    Content="&#xE116;" />
-            <Button Command="{Binding CloseCall}"
-                    Margin="5"
-                    Foreground="Red"
-                    FontFamily="Segoe UI Symbol"
-                    Content="&#xE137;" />
+        <StackPanel Grid.Row="1" Margin="12,5" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Command="{Binding AnswerCommand}" Margin="5" Foreground="Green" FontFamily="Segoe UI Symbol"
+                    Content="&#xE13A;"
+                    Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Command="{Binding HangupCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
+                    Content="&#xE137;"
+                    Visibility="{Binding IsRemoteRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Command="{Binding HangupCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
+                    Content="&#xE137;"
+                    Visibility="{Binding IsCallConnected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Command="{Binding RejectCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
+                    Content="&#xE137;"
+                    Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Command="{Binding SwitchMic}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE1D6;"
+                    Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
+            <Button Command="{Binding SwitchVideo}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE116;"
+                    Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
         </StackPanel>
     </Grid>
 </UserControl>

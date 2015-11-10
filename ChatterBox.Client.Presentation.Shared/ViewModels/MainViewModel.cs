@@ -1,5 +1,4 @@
 ﻿using Windows.UI.Core;
-using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 
@@ -7,18 +6,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public sealed class MainViewModel : DispatcherBindableBase
     {
-        private readonly ISignalingSocketChannel _signalingSocketChannel;
         private bool _isActive;
+        private bool _isSettingsVisible;
 
         public MainViewModel(
-            ISignalingSocketChannel signalingSocketChannel,
             WelcomeViewModel welcomeViewModel,
             ConnectingViewModel connectingViewModel,
             ContactsViewModel contactsViewModel,
             SettingsViewModel settingsViewModel,
             CoreDispatcher uiDispatcher) : base(uiDispatcher)
         {
-            _signalingSocketChannel = signalingSocketChannel;
             WelcomeViewModel = welcomeViewModel;
             ConnectingViewModel = connectingViewModel;
             ContactsViewModel = contactsViewModel;
@@ -26,6 +23,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             WelcomeViewModel.OnCompleted += WelcomeCompleted;
             ConnectingViewModel.OnRegistered += ConnectingViewModel_ConnectionEstablished;
+            ShowSettingsCommand = new DelegateCommand(() => IsSettingsVisible = true);
+
+            WelcomeViewModel.OnShowSettings += () => IsSettingsVisible = true;
+            ContactsViewModel.OnShowSettings += () => IsSettingsVisible = true;
+            ConnectingViewModel.OnShowSettings += () => IsSettingsVisible = true;
+            SettingsViewModel.OnClose += SettingsViewModelOnClose;
         }
 
         public ConnectingViewModel ConnectingViewModel { get; }
@@ -37,7 +40,14 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isActive, value); }
         }
 
+        public bool IsSettingsVisible
+        {
+            get { return _isSettingsVisible; }
+            set { SetProperty(ref _isSettingsVisible, value); }
+        }
+
         public SettingsViewModel SettingsViewModel { get; }
+        public DelegateCommand ShowSettingsCommand { get; set; }
         public WelcomeViewModel WelcomeViewModel { get; }
 
         private void ConnectingViewModel_ConnectionEstablished()
@@ -52,6 +62,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 //_signalingProxy.GetPeerList(new Message());
             }
+        }
+
+        private void SettingsViewModelOnClose()
+        {
+            IsSettingsVisible = false;
         }
 
         private void WelcomeCompleted()

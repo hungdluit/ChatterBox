@@ -14,6 +14,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public WelcomeViewModel()
         {
             CompleteCommand = new DelegateCommand(OnCompleteCommandExecute, CanCompleteCommandExecute);
+            ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
 
             Domain = RegistrationSettings.Domain;
             Name = RegistrationSettings.Name;
@@ -53,6 +54,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
+        public DelegateCommand ShowSettings { get; set; }
+
         private bool CanCompleteCommandExecute()
         {
             return ValidateStrings(Name, Domain);
@@ -67,6 +70,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public event Action OnCompleted;
+        public event Action OnShowSettings;
 
         private bool ValidateStrings(params string[] strings)
         {

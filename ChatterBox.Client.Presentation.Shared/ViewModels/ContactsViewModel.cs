@@ -14,24 +14,17 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private readonly Func<ConversationViewModel> _contactFactory;
         private bool _isConversationsListVisible;
         private bool _isSeparatorVisible;
-        private bool _isSettingsVisible;
         private ConversationViewModel _selectedConversation;
-        private SettingsViewModel _settingsViewModel;
-        private DelegateCommand _showSettings;
 
-        public ContactsViewModel(ISignalingUpdateService signalingUpdateService,
-            SettingsViewModel settingsViewModel,
+        public ContactsViewModel(IForegroundUpdateService foregroundUpdateService,
             Func<ConversationViewModel> contactFactory)
         {
             _contactFactory = contactFactory;
-            settingsViewModel.Close += Settings_OnClose;
-            SettingsViewModel = settingsViewModel;
-
-            signalingUpdateService.OnPeerDataUpdated += OnPeerDataUpdated;
+            foregroundUpdateService.OnPeerDataUpdated += OnPeerDataUpdated;
             OnPeerDataUpdated();
 
             LayoutService.Instance.LayoutChanged += LayoutChanged;
-            ShowSettings = new DelegateCommand(ShowSettingsExecute);
+            ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
         }
 
         public ObservableCollection<ConversationViewModel> Conversations { get; } =
@@ -49,29 +42,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isSeparatorVisible, value); }
         }
 
-        public bool IsSettingsVisible
-        {
-            get { return _isSettingsVisible; }
-            set { SetProperty(ref _isSettingsVisible, value); }
-        }
-
         public ConversationViewModel SelectedConversation
         {
             get { return _selectedConversation; }
             set { SetProperty(ref _selectedConversation, value); }
         }
 
-        public SettingsViewModel SettingsViewModel
-        {
-            get { return _settingsViewModel; }
-            set { SetProperty(ref _settingsViewModel, value); }
-        }
-
-        public DelegateCommand ShowSettings
-        {
-            get { return _showSettings; }
-            set { SetProperty(ref _showSettings, value); }
-        }
+        public DelegateCommand ShowSettings { get; set; }
 
         private void Contact_OnCloseConversation(ConversationViewModel obj)
         {
@@ -100,6 +77,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     sortList.Add(contact);
                     sortList = sortList.OrderBy(s => s.Name).ToList();
                     Conversations.Insert(sortList.IndexOf(contact), contact);
+                    contact.Initialize();
                 }
                 contact.IsOnline = peer.IsOnline;
             }
@@ -107,15 +85,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             UpdateSelection();
         }
 
-        private void Settings_OnClose()
-        {
-            IsSettingsVisible = false;
-        }
-
-        private void ShowSettingsExecute()
-        {
-            IsSettingsVisible = true;
-        }
+        public event Action OnShowSettings;
 
         private void UpdateSelection()
         {

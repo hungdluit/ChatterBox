@@ -16,20 +16,24 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private readonly ISocketConnection _connection;
         private string _status;
 
-        public ConnectingViewModel(ISignalingUpdateService signalingUpdateService, ISocketConnection socketConnection)
+        public ConnectingViewModel(IForegroundUpdateService foregroundUpdateService, ISocketConnection socketConnection)
         {
             _connection = socketConnection;
             _connection.OnConnectingStarted += OnConnectingStarted;
             _connection.OnConnectingFinished += OnConnectingFinished;
             _connection.OnRegistering += OnRegistering;
 
-            signalingUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
-            ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
+            foregroundUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
+            
+			ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
+			ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
         }
 
         public DelegateCommand ConnectCommand { get; }
 
-        public string Status
+        public DelegateCommand ShowSettings { get; set; }
+
+		public string Status
         {
             get { return _status; }
             set { SetProperty(ref _status, value); }
@@ -84,5 +88,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             ConnectCommand.RaiseCanExecuteChanged();
         }
+		
+		public event Action OnShowSettings;
     }
 }

@@ -36,12 +36,9 @@ namespace ChatterBox.Client.Common.Signaling
         {
             get
             {
-                if (_signalingSocketChannel != null)
-                {
-                    var connectionStatus = _signalingSocketChannel.GetConnectionStatus();
-                    if (connectionStatus != null)
-                        return connectionStatus.IsConnected;
-                }
+                var connectionStatus = _signalingSocketChannel.GetConnectionStatus();
+                if (connectionStatus != null)
+                    return connectionStatus.IsConnected;
                 return false;
             }
         }

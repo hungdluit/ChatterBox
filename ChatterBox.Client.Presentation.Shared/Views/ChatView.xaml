@@ -124,12 +124,6 @@
                         Grid.Column="2">
                 <Button Command="{Binding CallCommand}" Margin="5"
                         Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE13A;" />
-                <Button Command="{Binding AnswerCommand}" Margin="5"
-                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="ANS" />
-                <Button Command="{Binding HangupCommand}" Margin="5"
-                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="HUP" />
-                <Button Command="{Binding RejectCommand}" Margin="5"
-                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="REJ" />
                 <Button Command="{Binding VideoCallCommand}" Margin="5"
                         Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE116;" />
             </StackPanel>

@@ -20,6 +20,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
         }
 
+        public VoipState GetVoipState()
+        {
+            // Should never be called.  VoipContext handles it.
+            throw new NotImplementedException();
+        }
+
         public virtual void Hangup()
         {
         }
@@ -80,12 +86,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         internal virtual void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-        }
-
-        public VoipState GetVoipState()
-        {
-            // Should never be called.  VoipContext handles it.
-            throw new NotImplementedException();
         }
     }
 }

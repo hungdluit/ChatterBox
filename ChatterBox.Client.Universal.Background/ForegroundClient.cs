@@ -38,20 +38,19 @@ namespace ChatterBox.Client.Universal.Background
 
         private ValueSet SendToForeground(object arg = null, [CallerMemberName] string method = null)
         {
-            if (Hub.Instance.ForegroundConnection != null)
+            if (Hub.Instance.ForegroundConnection == null)
+                return null;
+
+            var channelWriteHelper = new ChannelWriteHelper(typeof(IForegroundChannel));
+            var message = channelWriteHelper.FormatOutput(arg, method);
+            var sendMessageTask = Hub.Instance.ForegroundConnection.SendMessageAsync(new ValueSet
             {
-                var channelWriteHelper = new ChannelWriteHelper(typeof(IForegroundChannel));
-                var message = channelWriteHelper.FormatOutput(arg, method);
-                var sendMessageTask = Hub.Instance.ForegroundConnection.SendMessageAsync(new ValueSet
-                {
-                    {typeof (IForegroundChannel).Name, message}
-                }).AsTask();
-                sendMessageTask.Wait();
-                return sendMessageTask.Result.Status != AppServiceResponseStatus.Success
-                    ? null
-                    : sendMessageTask.Result.Message;
-            }
-            return null;
+                {typeof (IForegroundChannel).Name, message}
+            }).AsTask();
+            sendMessageTask.Wait();
+            return sendMessageTask.Result.Status != AppServiceResponseStatus.Success
+                ? null
+                : sendMessageTask.Result.Message;
         }
 
         private TResult SendToForeground<TResult>(object arg = null, [CallerMemberName] string method = null)
