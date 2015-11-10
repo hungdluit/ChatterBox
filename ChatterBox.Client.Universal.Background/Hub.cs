@@ -25,8 +25,6 @@ namespace ChatterBox.Client.Universal.Background
 
         public ForegroundClient ForegroundClient { get; } = new ForegroundClient();
 
-        public IBackgroundTask ForegroundTask { get; set; }
-
         public AppServiceConnection ForegroundConnection
         {
             get { return _foregroundConnection; }
@@ -40,6 +38,8 @@ namespace ChatterBox.Client.Universal.Background
                 _foregroundConnection.RequestReceived += HandleForegroundRequest;
             }
         }
+
+        public IBackgroundTask ForegroundTask { get; set; }
 
         public static Hub Instance
         {

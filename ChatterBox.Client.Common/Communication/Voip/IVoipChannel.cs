@@ -9,6 +9,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void Answer();
         // Locally initiated calls
         void Call(OutgoingCallRequest request);
+        VoipState GetVoipState();
         // Hangup can happen on both sides
         void Hangup();
         void OnIceCandidate(RelayMessage message);
@@ -21,7 +22,5 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void OnSdpAnswer(RelayMessage message);
         void OnSdpOffer(RelayMessage message);
         void Reject(IncomingCallReject reason);
-
-        VoipState GetVoipState();
     }
 }

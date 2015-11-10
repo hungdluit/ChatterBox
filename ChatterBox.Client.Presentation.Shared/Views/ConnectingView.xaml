@@ -14,11 +14,16 @@
                     VerticalAlignment="Center">
             <TextBlock Text="{Binding Status}"
                        Margin="12,5" />
-            <Button Command="{Binding ConnectCommand}"
-                    HorizontalAlignment="Center"
-                    Margin="12,5"
-                    Width="120"
-                    Content="Reconnect" />
+            <StackPanel Orientation="Horizontal">
+                <Button HorizontalAlignment="Right" FontFamily="Segoe UI Symbol" Content="&#xE115;"
+                        Margin="5" Command="{Binding ShowSettings}" />
+                <Button Command="{Binding ConnectCommand}"
+                        HorizontalAlignment="Center"
+                        Margin="12,5"
+                        Width="120"
+                        Content="Reconnect" />
+            </StackPanel>
+
         </StackPanel>
 
     </Grid>

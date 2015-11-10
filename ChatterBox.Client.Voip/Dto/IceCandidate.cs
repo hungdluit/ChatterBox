@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Runtime.Serialization;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Voip.Dto
@@ -9,15 +6,14 @@ namespace ChatterBox.Client.Voip.Dto
     [DataContract]
     internal sealed class DtoIceCandidate
     {
-        public static DtoIceCandidate ToDto(RTCIceCandidate obj)
-        {
-            return new DtoIceCandidate
-            {
-                Candidate = obj.Candidate,
-                SdpMid = obj.SdpMid,
-                SdpMLineIndex = obj.SdpMLineIndex,
-            };
-        }
+        [DataMember]
+        public string Candidate { get; set; }
+
+        [DataMember]
+        public string SdpMid { get; set; }
+
+        [DataMember]
+        public ushort SdpMLineIndex { get; set; }
 
         public static RTCIceCandidate FromDto(DtoIceCandidate obj)
         {
@@ -25,15 +21,18 @@ namespace ChatterBox.Client.Voip.Dto
             {
                 Candidate = obj.Candidate,
                 SdpMid = obj.SdpMid,
-                SdpMLineIndex = obj.SdpMLineIndex,
+                SdpMLineIndex = obj.SdpMLineIndex
             };
         }
 
-        [DataMember]
-        public string Candidate { get; set; }
-        [DataMember]
-        public string SdpMid { get; set; }
-        [DataMember]
-        public ushort SdpMLineIndex { get; set; }
+        public static DtoIceCandidate ToDto(RTCIceCandidate obj)
+        {
+            return new DtoIceCandidate
+            {
+                Candidate = obj.Candidate,
+                SdpMid = obj.SdpMid,
+                SdpMLineIndex = obj.SdpMLineIndex
+            };
+        }
     }
 }
