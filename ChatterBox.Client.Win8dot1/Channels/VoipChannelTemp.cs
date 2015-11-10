@@ -24,7 +24,11 @@ namespace ChatterBox.Client.Win8dot1.Channels
 
         public VoipState GetVoipState()
         {
-            throw new NotImplementedException();
+            return new VoipState
+            {
+                State = VoipStateEnum.Idle,
+                HasPeerConnection = false
+            };
         }
 
         public void Hangup()

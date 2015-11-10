@@ -10,11 +10,12 @@ using Windows.UI.Core;
 
 namespace ChatterBox.Client.Win8dot1.Services
 {
-    internal class ForegroundSignalingUpdateService : ISignalingUpdateService, IForegroundChannel
+    internal class ForegroundSignalingUpdateService : IForegroundUpdateService, IForegroundChannel
     {
         public event Action OnPeerDataUpdated;
         public event Action OnRegistrationStatusUpdated;
         public event Action OnRelayMessagesUpdated;
+        public event Action<VoipState> OnVoipStateUpdate;
 
         private CoreDispatcher _uiDispatcher;
 
