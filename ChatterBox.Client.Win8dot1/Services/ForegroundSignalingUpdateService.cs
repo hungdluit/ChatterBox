@@ -41,7 +41,7 @@ namespace ChatterBox.Client.Win8dot1.Services
 
         public void OnVoipState(VoipState state)
         {
-            throw new NotImplementedException();
+            RunOnUiThread(() => OnVoipStateUpdate?.Invoke(state));
         }
 
         protected void RunOnUiThread(Action fn)

@@ -37,8 +37,10 @@
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="privateNetworkClientServer"/>
-    <Capability Name="internetClient"/>
-    <Capability Name="internetClientServer"/>
+    <Capability Name="privateNetworkClientServer" />
+    <Capability Name="internetClient" />
+    <Capability Name="internetClientServer" />
+    <DeviceCapability Name="microphone" />
+    <DeviceCapability Name="webcam" />
   </Capabilities>
 </Package>

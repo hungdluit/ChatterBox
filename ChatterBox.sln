@@ -43,6 +43,7 @@ Global
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{2093a3a2-0046-49eb-9e30-9e29d517606c}*SharedItemsImports = 13
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{6feb923e-1234-4711-a3c2-b976c3aac70d}*SharedItemsImports = 4
 		ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems*{cf1cd0d5-bf6b-457a-9927-8079fc667ca4}*SharedItemsImports = 4
+		ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems*{cf1cd0d5-bf6b-457a-9927-8079fc667ca4}*SharedItemsImports = 4
 		ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems*{66496392-9237-4c6d-a9d2-f64f7cb46715}*SharedItemsImports = 13
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}*SharedItemsImports = 4
 		ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems*{626bee3a-eb2f-415f-9e30-9aaf6b9c430a}*SharedItemsImports = 4

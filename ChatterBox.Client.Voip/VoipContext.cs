@@ -1,12 +1,13 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Calls;
-using ChatterBox.Client.Common.Communication.Foreground.Dto;
+﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.States;
 using ChatterBox.Client.Common.Settings;
-using ChatterBox.Client.Universal.Background;
 using ChatterBox.Common.Communication.Messages.Relay;
+using ChatterBox.Client.Voip;
+using ChatterBox.Client.Voip.States.Interfaces;
+using Microsoft.Practices.Unity;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip
@@ -15,12 +16,16 @@ namespace ChatterBox.Client.Common.Communication.Voip
     {
         private bool _isWebRTCInitialized;
 
-        public VoipContext()
+        public VoipContext(IUnityContainer container)
         {
-            SwitchState(new VoipState_Idle());
+            UnityContainer = container;
+            var idleState = container.Resolve<IIdle>();
+            SwitchState((BaseVoipState)idleState);
         }
 
         private RTCPeerConnection _peerConnection { get; set; }
+
+        public IUnityContainer UnityContainer { get; private set; }
 
         public RTCPeerConnection PeerConnection
         {
@@ -45,7 +50,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public string PeerId { get; set; }
         private BaseVoipState State { get; set; }
-        public VoipPhoneCall VoipCall { get; internal set; }
+        //public VoipPhoneCall VoipCall { get; internal set; }
 
         internal VoipState GetVoipState()
         {
@@ -70,7 +75,8 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public void SendToPeer(string tag, string payload)
         {
-            Hub.Instance.SignalingClient.Relay(new RelayMessage
+            var hub = UnityContainer.Resolve<IHub>();
+            hub.Relay(new RelayMessage
             {
                 FromUserId = RegistrationSettings.UserId,
                 ToUserId = PeerId,
@@ -88,7 +94,8 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 State = newState;
                 State.EnterState(this);
 
-                Task.Run(() => Hub.Instance.ForegroundClient.OnVoipState(GetVoipState()));
+                var hub = UnityContainer.Resolve<IHub>();
+                Task.Run(() => hub.OnVoipState(GetVoipState()));
             }
         }
 

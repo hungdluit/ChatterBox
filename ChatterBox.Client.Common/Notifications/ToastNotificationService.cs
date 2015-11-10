@@ -30,8 +30,17 @@ namespace ChatterBox.Client.Common.Notifications
 
         private static void ShowNotification(XmlDocument toastXml)
         {
-            ToastNotificationManager.CreateToastNotifier("ChatterBoxClientUniversalAppId")
-                .Show(new ToastNotification(toastXml));
+            try
+            {
+                ToastNotificationManager.CreateToastNotifier("ChatterBoxClientUniversalAppId")
+                     .Show(new ToastNotification(toastXml));
+            }
+            catch (System.Exception ex)
+            {
+                // Most likely an exception occurs here when the win8 client is used together with 
+                // a win10 one on same machine. A thrown exception will prevent some UI components
+                // to be updated.
+            }
         }
 
         public static void ShowPresenceNotification(string name, string imageUri, bool isOnline)

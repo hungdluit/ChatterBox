@@ -2,17 +2,22 @@
 using System.Diagnostics;
 using Windows.ApplicationModel.Calls;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
+using ChatterBox.Client.Voip.States.Interfaces;
+using Microsoft.Practices.Unity;
+using ChatterBox.Client.Universal.Background.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
-    internal class VoipState_RemoteRinging : BaseVoipState
+    internal class VoipState_RemoteRinging : BaseVoipState, IRemoteRinging
     {
         private readonly OutgoingCallRequest _request;
+        private readonly VoipCallContext _voipCallContext;
 
-        public VoipState_RemoteRinging(OutgoingCallRequest request)
+        public VoipState_RemoteRinging(OutgoingCallRequest request, VoipCallContext voipCallContext)
         {
             _request = request;
+            _voipCallContext = voipCallContext;
         }
 
         private void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
@@ -37,7 +42,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void Hangup()
         {
-            Context.SwitchState(new VoipState_HangingUp());
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
         }
 
         public override void OnEnteringState()
@@ -61,7 +67,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
                 call.NotifyCallActive();
 
-                Context.VoipCall = call;
+                _voipCallContext.VoipCall = call;
             }
         }
 
@@ -72,8 +78,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void OnOutgoingCallRejected(RelayMessage message)
         {
-            Context.VoipCall.NotifyCallEnded();
-            Context.SwitchState(new VoipState_Idle());
+            _voipCallContext.VoipCall.NotifyCallEnded();
+            var idleState = Context.UnityContainer.Resolve<IIdle>();
+            Context.SwitchState((BaseVoipState)idleState);
         }
     }
 }

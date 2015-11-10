@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
+using Microsoft.Practices.Unity;
 using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip
@@ -16,15 +17,22 @@ namespace ChatterBox.Client.Common.Communication.Voip
         // This variable should not be used outside of the getter below.
         private VoipContext _context;
 
+        private IUnityContainer _container;
+
         private VoipContext Context
         {
             get
             {
                 // Create on demand.
                 if (_context == null)
-                    _context = new VoipContext();
+                    _context = new VoipContext(_container);
                 return _context;
             }
+        }
+
+        public VoipChannel(IUnityContainer container)
+        {
+            _container = container;
         }
 
         #region IVoipChannel Members
