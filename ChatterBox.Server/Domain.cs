@@ -63,7 +63,6 @@ namespace ChatterBox.Server
                     UserId = message.UserId,
                     Domain = Name,
                     Name = message.Name,
-                    PushNotificationChannelURI = message.PushNotificationChannelURI,
                     Avatar = Clients.Count + 1
                 };
                 registeredClient.OnConnected += RegisteredClient_OnConnected;
