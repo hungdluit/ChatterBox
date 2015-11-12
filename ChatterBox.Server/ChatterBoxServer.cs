@@ -61,6 +61,8 @@ namespace ChatterBox.Server
 
         public void Run()
         {
+            WNSAuthentication.Instance.AuthenticateWithWNS();
+
             Logger.Info($"Starting TCP listener on port {Port}");
             var listener = new TcpListener(IPAddress.Any, Port);
             listener.Start();

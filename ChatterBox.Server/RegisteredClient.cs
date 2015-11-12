@@ -33,11 +33,12 @@ namespace ChatterBox.Server
         public bool IsOnline { get; private set; }
         private ILog Logger => LogManager.GetLogger(ToString());
 
+        private PushNotificationSender _pushNotificationSender;
         private ConcurrentQueue<RegisteredClientMessageQueueItem> MessageQueue { get; set; } =
             new ConcurrentQueue<RegisteredClientMessageQueueItem>();
 
         public string Name { get; set; }
-        public string PushNotificationChannelURI { get; set; }
+
         public string UserId { get; set; }
         private ConcurrentQueue<string> WriteQueue { get; set; } = new ConcurrentQueue<string>();
 
@@ -127,7 +128,7 @@ namespace ChatterBox.Server
             };
 
             if (ActiveConnection == null)
-                PushNotificationSender.SendNotification(PushNotificationChannelURI, queueItem.SerializedMessage);
+                _pushNotificationSender?.SendNotification(queueItem.SerializedMessage);
 
             MessageQueue.Enqueue(queueItem);
         }
@@ -153,9 +154,12 @@ namespace ChatterBox.Server
                 IsOnline = false;
                 OnDisconnected?.Invoke(this);
 
-                foreach (var item in itemsToSend)
+                if (_pushNotificationSender != null)
                 {
-                    PushNotificationSender.SendNotification(PushNotificationChannelURI, item.SerializedMessage);
+                    foreach (var item in itemsToSend)
+                    {
+                        _pushNotificationSender.SendNotification(item.SerializedMessage);
+                    }
                 }
             }
         }
@@ -181,8 +185,12 @@ namespace ChatterBox.Server
         public void SetActiveConnection(UnregisteredConnection connection, Registration message)
         {
             Logger.Debug("Handling new TCP connection.");
+            
             ConnectionId = Guid.NewGuid();
             ActiveConnection = connection.TcpClient;
+
+            RegisterClientForPushNotifications(message.PushNotificationChannelURI);
+
             OnRegistrationConfirmation(new RegisteredReply
             {
                 Avatar = Avatar,
@@ -286,6 +294,25 @@ namespace ChatterBox.Server
         public override string ToString()
         {
             return $"[{Domain}/{Name}]";
+        }
+
+        private void OnUserChannelURIExpired()
+        {
+            _pushNotificationSender.ChannelURI = null;
+        }
+
+        public bool RegisterClientForPushNotifications(string channelURI)
+        {
+            bool ret = false;
+            if (!String.IsNullOrEmpty(channelURI))
+            {
+                _pushNotificationSender = new PushNotificationSender();
+                _pushNotificationSender.OnChannelURIExpired += OnUserChannelURIExpired;
+                _pushNotificationSender.ChannelURI = channelURI;
+                ret = true;
+            }
+
+            return ret;
         }
     }
 }
