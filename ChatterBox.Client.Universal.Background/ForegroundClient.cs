@@ -38,7 +38,10 @@ namespace ChatterBox.Client.Universal.Background
 
         private ValueSet SendToForeground(object arg = null, [CallerMemberName] string method = null)
         {
-            var channelWriteHelper = new ChannelWriteHelper(typeof (IForegroundChannel));
+            if (Hub.Instance.ForegroundConnection == null)
+                return null;
+
+            var channelWriteHelper = new ChannelWriteHelper(typeof(IForegroundChannel));
             var message = channelWriteHelper.FormatOutput(arg, method);
             var sendMessageTask = Hub.Instance.ForegroundConnection.SendMessageAsync(new ValueSet
             {

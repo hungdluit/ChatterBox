@@ -1,61 +1,39 @@
 ﻿using System;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Settings;
+using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Registration;
 
+
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class ConnectingViewModel : BindableBase
     {
-        private readonly IClientChannel _clientChannel;
-        private readonly ISignalingSocketChannel _signalingSocketChannel;
-        private bool _connectionFailed;
-        private bool _isConnecting;
+        private readonly ISocketConnection _connection;
         private string _status;
 
-        public ConnectingViewModel(IForegroundUpdateService foregroundUpdateService,
-            ISignalingSocketChannel signalingSocketChannel, IClientChannel clientChannel)
+        public ConnectingViewModel(IForegroundUpdateService foregroundUpdateService, ISocketConnection socketConnection)
         {
-            _clientChannel = clientChannel;
-            _signalingSocketChannel = signalingSocketChannel;
+            _connection = socketConnection;
+            _connection.OnConnectingStarted += OnConnectingStarted;
+            _connection.OnConnectingFinished += OnConnectingFinished;
+            _connection.OnRegistering += OnRegistering;
+
             foregroundUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
-            ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
-            ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
+            
+			ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
+			ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
         }
 
         public DelegateCommand ConnectCommand { get; }
 
-        public bool ConnectionFailed
-        {
-            get { return _connectionFailed; }
-            set
-            {
-                if (SetProperty(ref _connectionFailed, value))
-                {
-                    ConnectCommand.RaiseCanExecuteChanged();
-                }
-            }
-        }
-
-        public bool IsConnecting
-        {
-            get { return _isConnecting; }
-            set
-            {
-                if (SetProperty(ref _isConnecting, value))
-                {
-                    ConnectCommand.RaiseCanExecuteChanged();
-                }
-            }
-        }
-
         public DelegateCommand ShowSettings { get; set; }
 
-        public string Status
+		public string Status
         {
             get { return _status; }
             set { SetProperty(ref _status, value); }
@@ -63,14 +41,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         public void EstablishConnection()
         {
-            ConnectionFailed = false;
-            IsConnecting = true;
-            var connectionStatus = _signalingSocketChannel.GetConnectionStatus();
-            if (connectionStatus.IsConnected)
+            if (_connection.IsConnected)
             {
-                ConnectionFailed = false;
-                IsConnecting = false;
-
                 if (SignalingStatus.IsRegistered)
                 {
                     OnRegistered?.Invoke();
@@ -78,29 +50,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             else
             {
-                connectionStatus = _signalingSocketChannel.ConnectToSignalingServer(null);
-                if (!connectionStatus.IsConnected)
-                {
-                    Status = "Failed to connect to the server. Check you settings and try again.";
-                    ConnectionFailed = true;
-                    IsConnecting = false;
-                    return;
-                }
-
-                Status = "Registering with the server...";
-                _clientChannel.Register(new Registration
-                {
-                    Name = RegistrationSettings.Name,
-                    UserId = RegistrationSettings.UserId,
-                    Domain = RegistrationSettings.Domain,
-                    PushNotificationChannelURI = RegistrationSettings.PushNotificationChannelURI
-                });
+                _connection.Connect();
             }
         }
 
         private bool OnConnectCommandCanExecute()
         {
-            return !IsConnecting && ConnectionFailed;
+            return !_connection.IsConnecting && _connection.IsConnectingFailed;
         }
 
         private void OnConnectCommandExecute()
@@ -115,6 +71,24 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             if (SignalingStatus.IsRegistered) OnRegistered?.Invoke();
         }
 
-        public event Action OnShowSettings;
+        private void OnConnectingStarted(object sender, object e)
+        {
+            ConnectCommand.RaiseCanExecuteChanged();
+        }
+
+        private void OnRegistering(object sender, object e)
+        {
+            Status = "Registering with the server...";
+        }
+
+        private void OnConnectingFinished(object sender, object e)
+        {
+            if (_connection.IsConnectingFailed)
+                Status = "Failed to connect to the server. Check you settings and try again.";
+
+            ConnectCommand.RaiseCanExecuteChanged();
+        }
+		
+		public event Action OnShowSettings;
     }
 }

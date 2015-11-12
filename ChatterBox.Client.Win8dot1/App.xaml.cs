@@ -64,7 +64,8 @@ namespace ChatterBox.Client.Win8dot1
                 .RegisterType<SignalingClient>(new ContainerControlledLifetimeManager())
                 .RegisterType<IForegroundChannel, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
                 .RegisterType<IForegroundUpdateService, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
-                .RegisterType<IClientChannel, ClientChannel>(new ContainerControlledLifetimeManager());
+                .RegisterType<IClientChannel, ClientChannel>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
 
             var rootFrame = Window.Current.Content as Frame;
 

@@ -33,6 +33,30 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|arm' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\arm\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <Content Include="Avatars\0.jpg" />
@@ -65,12 +89,14 @@
     <Compile Include="Settings\SettingsExtensions.cs" />
     <Compile Include="Settings\SignalingSettings.cs" />
     <Compile Include="Avatars\AvatarLink.cs" />
+    <Compile Include="Signaling\ISocketConnection.cs" />
     <Compile Include="Signaling\ISignalingSocketOperation.cs" />
     <Compile Include="Signaling\ISignalingSocketService.cs" />
     <Compile Include="Signaling\PersistedData\SignaledPeerData.cs" />
     <Compile Include="Signaling\PersistedData\SignaledRelayMessages.cs" />
     <Compile Include="Signaling\SignalingClient.cs" />
     <Compile Include="Signaling\PersistedData\SignalingStatus.cs" />
+    <Compile Include="Signaling\SocketConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
