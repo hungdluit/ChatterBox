@@ -27,15 +27,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="..\ChatterBox.Client.Universal\package.appxmanifest" />
+    <AppxManifest Include="..\ChatterBox.Client.Universal\package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BackgroundHost.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\LockScreenLogo.scale-200.png" />
+    <Image Include="Assets\SplashScreen.scale-200.png" />
+    <Image Include="Assets\Square150x150Logo.scale-200.png" />
+    <Image Include="Assets\Square44x44Logo.scale-200.png" />
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ChatterBox.Client.Universal_StoreKey.pfx" />
+    <None Include="ChatterBox.Client.Universal_TemporaryKey.pfx" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4497E847-8611-4545-BDBE-CE9744C7013C}</ProjectGuid>
     <Keyword>WindowsRuntimeComponent</Keyword>
-    <ProjectName>ChatterBox.Client.Universal.BackgroundHost</ProjectName>
+    <ProjectName>BackgroundHost</ProjectName>
     <RootNamespace>ChatterBox_Client_Universal_BackgroundHost</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
@@ -103,7 +118,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup>
+    <PackageCertificateThumbprint>C2678F5CA79C429C4C5873A13448BA99D429140E</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>ChatterBox.Client.Universal_StoreKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
