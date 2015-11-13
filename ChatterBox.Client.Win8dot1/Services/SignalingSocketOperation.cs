@@ -28,7 +28,8 @@ namespace ChatterBox.Client.Win8dot1.Services
 
         public void Dispose()
         {
-            //_signalingSocketChannel = null;
+            // on win 8 the socket do not need its ownership to be transfered
+			// as in win10 so it remains here for the lifetime of the app
         }
     }
 }
