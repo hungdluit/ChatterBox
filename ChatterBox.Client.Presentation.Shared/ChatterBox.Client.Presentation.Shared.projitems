@@ -20,7 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\BindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DispatcherBindableBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\ISignalingUpdateService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IForegroundUpdateService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LayoutService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LayoutType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ServicesBindingHelper.cs" />

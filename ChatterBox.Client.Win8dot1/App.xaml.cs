@@ -10,6 +10,13 @@ using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
 using Microsoft.Practices.Unity;
+using ChatterBox.Client.Common.Communication.Signaling;
+using ChatterBox.Client.Common.Communication.Voip;
+using ChatterBox.Common.Communication.Contracts;
+using ChatterBox.Client.Win8dot1.Channels;
+using ChatterBox.Client.Win8dot1.Services;
+using ChatterBox.Common.Communication.Helpers;
+using ChatterBox.Client.Common.Communication.Foreground;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -18,8 +25,6 @@ namespace ChatterBox.Client.Win8dot1
     /// </summary>
     sealed partial class App : Application
     {
-        private SignalingClient _signalingClient;
-
         /// <summary>
         ///     Initializes the singleton Application object.  This is the first line of authored code
         ///     executed, and as such is the logical equivalent of main() or WinMain().
@@ -38,7 +43,7 @@ namespace ChatterBox.Client.Win8dot1
         ///     search results, and so forth.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs args)
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
 
@@ -47,12 +52,20 @@ namespace ChatterBox.Client.Win8dot1
                 args.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
                 args.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
-                RegistrationSettings.Name = string.Empty;
-                RegistrationSettings.Domain = string.Empty;
-                RegistrationSettings.UserId = Guid.NewGuid().ToString();
+                RegistrationSettings.Reset();
                 registerAgain = true;
             }
 
+            Container
+                .RegisterType<ISignalingSocketChannel, SignalingSocketChannel>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISignalingSocketOperation, SignalingSocketOperation>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISignalingSocketService, SignalingSocketService>(new ContainerControlledLifetimeManager())
+                .RegisterType<IVoipChannel, VoipChannelTemp>()
+                .RegisterType<SignalingClient>(new ContainerControlledLifetimeManager())
+                .RegisterType<IForegroundChannel, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
+                .RegisterType<IForegroundUpdateService, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
+                .RegisterType<IClientChannel, ClientChannel>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -67,13 +80,13 @@ namespace ChatterBox.Client.Win8dot1
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-            if (rootFrame.Content == null || !string.IsNullOrEmpty(args.Arguments))
+            if (rootFrame.Content == null)
             {
                 // When the navigation stack isn't restored or there are launch arguments
                 // indicating an alternate launch (e.g.: via toast or secondary tile), 
                 // navigate to the appropriate page, configuring the new page by passing required 
                 // information as a navigation parameter
-                if (!rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>()))
+                if (!rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>()))
                 {
                     throw new Exception("Failed to create initial page");
                 }
