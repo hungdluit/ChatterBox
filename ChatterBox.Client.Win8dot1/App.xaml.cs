@@ -72,7 +72,8 @@ namespace ChatterBox.Client.Win8dot1
                 .RegisterType<IIdle, VoipState_Idle>()
                 .RegisterType<ILocalRinging, VoipState_LocalRinging>()
                 .RegisterType<IRemoteRinging, VoipState_RemoteRinging>()
-                .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager());
+                .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
 
             var rootFrame = Window.Current.Content as Frame;
 

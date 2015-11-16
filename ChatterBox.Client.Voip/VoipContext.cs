@@ -49,8 +49,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         public string PeerId { get; set; }
-        private BaseVoipState State { get; set; }
-        //public VoipPhoneCall VoipCall { get; internal set; }
+        private BaseVoipState State { get; set; }        
 
         internal VoipState GetVoipState()
         {
