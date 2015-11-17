@@ -1,4 +1,4 @@
-﻿namespace ChatterBox.Common.Communication.Shared.Messages.Relay
+﻿namespace ChatterBox.Common.Communication.Messages.Relay
 {
     public static class RelayMessageTags
     {

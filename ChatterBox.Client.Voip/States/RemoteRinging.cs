@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Windows.ApplicationModel.Calls;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {

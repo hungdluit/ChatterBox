@@ -22,7 +22,8 @@ namespace ChatterBox.Common.Communication.Helpers
                     ? request
                     : request.Substring(0, request.IndexOf(" ", StringComparison.CurrentCultureIgnoreCase));
 
-                var method = Handler.GetType().GetRuntimeMethods().Single(s => s.Name == methodName);
+                var methods = Handler.GetType().GetRuntimeMethods();
+                var method = methods.Single(s => s.Name == methodName);
                 var parameters = method.GetParameters();
 
                 object argument = null;
@@ -41,12 +42,13 @@ namespace ChatterBox.Common.Communication.Helpers
                     Result = result
                 };
             }
-            catch
+            catch(Exception exception)
             {
                 return new InvocationResult
                 {
-                    Invoked = false
-                };
+                    Invoked = false,
+                  ErrorMessage = exception.ToString()
+                 };
             }
         }
     }

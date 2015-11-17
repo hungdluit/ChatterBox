@@ -21,10 +21,28 @@
       An Assembly element with Name="*Application*" applies to all assemblies in
       the application package. The asterisks are not wildcards.
     -->
-    <Assembly Name="*Application*" Dynamic="Required All" />
+    <Assembly Name="*Application*" Dynamic="Required All" Serialize="Required All" />
+
+    <Namespace Name="ChatterBox.Client.Common.Communication.Signaling.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All"/>
+    <Namespace Name="ChatterBox.Client.Common.Communication.Voip.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All"/>
+    <Namespace Name="ChatterBox.Client.Common.Communication.Foreground.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Common.Communication.Messages" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Common.Communication.Messages.Peers" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Common.Communication.Messages.Registration" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Common.Communication.Messages.Relay" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Common.Communication.Messages.Standard" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Common.Communication.Messages.Interfaces" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All" />
+    
+    <Namespace Name="ChatterBox.Common.Communication.Contracts" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All" />
+    <Namespace Name="ChatterBox.Client.Common.Communication.Foreground" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>
+    <Namespace Name="ChatterBox.Client.Common.Communication.Signaling" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All"/>
 
 
-    <!-- Add your application specific runtime directives here. -->
+    <Namespace Name="ChatterBox.Client.Common.Communication.Voip" Dynamic="Required All" />
+    <Type Name="ChatterBox.Client.Universal.Background.SignalingSocketService" Dynamic="All" Browse="All" />
+    <Type Name="ChatterBox.Client.Common.Signaling.SignalingClient" Dynamic="All" Browse="All" />
+    <Type Name="ChatterBox.Client.Universal.Background.ForegroundClient" Dynamic="All" />
+    <Type Name="ChatterBox.Client.Universal.Background.Hub" Dynamic="Required All" />
 
 
   </Application>

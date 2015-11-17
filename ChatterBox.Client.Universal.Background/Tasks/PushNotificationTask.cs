@@ -5,8 +5,8 @@ using ChatterBox.Client.Common.Avatars;
 using ChatterBox.Client.Common.Notifications;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
+using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Serialization;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Universal.Background.Tasks
 {

@@ -7,9 +7,8 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
-using ChatterBox.Common.Communication.Shared.Messages.Registration;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using Common.Logging;
 
 namespace ChatterBox.Server

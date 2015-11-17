@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Standard;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using ChatterBox.Client.Common.Signaling;
+using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Win8dot1.Channels
 {

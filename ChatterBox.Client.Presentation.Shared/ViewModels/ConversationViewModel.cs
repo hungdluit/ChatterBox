@@ -12,7 +12,7 @@ using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Common.Communication.Contracts;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using ChatterBox.Client.Voip.Dto;
+using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Serialization;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States

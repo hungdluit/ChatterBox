@@ -1,7 +1,7 @@
 ﻿using System;
 using ChatterBox.Common.Communication.Messages.Interfaces;
 
-namespace ChatterBox.Common.Communication.Shared.Messages.Relay
+namespace ChatterBox.Common.Communication.Messages.Relay
 {
     public sealed class RelayMessage : IMessage
     {

@@ -4,5 +4,6 @@
     {
         public bool Invoked { get; set; }
         public object Result { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

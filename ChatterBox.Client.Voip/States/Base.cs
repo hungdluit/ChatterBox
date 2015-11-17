@@ -1,7 +1,7 @@
 ﻿using System;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Common.Communication.Messages.Relay;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States

@@ -18,8 +18,8 @@ using ChatterBox.Client.Universal.Background.Helpers;
 using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Universal.Services
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using ChatterBox.Common.Communication.Messages.Interfaces;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Common.Communication.Messages.Relay;
 using Common.Logging;
 
 namespace ChatterBox.Server

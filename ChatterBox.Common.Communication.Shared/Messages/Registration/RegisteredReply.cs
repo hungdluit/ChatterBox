@@ -1,7 +1,7 @@
 ﻿using System;
 using ChatterBox.Common.Communication.Messages.Interfaces;
 
-namespace ChatterBox.Common.Communication.Shared.Messages.Registration
+namespace ChatterBox.Common.Communication.Messages.Registration
 {
     public sealed class RegisteredReply : IMessageReply
     {

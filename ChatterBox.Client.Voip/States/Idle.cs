@@ -5,7 +5,7 @@ using Windows.Foundation.Metadata;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Universal.Background;
 using ChatterBox.Client.Universal.Background.Tasks;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
+using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {

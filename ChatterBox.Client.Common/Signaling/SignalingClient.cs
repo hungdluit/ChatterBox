@@ -15,9 +15,8 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
+using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
-using ChatterBox.Common.Communication.Shared.Messages.Registration;
-using ChatterBox.Common.Communication.Shared.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Signaling
 {
@@ -37,7 +36,7 @@ namespace ChatterBox.Client.Common.Signaling
             ServerChannelInvoker = new ChannelInvoker(this);
         }
 
-        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IClientChannel));
+        private ChannelWriteHelper ClientChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
         private ChannelInvoker ServerChannelInvoker { get; }
 
         #region IClientChannel Members
@@ -128,7 +127,7 @@ namespace ChatterBox.Client.Common.Signaling
         {
             ClientConfirmation(Confirmation.For(message));
             SignaledRelayMessages.Add(message);
-            if (message.Tag == RelayMessageTags.InstantMessage && !SignaledRelayMessages.IsPushNotificationReceived(message.Id) && 
+            if (message.Tag == RelayMessageTags.InstantMessage && !SignaledRelayMessages.IsPushNotificationReceived(message.Id) &&
                 (message.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalMinutes < 10))
             {
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,
@@ -209,7 +208,7 @@ namespace ChatterBox.Client.Common.Signaling
             }
             else
             {
-                requests = request.Split(new[] {Environment.NewLine},
+                requests = request.Split(new[] { Environment.NewLine },
                     StringSplitOptions.RemoveEmptyEntries).ToList();
             }
 
@@ -218,6 +217,7 @@ namespace ChatterBox.Client.Common.Signaling
                 var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
                 if (i != requests.Count - 1) continue;
                 if (invoked.Invoked) continue;
+                ToastNotificationService.ShowToastNotification(invoked.ErrorMessage);
                 var bufferFileTask = GetBufferFile().AsTask();
                 bufferFileTask.Wait();
                 var appendTask = FileIO.AppendTextAsync(bufferFileTask.Result, requests[i]).AsTask();
