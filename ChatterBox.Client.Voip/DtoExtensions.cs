@@ -1,20 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using ChatterBox.Client.Common.Signaling.Dto;
 using webrtc_winrt_api;
 
-namespace ChatterBox.Client.Voip.Dto
+namespace ChatterBox.Client.Voip
 {
-    [DataContract]
-    internal sealed class DtoIceCandidate
+    internal  static class DtoExtensions
     {
-        [DataMember]
-        public string Candidate { get; set; }
-
-        [DataMember]
-        public string SdpMid { get; set; }
-
-        [DataMember]
-        public ushort SdpMLineIndex { get; set; }
-
         public static RTCIceCandidate FromDto(DtoIceCandidate obj)
         {
             return new RTCIceCandidate

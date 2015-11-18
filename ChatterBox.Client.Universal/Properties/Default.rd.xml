@@ -23,6 +23,7 @@
     -->
     <Assembly Name="*Application*" Dynamic="Required All" Serialize="Required All" />
 
+    <Namespace Name="ChatterBox.Client.Common.Signaling.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All"/>
     <Namespace Name="ChatterBox.Client.Common.Communication.Signaling.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All"/>
     <Namespace Name="ChatterBox.Client.Common.Communication.Voip.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All" Activate="All"/>
     <Namespace Name="ChatterBox.Client.Common.Communication.Foreground.Dto" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All"/>

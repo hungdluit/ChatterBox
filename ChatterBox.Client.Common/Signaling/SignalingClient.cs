@@ -217,7 +217,6 @@ namespace ChatterBox.Client.Common.Signaling
                 var invoked = ServerChannelInvoker.ProcessRequest(requests[i]);
                 if (i != requests.Count - 1) continue;
                 if (invoked.Invoked) continue;
-                ToastNotificationService.ShowToastNotification(invoked.ErrorMessage);
                 var bufferFileTask = GetBufferFile().AsTask();
                 bufferFileTask.Wait();
                 var appendTask = FileIO.AppendTextAsync(bufferFileTask.Result, requests[i]).AsTask();

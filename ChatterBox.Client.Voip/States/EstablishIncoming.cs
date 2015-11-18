@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ChatterBox.Client.Voip.Dto;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
+using ChatterBox.Client.Common.Signaling.Dto;
+using ChatterBox.Client.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Serialization;
 using webrtc_winrt_api;
@@ -45,7 +47,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
-                DtoIceCandidate.FromDto(
+                DtoExtensions.FromDto(
                     (DtoIceCandidate) JsonConvert.Deserialize(message.Payload, typeof (DtoIceCandidate)));
             await Context.PeerConnection.AddIceCandidate(candidate);
         }
@@ -63,7 +65,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
-            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoIceCandidate.ToDto(candidate)));
+            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
         }
     }
 }
