@@ -7,14 +7,15 @@ namespace ChatterBox.Client.Universal.Services
 {
     public class PushNotificationHelper
     {
+        //TODO: Fix timeout for push notifications registration
         public static async void RegisterPushNotificationChannel()
         {
-            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-            if (channel != null)
-            {
-                RegistrationSettings.PushNotificationChannelURI = channel.Uri;
-                Debug.WriteLine($"Push token chanell URI: {channel.Uri}");
-            }
+            //var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            //if (channel != null)
+            //{
+            //    RegistrationSettings.PushNotificationChannelURI = channel.Uri;
+            //    Debug.WriteLine($"Push token chanell URI: {channel.Uri}");
+            //}
         }
     }
 }
