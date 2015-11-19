@@ -120,6 +120,11 @@
     <Compile Include="Tasks\PushNotificationTask.cs" />
     <Compile Include="Tasks\SignalingTask.cs" />
     <Compile Include="Tasks\VoipTask.cs" />
+    <Compile Include="Voip\States\HangingUp.cs" />
+    <Compile Include="Voip\States\Idle.cs" />
+    <Compile Include="Voip\States\LocalRinging.cs" />
+    <Compile Include="Voip\States\RemoteRinging.cs" />
+    <Compile Include="Voip\VoipCallContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChatterBox.Client.Common\ChatterBox.Client.Common.csproj">

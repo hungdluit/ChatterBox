@@ -8,18 +8,37 @@ using ChatterBox.Client.Universal.Background.DeferralWrappers;
 using ChatterBox.Client.Universal.Background.Helpers;
 using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Common.Communication.Contracts;
+using Microsoft.Practices.Unity;
+using ChatterBox.Client.Voip.States.Interfaces;
+using ChatterBox.Client.Universal.Background.Voip.States;
+using ChatterBox.Client.Common.Communication.Voip.States;
+using ChatterBox.Client.Voip;
+using System;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Universal.Background.Voip;
+using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Universal.Background
 {
-    public sealed class Hub
+    internal sealed class Hub : IHub
     {
+        private IUnityContainer _container;
         private static volatile Hub _instance;
         private static readonly object SyncRoot = new object();
         private AppServiceConnection _foregroundConnection;
 
         private Hub()
         {
-            //TODO: Put in handler for the voip channel instead of null
+            _container = new UnityContainer();
+            _container.RegisterInstance<IHub>(this)
+                      .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
+                      .RegisterInstance(new VoipCallContext())
+                      .RegisterType<IIdle, VoipState_Idle>()
+                      .RegisterType<ILocalRinging, VoipState_LocalRinging>()
+                      .RegisterType<IRemoteRinging, VoipState_RemoteRinging>()
+                      .RegisterType<IHangingUp, VoipState_HangingUp>();
+
+            VoipChannel = new VoipChannel(_container);
             SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, VoipChannel);
         }
 
@@ -57,7 +76,7 @@ namespace ChatterBox.Client.Universal.Background
 
         public SignalingClient SignalingClient { get; }
         public SignalingSocketService SignalingSocketService { get; } = new SignalingSocketService();
-        public IVoipChannel VoipChannel { get; } = new VoipChannel();
+        public IVoipChannel VoipChannel { get; }
         public VoipTask VoipTaskInstance { get; set; }
 
         private void HandleForegroundRequest(
@@ -84,5 +103,19 @@ namespace ChatterBox.Client.Universal.Background
                 }
             }
         }
+
+        #region IHub members
+
+        public void Relay(RelayMessage message)
+        {
+            SignalingClient.Relay(message);
+        }
+
+        public void OnVoipState(VoipState voipState)
+        {
+            ForegroundClient.OnVoipState(voipState);
+        }
+
+        #endregion
     }
 }

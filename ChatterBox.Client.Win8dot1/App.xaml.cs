@@ -15,8 +15,10 @@ using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Client.Win8dot1.Channels;
 using ChatterBox.Client.Win8dot1.Services;
-using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Client.Common.Communication.Foreground;
+using ChatterBox.Client.Voip.States.Interfaces;
+using ChatterBox.Client.Win8dot1.Voip.States;
+using ChatterBox.Client.Voip;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -60,11 +62,17 @@ namespace ChatterBox.Client.Win8dot1
                 .RegisterType<ISignalingSocketChannel, SignalingSocketChannel>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISignalingSocketOperation, SignalingSocketOperation>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISignalingSocketService, SignalingSocketService>(new ContainerControlledLifetimeManager())
-                .RegisterType<IVoipChannel, VoipChannelTemp>()
                 .RegisterType<SignalingClient>(new ContainerControlledLifetimeManager())
                 .RegisterType<IForegroundChannel, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
                 .RegisterType<IForegroundUpdateService, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
                 .RegisterType<IClientChannel, ClientChannel>(new ContainerControlledLifetimeManager())
+                .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager())
+                .RegisterType<IHub, Voip.Hub>(new ContainerControlledLifetimeManager())
+                .RegisterType<IHangingUp, VoipState_HangingUp>()
+                .RegisterType<IIdle, VoipState_Idle>()
+                .RegisterType<ILocalRinging, VoipState_LocalRinging>()
+                .RegisterType<IRemoteRinging, VoipState_RemoteRinging>()
+                .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
 
             var rootFrame = Window.Current.Content as Frame;

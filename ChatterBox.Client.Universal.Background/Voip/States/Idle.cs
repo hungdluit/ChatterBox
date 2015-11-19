@@ -3,17 +3,20 @@ using System.Diagnostics;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation.Metadata;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Client.Universal.Background;
 using ChatterBox.Client.Universal.Background.Tasks;
+using ChatterBox.Client.Common.Communication.Voip.States;
+using ChatterBox.Client.Voip.States.Interfaces;
+using Microsoft.Practices.Unity;
 using ChatterBox.Common.Communication.Messages.Relay;
 
-namespace ChatterBox.Client.Common.Communication.Voip.States
+namespace ChatterBox.Client.Universal.Background.Voip.States
 {
-    internal class VoipState_Idle : BaseVoipState
+    internal class VoipState_Idle : BaseVoipState, IIdle
     {
         public override void Call(OutgoingCallRequest request)
         {
-            Context.SwitchState(new VoipState_RemoteRinging(request));
+            var remoteRingingState = Context.UnityContainer.Resolve<IRemoteRinging>(new ParameterOverride("request", request));
+            Context.SwitchState((BaseVoipState)remoteRingingState);
         }
 
         public override void OnEnteringState()
@@ -29,7 +32,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void OnIncomingCall(RelayMessage message)
         {
-            Context.SwitchState(new VoipState_LocalRinging(message));
+            var localRingingState = Context.UnityContainer.Resolve<ILocalRinging>(new ParameterOverride("message", message));
+            Context.SwitchState((BaseVoipState)localRingingState);
         }
 
         public override async void OnLeavingState()

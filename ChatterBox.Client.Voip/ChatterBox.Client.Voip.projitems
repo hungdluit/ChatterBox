@@ -10,14 +10,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DtoExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IHub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\Active.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\Base.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\EstablishIncoming.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\EstablishOutgoing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)States\HangingUp.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)States\Idle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)States\LocalRinging.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)States\RemoteRinging.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\Interfaces\IHangingUp.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\Interfaces\IIdle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\Interfaces\ILocalRinging.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)States\Interfaces\IRemoteRinging.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VoipChannel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VoipContext.cs" />
   </ItemGroup>

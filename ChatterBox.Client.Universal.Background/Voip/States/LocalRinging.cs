@@ -2,23 +2,28 @@
 using System.Diagnostics;
 using Windows.ApplicationModel.Calls;
 using ChatterBox.Client.Common.Avatars;
+using Microsoft.Practices.Unity;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
+using ChatterBox.Client.Voip.States.Interfaces;
+using ChatterBox.Client.Universal.Background.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
-    internal class VoipState_LocalRinging : BaseVoipState
+    internal class VoipState_LocalRinging : BaseVoipState, ILocalRinging
     {
         private readonly RelayMessage _message;
+        private readonly VoipCallContext _voipCallContext;
 
-        public VoipState_LocalRinging(RelayMessage message)
+        public VoipState_LocalRinging(RelayMessage message, VoipCallContext voipCallContext)
         {
             _message = message;
+            _voipCallContext = voipCallContext;
         }
 
         public override void Answer()
         {
-            Context.VoipCall.NotifyCallActive();
+            _voipCallContext.VoipCall.NotifyCallActive();
             Context.SendToPeer(RelayMessageTags.VoipAnswer, "");
             Context.SwitchState(new VoipState_EstablishIncoming());
         }
@@ -50,7 +55,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void Hangup()
         {
-            Context.SwitchState(new VoipState_HangingUp());
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
         }
 
         public override void OnEnteringState()
@@ -75,7 +81,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
                 call.NotifyCallActive();
 
-                Context.VoipCall = call;
+                _voipCallContext.VoipCall = call;
             }
 #else
 
@@ -105,14 +111,16 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void OnRemoteHangup(RelayMessage message)
         {
-            Context.SwitchState(new VoipState_HangingUp());
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
         }
 
         public override void Reject(IncomingCallReject reason)
         {
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
-            Context.VoipCall.NotifyCallEnded();
-            Context.SwitchState(new VoipState_Idle());
+            _voipCallContext.VoipCall.NotifyCallEnded();
+            var idleState = Context.UnityContainer.Resolve<IIdle>();
+            Context.SwitchState((BaseVoipState)idleState);
         }
     }
 }

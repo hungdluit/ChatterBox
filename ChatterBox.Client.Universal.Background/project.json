@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "Unity": "4.0.1",
     "WebRTC": "1.1.71"
   },
   "frameworks": {

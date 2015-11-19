@@ -7,6 +7,8 @@ using ChatterBox.Client.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Serialization;
 using webrtc_winrt_api;
+using ChatterBox.Client.Voip.States.Interfaces;
+using Microsoft.Practices.Unity;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -14,7 +16,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
     {
         public override void Hangup()
         {
-            Context.SwitchState(new VoipState_HangingUp());
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
         }
 
         public override async void OnEnteringState()
@@ -62,7 +65,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.SwitchState(new VoipState_ActiveCall());
         }
 
-        internal override void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));

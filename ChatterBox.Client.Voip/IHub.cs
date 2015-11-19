@@ -1,0 +1,17 @@
+﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Common.Communication.Messages.Relay;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ChatterBox.Client.Voip
+{
+    internal interface IHub
+    {
+        void Relay(RelayMessage message);
+
+        void OnVoipState(VoipState voipState);
+    }
+}

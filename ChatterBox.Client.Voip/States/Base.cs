@@ -84,7 +84,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
         }
 
-        internal virtual void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public virtual void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
         }
     }
