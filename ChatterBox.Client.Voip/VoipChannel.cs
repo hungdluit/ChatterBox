@@ -130,6 +130,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 {
                     fn();
                 }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"Exception: {ex.Message} {Environment.NewLine}{ex.StackTrace}");
+                }
                 finally
                 {
                     _sem.Release();

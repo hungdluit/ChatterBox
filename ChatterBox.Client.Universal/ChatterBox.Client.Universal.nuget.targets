@@ -4,6 +4,6 @@
     <NuGetPackageRoot>C:\Users\GodAdmin\.nuget\packages\</NuGetPackageRoot>
   </PropertyGroup>
   <ImportGroup>
-    <Import Project="$(NuGetPackageRoot)\WebRTC\1.1.71\build\netcore45\WebRTC.targets" Condition="Exists('$(NuGetPackageRoot)\WebRTC\1.1.71\build\netcore45\WebRTC.targets')" />
+    <Import Project="$(NuGetPackageRoot)\WebRTC\1.1.174\build\netcore45\WebRTC.targets" Condition="Exists('$(NuGetPackageRoot)\WebRTC\1.1.174\build\netcore45\WebRTC.targets')" />
   </ImportGroup>
 </Project>
