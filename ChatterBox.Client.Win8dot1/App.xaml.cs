@@ -1,28 +1,28 @@
-﻿using System;
-using System.Diagnostics;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using ChatterBox.Client.Common.Background;
+using ChatterBox.Client.Common.Communication.Foreground;
+using ChatterBox.Client.Common.Communication.Signaling;
+using ChatterBox.Client.Common.Communication.Voip;
+using ChatterBox.Client.Common.Notifications;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
-using Microsoft.Practices.Unity;
-using ChatterBox.Client.Common.Communication.Signaling;
-using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Common.Communication.Contracts;
+using ChatterBox.Client.Voip;
+using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Client.Win8dot1.Channels;
 using ChatterBox.Client.Win8dot1.Services;
-using ChatterBox.Client.Common.Communication.Foreground;
-using ChatterBox.Client.Voip.States.Interfaces;
-using ChatterBox.Client.Win8dot1.Voip.States;
-using ChatterBox.Client.Voip;
-using ChatterBox.Client.Common.Background;
+using ChatterBox.Client.Win8dot1.Voip;
+using ChatterBox.Common.Communication.Contracts;
+using Microsoft.Practices.Unity;
+using System;
+using System.Diagnostics;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
-using ChatterBox.Client.Common.Notifications;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -73,17 +73,17 @@ namespace ChatterBox.Client.Win8dot1
                 .RegisterType<ISignalingSocketOperation, SignalingSocketOperation>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISignalingSocketService, SignalingSocketService>(new ContainerControlledLifetimeManager())
                 .RegisterType<SignalingClient>(new ContainerControlledLifetimeManager())
+                .RegisterType<IVideoRenderHelper, VideoRenderHelper>()
                 .RegisterType<IForegroundChannel, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
                 .RegisterType<IForegroundUpdateService, ForegroundSignalingUpdateService>(new ContainerControlledLifetimeManager())
                 .RegisterType<IClientChannel, ClientChannel>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager())
+                .RegisterType<IVoipCoordinator, VoipCoordinator>()
                 .RegisterType<IHub, Voip.Hub>(new ContainerControlledLifetimeManager())
-                .RegisterType<IHangingUp, VoipState_HangingUp>()
-                .RegisterType<IIdle, VoipState_Idle>()
-                .RegisterType<ILocalRinging, VoipState_LocalRinging>()
-                .RegisterType<IRemoteRinging, VoipState_RemoteRinging>()
+                .RegisterType<VoipContext>(new ContainerControlledLifetimeManager())
                 .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
-                .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
+                .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager())
+                .RegisterType<IWebRTCSettingsService, WebRTCSettingsService>();
 
             var rootFrame = Window.Current.Content as Frame;
 

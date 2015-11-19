@@ -7,11 +7,20 @@ using ChatterBox.Common.Communication.Serialization;
 using webrtc_winrt_api;
 using ChatterBox.Client.Voip.States.Interfaces;
 using Microsoft.Practices.Unity;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_ActiveCall : BaseVoipState
     {
+        private OutgoingCallRequest _callRequest;
+
+        public VoipState_ActiveCall(OutgoingCallRequest callRequest)
+        {
+            _callRequest = callRequest;
+            IsVideoEnabled = callRequest.VideoEnabled;
+        }
+
         internal override async void OnAddStream(MediaStream stream)
         {
             Context.RemoteStream = stream;
@@ -21,13 +30,20 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
                 var media = await Media.CreateMediaAsync();
                 var source = media.CreateMediaStreamSource(tracks[0], 30, "PEER");
                 Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
+		    }
+		}
+        public override VoipStateEnum VoipState
+        {
+            get
+            {
+                return VoipStateEnum.ActiveCall;
             }
         }
 
         public override void Hangup()
         {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
+            var hangingUpState = new VoipState_HangingUp();
+            Context.SwitchState(hangingUpState);
         }
 
         public override async void OnIceCandidate(RelayMessage message)
@@ -41,8 +57,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override void OnRemoteHangup(RelayMessage message)
         {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
+            var hangingUpState = new VoipState_HangingUp();
+            Context.SwitchState(hangingUpState);
         }
 
         public override void SendLocalIceCandidate(RTCIceCandidate candidate)

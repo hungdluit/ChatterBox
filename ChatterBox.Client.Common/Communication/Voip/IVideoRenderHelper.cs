@@ -1,8 +1,6 @@
-﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Common.Communication.Messages.Relay;
-using System;
-using Windows.Media.Core;
+﻿using Windows.Media.Core;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -13,5 +11,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         event RenderFormatUpdateHandler RenderFormatUpdate;
         void SetupRenderer(uint foregroundProcessId, IMediaSource source);
         void Teardown();
+
+        void SetMediaElement(CoreDispatcher dispatcher, MediaElement mediaElement);
     }
 }

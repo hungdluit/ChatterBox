@@ -23,6 +23,21 @@ namespace WebRTCSwapChainPanel {
         {
             uint32 get();
         }
+		static property Windows::UI::Xaml::DependencyProperty^ SwapChainPanelHandleProperty
+		{
+			Windows::UI::Xaml::DependencyProperty^ get()
+			{
+				return _swapChainPanelHandleProperty;
+			}
+		}
+		static property Windows::UI::Xaml::DependencyProperty^ SizeProperty
+		{
+			Windows::UI::Xaml::DependencyProperty^ get()
+			{
+				return _intSizeProperty;
+			}
+		}
+
     private:
         void OnScaleChange();
         void UpdateHandle(int64 handle);
@@ -34,22 +49,7 @@ namespace WebRTCSwapChainPanel {
 
         HANDLE _handle;
         Windows::Foundation::Size _nativeVideoSize;
-        Windows::Foundation::Size _controlSize;
-
-        static property Windows::UI::Xaml::DependencyProperty^ SwapChainPanelHandleProperty
-        {
-          Windows::UI::Xaml::DependencyProperty^ get()
-          {
-            return _swapChainPanelHandleProperty;
-          }
-        }
-        static property Windows::UI::Xaml::DependencyProperty^ SizeProperty
-        {
-          Windows::UI::Xaml::DependencyProperty^ get()
-          {
-            return _intSizeProperty;
-          }
-        }
+        Windows::Foundation::Size _controlSize;        
 
         static Windows::UI::Xaml::DependencyProperty^  _swapChainPanelHandleProperty;
         static Windows::UI::Xaml::DependencyProperty^  _intSizeProperty;

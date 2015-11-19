@@ -22,6 +22,7 @@ using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
 using ChatterBox.Client.Common.Background;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Universal.Services
 {
@@ -242,6 +243,10 @@ namespace ChatterBox.Client.Universal.Services
         public void OnSignaledDataUpdated()
         {
             RunOnUiThread(() => OnUpdate?.Invoke());
+        }
+
+        public void RegisterVideoElements(MediaElement self, MediaElement peer)
+        {            
         }
 
         public event Action OnUpdate;

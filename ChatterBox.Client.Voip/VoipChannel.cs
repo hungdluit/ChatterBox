@@ -10,6 +10,9 @@ using ChatterBox.Common.Communication.Messages.Relay;
 using Windows.Networking.Connectivity;
 using System.Collections.Generic;
 using ChatterBox.Client.Voip;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
+using ChatterBox.Client.Voip.States.Interfaces;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -24,26 +27,28 @@ namespace ChatterBox.Client.Common.Communication.Voip
         // This variable should not be used outside of the getter below.
         private VoipContext _context;
 
-        private IUnityContainer _container;
         private UInt32 _foregroundProcessId;
+        private IHub _hub;
+        private CoreDispatcher _dispatcher;
+        private IVoipCoordinator _coordinator;
 
         private VoipContext Context
         {
             get
             {
-                // Create on demand.
-                if (_context == null)
-                {
-                    _context = new VoipContext(_container);
-                    _context.ForegroundProcessId = _foregroundProcessId;
-                }
                 return _context;
             }
         }
 
-        public VoipChannel(IUnityContainer container)
+        public VoipChannel(IHub hub, 
+                           CoreDispatcher dispatcher,
+                           IVoipCoordinator coordinator,
+                           VoipContext context)
         {
-            _container = container;
+            _hub = hub;
+            _dispatcher = dispatcher;
+            _coordinator = coordinator;
+            _context = context;
         }
 
         #region IVoipChannel Members
@@ -56,6 +61,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         public void SetForegroundProcessId(uint processId)
         {
             _foregroundProcessId = processId;
+            _context.ForegroundProcessId = processId;
         }
 
 
@@ -191,22 +197,25 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     break;
             }
             var properties = new Dictionary<string, string> { { "Connection Type", connType } };
-            var hub = Context.UnityContainer.Resolve<IHub>();
-            hub.TrackStatsManagerEvent("CallStarted", properties);
+            _hub.TrackStatsManagerEvent("CallStarted", properties);
             // start call watch to count duration for tracking as request
-            hub.StartStatsManagerCallWatch();
+            _hub.StartStatsManagerCallWatch();
         }
 
         private void TrackCallEnded() {
             // log call duration as CallEnded event property
             string duration = DateTimeOffset.Now.Subtract(_callStartDateTime).Duration().ToString(@"hh\:mm\:ss");
             var properties = new Dictionary<string, string> { { "Call Duration", duration } };
-            var hub = Context.UnityContainer.Resolve<IHub>();
-            hub.TrackStatsManagerEvent("CallEnded", properties);
+            _hub.TrackStatsManagerEvent("CallEnded", properties);
 
             // stop call watch, so the duration will be calculated and tracked as request
-            hub.StopStatsManagerCallWatch();
+            _hub.StopStatsManagerCallWatch();
         }
 
+        public void RegisterVideoElements(MediaElement self, MediaElement peer)
+        {
+            Context.LocalVideoRenderer.SetMediaElement(_dispatcher, self);
+            Context.RemoteVideoRenderer.SetMediaElement(_dispatcher, peer);
+        }
     }
 }

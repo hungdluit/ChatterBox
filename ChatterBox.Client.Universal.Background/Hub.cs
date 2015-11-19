@@ -1,46 +1,36 @@
-﻿using System.Linq;
-using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
+﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
 using ChatterBox.Client.Universal.Background.Helpers;
 using ChatterBox.Client.Universal.Background.Tasks;
-using ChatterBox.Common.Communication.Contracts;
-using Microsoft.Practices.Unity;
-using ChatterBox.Client.Voip.States.Interfaces;
-using ChatterBox.Client.Universal.Background.Voip.States;
-using ChatterBox.Client.Common.Communication.Voip.States;
-using ChatterBox.Client.Voip;
-using System;
-using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Universal.Background.Voip;
+using ChatterBox.Client.Voip;
+using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
 
 namespace ChatterBox.Client.Universal.Background
 {
     internal sealed class Hub : IHub
     {
-        private IUnityContainer _container;
         private static volatile Hub _instance;
         private static readonly object SyncRoot = new object();
         private AppServiceConnection _foregroundConnection;
 
         private Hub()
         {
-            _container = new UnityContainer();
-            _container.RegisterInstance<IHub>(this)
-                      .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
-                      .RegisterInstance(new VoipCallContext())
-                      .RegisterType<IIdle, VoipState_Idle>()
-                      .RegisterType<ILocalRinging, VoipState_LocalRinging>()
-                      .RegisterType<IRemoteRinging, VoipState_RemoteRinging>()
-                      .RegisterType<IHangingUp, VoipState_HangingUp>()
-                      .RegisterType<IVideoRenderHelper, VideoRenderHelper>();
+            var renderResolver = new Func<IVideoRenderHelper>(() => new VideoRenderHelper());
 
-            VoipChannel = new VoipChannel(_container);
+            var voipCoordinator = new VoipCoordinator(this);
+            var voipContext = new VoipContext(this, null, renderResolver, voipCoordinator);
+            VoipChannel = new VoipChannel(this, null, voipCoordinator, voipContext);
+
             SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, VoipChannel);
         }
 
@@ -120,7 +110,8 @@ namespace ChatterBox.Client.Universal.Background
             ForegroundClient.OnVoipState(voipState);
         }
 
-        public void InitialiazeStatsManager(webrtc_winrt_api.RTCPeerConnection pc) {
+        public void InitialiazeStatsManager(webrtc_winrt_api.RTCPeerConnection pc)
+        {
             RTCStatsManager.Initialize(pc);
         }
 
@@ -134,19 +125,23 @@ namespace ChatterBox.Client.Universal.Background
             ForegroundClient.OnUpdateFrameFormat(frameFormat);
         }
 
-        public void TrackStatsManagerEvent(String name, IDictionary<string, string> props) {
+        public void TrackStatsManagerEvent(String name, IDictionary<string, string> props)
+        {
             RTCStatsManager.TrackEvent(name, props);
         }
 
-        public void TrackStatsManagerMetric(String name, double value) {
+        public void TrackStatsManagerMetric(String name, double value)
+        {
             RTCStatsManager.TrackMetric(name, value);
         }
 
-        public void StartStatsManagerCallWatch() {
+        public void StartStatsManagerCallWatch()
+        {
             RTCStatsManager.StartCallWatch();
         }
 
-        public void StopStatsManagerCallWatch() {
+        public void StopStatsManagerCallWatch()
+        {
             RTCStatsManager.StopCallWatch();
         }
         #endregion

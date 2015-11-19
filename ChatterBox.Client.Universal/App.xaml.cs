@@ -1,28 +1,26 @@
-﻿using System;
-using System.Diagnostics;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
-using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+﻿using ChatterBox.Client.Common.Background;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Settings;
+using ChatterBox.Client.Common.Notifications;
+using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
+using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Universal.Services;
 using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
-using ChatterBox.Client.Common.Signaling;
-using ChatterBox.Client.Common.Notifications;
-using ChatterBox.Client.Common.Background;
+using System;
+using System.Diagnostics;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
-using ChatterBox.Client.Universal.Background.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace ChatterBox.Client.Universal
 {
@@ -54,7 +52,7 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-			if (e.PreviousExecutionState == ApplicationExecutionState.Running)
+            if (e.PreviousExecutionState == ApplicationExecutionState.Running)
             {
                 Resume();
                 return;
@@ -66,11 +64,12 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
                 Container.RegisterType<TaskHelper>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<HubClient>(new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
             }
 
             if (!Container.Resolve<HubClient>().IsConnected)

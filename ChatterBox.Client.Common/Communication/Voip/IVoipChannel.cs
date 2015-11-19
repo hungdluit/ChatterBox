@@ -2,6 +2,7 @@
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
 using Windows.Graphics.Display;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -25,5 +26,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void OnSdpAnswer(RelayMessage message);
         void OnSdpOffer(RelayMessage message);
         void Reject(IncomingCallReject reason);
+        void RegisterVideoElements(MediaElement self, MediaElement peer);
     }
 }

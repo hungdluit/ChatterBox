@@ -4,12 +4,15 @@ using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
 using webrtc_winrt_api;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
-    internal class BaseVoipState : IVoipChannel
+    internal abstract class BaseVoipState : IVoipChannel
     {
         public VoipContext Context { get; private set; }
+
+        public abstract VoipStateEnum VoipState { get; }
 
         #region IVoipChannel Members
 
@@ -104,5 +107,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         //internal virtual void UpdateSwapChainHandle(long handle, bool local)
         //{
         //}
+		
+        public void RegisterVideoElements(MediaElement self, MediaElement peer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsVideoEnabled { get; set; }
     }
 }

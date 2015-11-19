@@ -9,16 +9,42 @@ using ChatterBox.Common.Communication.Serialization;
 using webrtc_winrt_api;
 using Microsoft.Practices.Unity;
 using ChatterBox.Client.Voip.States.Interfaces;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Communication.Voip.States;
+using System.Linq;
+using Windows.UI.Core;
+using ChatterBox.Client.Voip.Utils;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_EstablishOutgoing : BaseVoipState
     {
-        private OutgoingCallRequest _request;
+        private OutgoingCallRequest _callRequest;
 
         public VoipState_EstablishOutgoing(OutgoingCallRequest request)
         {
-            _request = request;
+            _callRequest = request;
+            IsVideoEnabled = request.VideoEnabled;
+        }
+
+        public override VoipStateEnum VoipState
+        {
+            get
+            {
+                return VoipStateEnum.EstablishOutgoing;
+            }
+        }
+
+        public override void Hangup()
+        {
+            var hangingUpState = new VoipState_HangingUp();
+            Context.SwitchState(hangingUpState);
+        }
+
+        public override void OnRemoteHangup(RelayMessage message)
+        {
+            var hangingUpState = new VoipState_HangingUp();
+            Context.SwitchState(hangingUpState);
         }
 
         public override async void OnEnteringState()
@@ -38,28 +64,27 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             };
             Context.PeerConnection = new RTCPeerConnection(config);
 
-            _media = await Media.CreateMediaAsync();
-            await _media.EnumerateAudioVideoCaptureDevices();
-            Context.LocalStream = await _media.GetUserMedia(new RTCMediaStreamConstraints
+            Context.LocalStream = await Context.Media.GetUserMedia(new RTCMediaStreamConstraints
             {
-                videoEnabled = _request.Video,
+                videoEnabled = _callRequest.VideoEnabled,
                 audioEnabled = true
             });
             Context.PeerConnection.AddStream(Context.LocalStream);
             var sdpOffer = await Context.PeerConnection.CreateOffer();
+            var sdpString = sdpOffer.Sdp;
+            SdpUtils.SelectCodecs(ref sdpString, Context.AudioCodec, Context.VideoCodec);
+            sdpOffer.Sdp = sdpString;
             await Context.PeerConnection.SetLocalDescription(sdpOffer);
 
             var tracks = Context.LocalStream.GetVideoTracks();
             if (tracks.Count > 0)
             {
-                var source = _media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
+                var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
                 Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
             }
 
             Context.SendToPeer(RelayMessageTags.SdpOffer, sdpOffer.Sdp);
         }
-
-        Media _media;
 
         internal override void OnAddStream(MediaStream stream)
         {
@@ -67,7 +92,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             var tracks = stream.GetVideoTracks();
             if (tracks.Count > 0)
             {
-                var source = _media.CreateMediaStreamSource(tracks[0], 30, "PEER");
+                var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "PEER");
                 Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
             }
         }
@@ -77,7 +102,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
                 DtoExtensions.FromDto(
-                    (DtoIceCandidate) JsonConvert.Deserialize(message.Payload, typeof (DtoIceCandidate)));
+                    (DtoIceCandidate)JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate)));
             await Context.PeerConnection.AddIceCandidate(candidate);
         }
 
@@ -85,25 +110,13 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             await
                 Context.PeerConnection.SetRemoteDescription(new RTCSessionDescription(RTCSdpType.Answer, message.Payload));
-            Context.SwitchState(new VoipState_ActiveCall());
+            Context.SwitchState(new VoipState_ActiveCall(_callRequest));
         }
 
         public override void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
-        }
-
-        public override void Hangup()
-        {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
-        }
-
-        public override void OnRemoteHangup(RelayMessage message)
-        {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
         }
     }
 }

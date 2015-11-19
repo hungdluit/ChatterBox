@@ -13,6 +13,6 @@ namespace ChatterBox.Common.Communication.Messages.Relay
         public DateTimeOffset SentDateTimeUtc { get; set; }
         public string Tag { get; set; }
         public string ToName { get; set; }
-        public string ToUserId { get; set; }
+        public string ToUserId { get; set; }        
     }
 }

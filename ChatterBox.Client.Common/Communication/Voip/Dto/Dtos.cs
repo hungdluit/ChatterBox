@@ -1,9 +1,15 @@
-﻿namespace ChatterBox.Client.Common.Communication.Voip.Dto
+﻿using System.Runtime.Serialization;
+
+namespace ChatterBox.Client.Common.Communication.Voip.Dto
 {
     public sealed class OutgoingCallRequest
     {
+        [DataMember]
         public string PeerUserId { get; set; }
-        public bool Video { get; set; }
+
+        [DataMember]
+        public bool VideoEnabled { get; set; }
+
     }
 
     public sealed class IncomingCallReject

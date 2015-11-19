@@ -14,6 +14,7 @@ using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
 using System.Diagnostics;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -36,9 +37,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private Windows.Foundation.Size _localNativeVideoSize;
         private Windows.Foundation.Size _remoteNativeVideoSize;
 
+        private MediaElement _selfVideoElement;
+        private MediaElement _peerVideoElement;
+
         public ConversationViewModel(IClientChannel clientChannel,
-            IForegroundUpdateService foregroundUpdateService,
-            IVoipChannel voipChannel)
+                                     IForegroundUpdateService foregroundUpdateService,
+                                     IVoipChannel voipChannel)
         {
             _clientChannel = clientChannel;
             _voipChannel = voipChannel;
@@ -133,14 +137,14 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
-        bool _isPeerVideoAvailable;
+        private bool _isPeerVideoAvailable;
         public bool IsPeerVideoAvailable
         {
             get { return _isPeerVideoAvailable; }
             set { SetProperty(ref _isPeerVideoAvailable, value); }
         }
 
-        bool _isSelfVideoAvailable;
+        private bool _isSelfVideoAvailable;
         public bool IsSelfVideoAvailable
         {
             get { return _isSelfVideoAvailable; }
@@ -244,7 +248,25 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void OnAnswerCommandExecute()
         {
+            _voipChannel.RegisterVideoElements(_selfVideoElement, _peerVideoElement);
             _voipChannel.Answer();
+        }
+
+        private bool OnVideoCallCommandCanExecute()
+        {
+            return !IsInCallMode && !IsOtherConversationInCallMode;
+        }
+
+        private void OnVideoCallCommandExecute()
+        {
+            _voipChannel.RegisterVideoElements(_selfVideoElement, _peerVideoElement);
+            _voipChannel.Call(new OutgoingCallRequest
+            {
+                PeerUserId = UserId,
+                VideoEnabled = true
+            });
+            IsPeerVideoAvailable = true;
+            IsSelfVideoAvailable = true;
         }
 
         private bool OnCallCommandCanExecute()
@@ -257,23 +279,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _voipChannel.Call(new OutgoingCallRequest
             {
                 PeerUserId = UserId,
-                Video = false
+                VideoEnabled = false
             });
             IsSelfVideoAvailable = true;
-        }
-
-        private bool OnVideoCallCommandCanExecute()
-        {
-            return !IsInCallMode && !IsOtherConversationInCallMode;
-        }
-
-        private void OnVideoCallCommandExecute()
-        {
-            _voipChannel.Call(new OutgoingCallRequest
-            {
-                PeerUserId = UserId,
-                Video = true
-            });
         }
 
         public event Action<ConversationViewModel> OnCloseConversation;
@@ -408,6 +416,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
+                        IsSelfVideoAvailable =
+                        IsPeerVideoAvailable = voipState.IsVideoEnabled;
                     }
                     else
                     {
@@ -434,6 +444,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
+                        IsSelfVideoAvailable =
+                        IsPeerVideoAvailable = voipState.IsVideoEnabled;
                     }
                     else
                     {
@@ -483,5 +495,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public event Action<ConversationViewModel> OnIsInCallMode;
+
+        public void RegisterVideoElements(MediaElement self, MediaElement peer)
+        {
+            _selfVideoElement = self;
+            _peerVideoElement = peer;
+        }
     }
 }

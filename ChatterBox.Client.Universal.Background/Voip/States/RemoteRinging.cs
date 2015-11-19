@@ -6,50 +6,38 @@ using ChatterBox.Client.Voip.States.Interfaces;
 using Microsoft.Practices.Unity;
 using ChatterBox.Client.Universal.Background.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
+using ChatterBox.Common.Communication.Serialization;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_RemoteRinging : BaseVoipState, IRemoteRinging
     {
         private readonly OutgoingCallRequest _request;
-        private readonly VoipCallContext _voipCallContext;
 
-        public VoipState_RemoteRinging(OutgoingCallRequest request, VoipCallContext voipCallContext)
+        public VoipState_RemoteRinging(OutgoingCallRequest request)
         {
             _request = request;
-            _voipCallContext = voipCallContext;
+			IsVideoEnabled = request.VideoEnabled;
         }
 
-        private void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
-        {
-            Hangup();
-        }
-
-        private void Call_HoldRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Call_RejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Call_ResumeRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
-        {
-            throw new NotImplementedException();
-        }
+		public override VoipStateEnum VoipStateEnum
+		{
+			get
+			{
+				return VoipStateEnum.RemoteRinging;
+			}			
+		}
 
         public override void Hangup()
         {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
+            var hangingUpState = new VoipState_HangingUp();
+            Context.SwitchState(hangingUpState);
         }
 
         public override void OnRemoteHangup(RelayMessage message)
         {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
+            var hangingUpState = new VoipState_HangingUp();
+            Context.SwitchState(hangingUpState);
         }
 
         public override void OnEnteringState()
@@ -57,24 +45,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Debug.Assert(Context.PeerConnection == null);
 
             Context.PeerId = _request.PeerUserId;
+			
+			var payload = JsonConvert.Serialize(_request);
 
-            Context.SendToPeer(RelayMessageTags.VoipCall, "");
-            Context.InitializeWebRTC();
+            Context.SendToPeer(RelayMessageTags.VoipCall, payload);
 
-            var vCC = VoipCallCoordinator.GetDefault();
-            var call = vCC.RequestNewOutgoingCall(_request.PeerUserId, _request.PeerUserId, "ChatterBox Universal",
-                VoipPhoneCallMedia.Audio);
-            if (call != null)
-            {
-                call.EndRequested += Call_EndRequested;
-                call.HoldRequested += Call_HoldRequested;
-                call.RejectRequested += Call_RejectRequested;
-                call.ResumeRequested += Call_ResumeRequested;
-
-                call.NotifyCallActive();
-
-                _voipCallContext.VoipCall = call;
-            }
+            Context.VoipCoordinator.OnEnterRemoteRinging(this, _request);
         }
 
         public override void OnOutgoingCallAccepted(RelayMessage message)

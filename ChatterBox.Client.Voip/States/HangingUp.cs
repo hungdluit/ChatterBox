@@ -1,19 +1,21 @@
-﻿using ChatterBox.Client.Common.Communication.Voip.States;
+﻿using System;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Communication.Voip.States;
 using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Common.Communication.Messages.Relay;
 using Microsoft.Practices.Unity;
 
-namespace ChatterBox.Client.Universal.Background.Voip.States
+namespace ChatterBox.Client.Common.Communication.Voip.States
 {
-    internal class VoipState_HangingUp : BaseVoipState, IHangingUp
+    internal class VoipState_HangingUp : BaseVoipState
     {
-        public override VoipStateEnum VoipStateEnum
-		{
-			get
-			{
-				return VoipStateEnum.HangingUp;
-			}
-		}
+        public override VoipStateEnum VoipState
+        {
+            get
+            {
+                return VoipStateEnum.HangingUp;
+            }
+        }
 
         public override void OnEnteringState()
         {
@@ -25,20 +27,11 @@ namespace ChatterBox.Client.Universal.Background.Voip.States
                 Context.PeerId = null;
             }
 
-            if (_voipCallContext.VoipCall != null)
-            {
-                _voipCallContext.VoipCall.NotifyCallEnded();
-                _voipCallContext.VoipCall = null;
-            }
-
             Context.LocalStream?.Stop();
-            Context.LocalStream = null;
-
             Context.RemoteStream?.Stop();
-            Context.RemoteStream = null;
 
-			Context.VoipCoordinator.OnEnterHangingUp();
-			
+            Context.VoipCoordinator.OnEnterHangingUp();
+
             var idleState = new VoipState_Idle();
             Context.SwitchState(idleState);
         }
