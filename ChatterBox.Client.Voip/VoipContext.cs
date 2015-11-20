@@ -4,6 +4,7 @@ using ChatterBox.Client.Common.Settings;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Client.Voip;
 using ChatterBox.Client.Voip.States.Interfaces;
+using ChatterBox.Client.Universal.Background;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
@@ -44,7 +45,15 @@ namespace ChatterBox.Client.Common.Communication.Voip
                             State.SendLocalIceCandidate(evt.Candidate);
                         }
                     };
+
+                    Hub.Instance.RTCStatsManager.Initialize(_peerConnection);
+                    Hub.Instance.RTCStatsManager.IsStatsCollectionEnabled = true;
                 }
+                else
+                {
+                    Hub.Instance.RTCStatsManager.IsStatsCollectionEnabled = false;
+                }
+
             }
         }
 

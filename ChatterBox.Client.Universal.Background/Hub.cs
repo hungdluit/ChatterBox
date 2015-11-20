@@ -44,6 +44,8 @@ namespace ChatterBox.Client.Universal.Background
 
         public ForegroundClient ForegroundClient { get; } = new ForegroundClient();
 
+        public StatsManager RTCStatsManager { get; } = new StatsManager();
+
         public AppServiceConnection ForegroundConnection
         {
             get { return _foregroundConnection; }
