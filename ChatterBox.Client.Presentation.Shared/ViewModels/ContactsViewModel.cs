@@ -73,6 +73,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact.UserId = peer.UserId;
                     contact.ProfileSource = new BitmapImage(new Uri(AvatarLink.For(peer.Avatar)));
                     contact.OnCloseConversation += Contact_OnCloseConversation;
+                    contact.OnIsInCallMode += Contact_OnIsInCallMode;
                     var sortList = Conversations.ToList();
                     sortList.Add(contact);
                     sortList = sortList.OrderBy(s => s.Name).ToList();
@@ -83,6 +84,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
 
             UpdateSelection();
+        }
+
+        private void Contact_OnIsInCallMode(ConversationViewModel conversation)
+        {
+            SelectedConversation = conversation;
         }
 
         public event Action OnShowSettings;

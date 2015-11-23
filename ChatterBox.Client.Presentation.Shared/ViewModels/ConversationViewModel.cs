@@ -83,8 +83,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _isInCallMode; }
             set
             {
-                if (SetProperty(ref _isInCallMode, value))
-                    UpdateCommandStates();
+                if (!SetProperty(ref _isInCallMode, value)) return;
+                UpdateCommandStates();
+                if (value)OnIsInCallMode?.Invoke(this);
             }
         }
 
@@ -355,5 +356,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             HangupCommand.RaiseCanExecuteChanged();
             RejectCommand.RaiseCanExecuteChanged();
         }
+
+        public event Action<ConversationViewModel> OnIsInCallMode;
     }
 }
