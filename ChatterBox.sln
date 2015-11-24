@@ -37,13 +37,15 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ChatterBox.Client.Voip", "C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BackgroundHost", "BackgroundHost\BackgroundHost.vcxproj", "{4497E847-8611-4545-BDBE-CE9744C7013C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.Win8dot1.Background", "ChatterBox.Client.Win8dot1.Background\ChatterBox.Client.Win8dot1.Background.csproj", "{60E75DAB-56F8-426B-8167-DEB0A5380ECB}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{6b237d83-603c-42af-aabe-9a8013ef1805}*SharedItemsImports = 4
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{2093a3a2-0046-49eb-9e30-9e29d517606c}*SharedItemsImports = 13
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{6feb923e-1234-4711-a3c2-b976c3aac70d}*SharedItemsImports = 4
-		ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems*{cf1cd0d5-bf6b-457a-9927-8079fc667ca4}*SharedItemsImports = 4
 		ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems*{cf1cd0d5-bf6b-457a-9927-8079fc667ca4}*SharedItemsImports = 4
+		ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems*{cf1cd0d5-bf6b-457a-9927-8079fc667ca4}*SharedItemsImports = 4
 		ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems*{66496392-9237-4c6d-a9d2-f64f7cb46715}*SharedItemsImports = 13
 		ChatterBox.Common.Communication.Shared\ChatterBox.Common.Communication.Shared.projitems*{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}*SharedItemsImports = 4
 		ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems*{626bee3a-eb2f-415f-9e30-9aaf6b9c430a}*SharedItemsImports = 4
@@ -207,6 +209,22 @@ Global
 		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x86.ActiveCfg = Release|Win32
 		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x86.Build.0 = Release|Win32
 		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x86.Deploy.0 = Release|Win32
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|ARM.Build.0 = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|x64.Build.0 = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Debug|x86.Build.0 = Debug|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|ARM.ActiveCfg = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|ARM.Build.0 = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|x64.ActiveCfg = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|x64.Build.0 = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|x86.ActiveCfg = Release|Any CPU
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -226,5 +244,6 @@ Global
 		{9E96F63A-7E37-4F90-B9A2-93DA25E663A1} = {3E40FA14-1992-423F-BFE4-25B36A3B19BB}
 		{66496392-9237-4C6D-A9D2-F64F7CB46715} = {3E40FA14-1992-423F-BFE4-25B36A3B19BB}
 		{4497E847-8611-4545-BDBE-CE9744C7013C} = {5FADF291-CCF7-43C0-8578-54C745B509F0}
+		{60E75DAB-56F8-426B-8167-DEB0A5380ECB} = {9CFEC98A-4DE7-4234-917D-F56A1695B726}
 	EndGlobalSection
 EndGlobal

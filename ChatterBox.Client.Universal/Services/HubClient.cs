@@ -20,6 +20,7 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
+using ChatterBox.Client.Common.Background;
 
 namespace ChatterBox.Client.Universal.Services
 {
@@ -106,7 +107,7 @@ namespace ChatterBox.Client.Universal.Services
         {
             return InvokeHubChannel<ISignalingSocketChannel, ConnectionStatus>(new ConnectionOwner
             {
-                OwnerId = _taskHelper.GetSignalingTask().TaskId.ToString()
+                OwnerId = _taskHelper.GetTask(nameof(SignalingTask)).TaskId.ToString()
             });
         }
 

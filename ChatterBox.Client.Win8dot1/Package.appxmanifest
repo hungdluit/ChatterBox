@@ -1,8 +1,9 @@
-<?xml version="1.0" ?><Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="ChatterBox" Publisher="CN=Macadamian" Version="1.1.170.0"/>
+<?xml version="1.0"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
+  <Identity Name="MacadamianTechnologies.ChatterboxWebRTC" Publisher="CN=0BF51448-0221-4D5C-A9D3-036C6B759273" Version="1.1.170.0" />
   <Properties>
-    <DisplayName>ChatterBox</DisplayName>
-    <PublisherDisplayName>Macadamian</PublisherDisplayName>
+    <DisplayName>Chatterbox WebRTC</DisplayName>
+    <PublisherDisplayName>Macadamian Technologies</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
@@ -10,29 +11,34 @@
     <OSMaxVersionTested>6.3.0</OSMaxVersionTested>
   </Prerequisites>
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application EntryPoint="ChatterBox.Client.Win8dot1.App" Executable="$targetnametoken$.exe" Id="Chatterbox.App">
+    <Application EntryPoint="ChatterBox.Client.Win8dot1.App" Executable="$targetnametoken$.exe" Id="ChatterBoxClientAppId">
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Tasks.Signaling.Win8dot1.SignalingTask" Executable="$targetnametoken$.exe">
+        <Extension Category="windows.backgroundTasks" Executable="$targetnametoken$.exe" EntryPoint="ChatterBox.Client.Tasks.Signaling.Win8dot1.SignalingTask">
           <BackgroundTasks>
-            <Task Type="controlChannel"/>
-            <Task Type="systemEvent"/>
+            <Task Type="controlChannel" />
+            <Task Type="systemEvent" />
           </BackgroundTasks>
         </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Tasks.Signaling.Win8dot1.KeepAliveTask" Executable="$targetnametoken$.exe">
+        <Extension Category="windows.backgroundTasks" Executable="$targetnametoken$.exe" EntryPoint="ChatterBox.Client.Tasks.Signaling.Win8dot1.KeepAliveTask">
           <BackgroundTasks>
-            <Task Type="controlChannel"/>
-            <Task Type="systemEvent"/>
+            <Task Type="controlChannel" />
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Common.Background.PushNotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
       </Extensions>
       <m2:VisualElements BackgroundColor="transparent" Description="ChatterBox" DisplayName="ChatterBox" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" ToastCapable="true">
         <m2:DefaultTile ShortName="ChatterBox">
         </m2:DefaultTile>
-        <m2:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badge"/>
-        <m2:SplashScreen Image="Assets\SplashScreen.png"/>
+        <m2:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badge" />
+        <m2:SplashScreen Image="Assets\SplashScreen.png" />
       </m2:VisualElements>
     </Application>
   </Applications>

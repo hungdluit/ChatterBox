@@ -83,6 +83,7 @@
     <Compile Include="Communication\Signaling\ISignalingSocketChannel.cs" />
     <Compile Include="Communication\Voip\Dto\Dtos.cs" />
     <Compile Include="Communication\Voip\IVoipChannel.cs" />
+    <Compile Include="Notifications\PushNotificationHelper.cs" />
     <Compile Include="Notifications\ToastNotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\RegistrationSettings.cs" />
@@ -98,6 +99,9 @@
     <Compile Include="Signaling\SignalingClient.cs" />
     <Compile Include="Signaling\PersistedData\SignalingStatus.cs" />
     <Compile Include="Signaling\SocketConnection.cs" />
+    <Compile Include="Tasks\BackgroundTaskDeferralWrapper.cs" />
+    <Compile Include="Tasks\PushNotificationTask.cs" />
+    <Compile Include="Tasks\TaskHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">

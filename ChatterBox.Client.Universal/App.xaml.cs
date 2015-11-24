@@ -18,6 +18,10 @@ using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
 using ChatterBox.Client.Common.Signaling;
+using ChatterBox.Client.Common.Notifications;
+using ChatterBox.Client.Common.Background;
+using Windows.ApplicationModel.Background;
+using ChatterBox.Client.Universal.Background.Tasks;
 
 namespace ChatterBox.Client.Universal
 {
@@ -66,17 +70,11 @@ namespace ChatterBox.Client.Universal
                 registerAgain = true;
             }
 
-            PushNotificationHelper.RegisterPushNotificationChannel();
-
             var helper = new TaskHelper();
 
-            var pushNotificationTask = await helper.RegisterPushNotificationTask(false);
-            if (pushNotificationTask == null)
-            {
-                Debug.WriteLine("Push notification background task is not started");
-            }
+            await RegisterForPush(helper);
 
-            var signalingTask = await helper.RegisterSignalingTask(registerAgain);
+            var signalingTask = await RegisterSignalingTask(helper, registerAgain);
             if (signalingTask == null)
             {
                 var message = new MessageDialog("The signaling task is required.");
@@ -118,9 +116,9 @@ namespace ChatterBox.Client.Universal
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof (MainView), Container.Resolve<MainViewModel>());
+                rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>());
             }
-            
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -168,6 +166,29 @@ namespace ChatterBox.Client.Universal
         {
             LayoutService.Instance.LayoutRoot = args.Window;
             base.OnWindowCreated(args);
+        }
+
+        private static async System.Threading.Tasks.Task RegisterForPush(TaskHelper helper, bool registerAgain = true)
+        {
+            try
+            {
+                PushNotificationHelper.RegisterPushNotificationChannel();
+
+                var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, new PushNotificationTrigger(), registerAgain).AsTask();
+                if (pushNotificationTask == null)
+                {
+                    Debug.WriteLine("Push notification background task is not started");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Failed to register for push notification. Error: {e.Message}");
+            }
+        }
+
+        private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
+        {
+            return await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName, new SocketActivityTrigger(), registerAgain).AsTask();
         }
     }
 }

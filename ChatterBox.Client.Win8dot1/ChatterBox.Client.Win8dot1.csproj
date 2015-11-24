@@ -18,11 +18,11 @@
     </NuGetPackageImportStamp>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>BAB846E6247CD33FC0C578FDAA274AF24BD3DBF1</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>3EA9D965B77EF099A1892E870C0B601740802C4E</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>ChatterBox.Client.Win8dot1_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -116,6 +116,10 @@
     <ProjectReference Include="..\ChatterBox.Client.Common\ChatterBox.Client.Common.csproj">
       <Project>{9e96f63a-7e37-4f90-b9a2-93da25e663a1}</Project>
       <Name>ChatterBox.Client.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.Win8dot1.Background\ChatterBox.Client.Win8dot1.Background.csproj">
+      <Project>{60e75dab-56f8-426b-8167-deb0a5380ecb}</Project>
+      <Name>ChatterBox.Client.Win8dot1.Background</Name>
     </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
