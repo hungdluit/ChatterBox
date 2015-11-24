@@ -38,6 +38,8 @@ namespace ChatterBox.Client.Universal.Services
             _taskHelper = taskHelper;
         }
 
+        public bool IsConnected { get; private set; }
+
         #region IClientChannel Members
 
         public void ClientConfirmation(Confirmation confirmation)
@@ -191,7 +193,8 @@ namespace ChatterBox.Client.Universal.Services
             _appConnection.ServiceClosed += OnServiceClosed;
             _appConnection.RequestReceived += OnRequestReceived;
             var status = await _appConnection.OpenAsync();
-            return status == AppServiceConnectionStatus.Success;
+            IsConnected=( status == AppServiceConnectionStatus.Success);
+            return IsConnected;
         }
 
         private void InvokeHubChannel<TContract>(object arg = null, [CallerMemberName] string method = null)
@@ -216,6 +219,7 @@ namespace ChatterBox.Client.Universal.Services
 
         private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
+            IsConnected = false;
         }
 
         public void OnSignaledDataUpdated()
