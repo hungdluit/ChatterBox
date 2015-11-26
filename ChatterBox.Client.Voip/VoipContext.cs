@@ -4,7 +4,6 @@ using ChatterBox.Client.Common.Settings;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Client.Voip;
 using ChatterBox.Client.Voip.States.Interfaces;
-using ChatterBox.Client.Universal.Background;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
@@ -34,6 +33,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             set
             {
                 _peerConnection = value;
+                var hub = UnityContainer.Resolve<IHub>();
                 if (_peerConnection != null)
                 {
                     // Register to the events from the peer connection.
@@ -46,12 +46,12 @@ namespace ChatterBox.Client.Common.Communication.Voip
                         }
                     };
 
-                    Hub.Instance.RTCStatsManager.Initialize(_peerConnection);
-                    Hub.Instance.RTCStatsManager.IsStatsCollectionEnabled = true;
+                    hub.InitialiazeStatsManager(_peerConnection);
+                    hub.ToggleStatsManagerConnectionState(true);
                 }
                 else
                 {
-                    Hub.Instance.RTCStatsManager.IsStatsCollectionEnabled = false;
+                    hub.ToggleStatsManagerConnectionState( false);
                 }
 
             }

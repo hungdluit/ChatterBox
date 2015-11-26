@@ -118,6 +118,14 @@ namespace ChatterBox.Client.Universal.Background
             ForegroundClient.OnVoipState(voipState);
         }
 
+        public void InitialiazeStatsManager(webrtc_winrt_api.RTCPeerConnection pc) {
+            RTCStatsManager.Initialize(pc);
+        }
+
+        public void ToggleStatsManagerConnectionState(bool enable)
+        {
+            RTCStatsManager.IsStatsCollectionEnabled = enable;
+        }
         #endregion
     }
 }
