@@ -17,5 +17,13 @@ namespace ChatterBox.Client.Voip
         void InitialiazeStatsManager(webrtc_winrt_api.RTCPeerConnection pc);
 
         void ToggleStatsManagerConnectionState(bool enable);
+
+        void TrackStatsManagerEvent(string name, IDictionary<string, string> props);
+
+        void TrackStatsManagerMetric(string name, double value);
+
+        void StartStatsManagerCallWatch();
+
+        void StopStatsManagerCallWatch();
     }
 }

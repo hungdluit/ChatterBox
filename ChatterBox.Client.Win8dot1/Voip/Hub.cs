@@ -38,5 +38,25 @@ namespace ChatterBox.Client.Win8dot1.Voip
         {
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
+
+        void TrackStatsManagerEvent(string name, IDictionary<string, string> props)
+        {
+            Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
+        }
+
+        void TrackStatsManagerMetric(string name, double value)
+        {
+            Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
+        }
+
+        void StartStatsManagerCallWatch()
+        {
+            Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
+        }
+
+        void StopStatsManagerCallWatch()
+        {
+            Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
+        }
     }
 }

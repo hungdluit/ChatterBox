@@ -6,6 +6,9 @@ using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using Microsoft.Practices.Unity;
 using ChatterBox.Common.Communication.Messages.Relay;
+using Windows.Networking.Connectivity;
+using System.Collections.Generic;
+using ChatterBox.Client.Voip;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -14,6 +17,9 @@ namespace ChatterBox.Client.Common.Communication.Voip
         // Semaphore used to make sure only one call on the channel
         // is executed at any given time.
         private readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+
+        DateTimeOffset _callStartDateTime;
+
         // This variable should not be used outside of the getter below.
         private VoipContext _context;
 
@@ -37,10 +43,12 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         #region IVoipChannel Members
 
+
         public void Answer()
         {
             Debug.WriteLine("VoipChannel.Answer");
             Post(() => Context.WithState(st => st.Answer()));
+            TrackCallStarted();
         }
 
         public void Call(OutgoingCallRequest request)
@@ -66,6 +74,11 @@ namespace ChatterBox.Client.Common.Communication.Voip
         public void Hangup()
         {
             Debug.WriteLine("VoipChannel.Hangup");
+            // don't log CallEnded if it is not started yet
+            if (Context.GetVoipState().State != VoipStateEnum.RemoteRinging)
+            {
+                TrackCallEnded();
+            }
             Post(() => Context.WithState(st => st.Hangup()));
         }
 
@@ -86,6 +99,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         {
             Debug.WriteLine("VoipChannel.OnOutgoingCallAccepted");
             Post(() => Context.WithState(st => st.OnOutgoingCallAccepted(message)));
+            TrackCallStarted();
         }
 
         public void OnOutgoingCallRejected(RelayMessage message)
@@ -140,5 +154,44 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 }
             });
         }
+
+        private void TrackCallStarted()
+        {
+            _callStartDateTime = DateTimeOffset.Now;
+            var currentConnection = NetworkInformation.GetInternetConnectionProfile();
+            string connType;
+            switch (currentConnection.NetworkAdapter.IanaInterfaceType)
+            {
+                case 6:
+                    connType = "Cable";
+                    break;
+                case 71:
+                    connType = "WiFi";
+                    break;
+                case 243:
+                    connType = "Mobile";
+                    break;
+                default:
+                    connType = "Unknown";
+                    break;
+            }
+            var properties = new Dictionary<string, string> { { "Connection Type", connType } };
+            var hub = Context.UnityContainer.Resolve<IHub>();
+            hub.TrackStatsManagerEvent("CallStarted", properties);
+            // start call watch to count duration for tracking as request
+            hub.StartStatsManagerCallWatch();
+        }
+
+        private void TrackCallEnded() {
+            // log call duration as CallEnded event property
+            string duration = DateTimeOffset.Now.Subtract(_callStartDateTime).Duration().ToString(@"hh\:mm\:ss");
+            var properties = new Dictionary<string, string> { { "Call Duration", duration } };
+            var hub = Context.UnityContainer.Resolve<IHub>();
+            hub.TrackStatsManagerEvent("CallEnded", properties);
+
+            // stop call watch, so the duration will be calculated and tracked as request
+            hub.StopStatsManagerCallWatch();
+        }
+
     }
 }

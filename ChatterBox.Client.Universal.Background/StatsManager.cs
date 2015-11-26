@@ -12,15 +12,19 @@ namespace ChatterBox.Client.Universal.Background
     {
         public StatsManager()
         {
+            _telemetry = new TelemetryClient();
+            _telemetry.Context.Operation.Id = Guid.NewGuid().ToString();
         }
 
         RTCPeerConnection _peerConnection;
+        TelemetryClient _telemetry;
         public void Initialize(RTCPeerConnection pc)
         {
             if (pc != null)
             {
                 _peerConnection = pc;
                 _peerConnection.OnRTCStatsReportsReady += PeerConnection_OnRTCStatsReportsReady;
+                
             }
             else
             {
@@ -57,7 +61,6 @@ namespace ChatterBox.Client.Universal.Background
 
         private void ProcessReports(IList<RTCStatsReport> reports)
         {
-                var tc = new TelemetryClient();
                 foreach (var report in reports)
                 {
                     MetricTelemetry metric = new MetricTelemetry();
@@ -71,25 +74,25 @@ namespace ChatterBox.Client.Universal.Background
                         {
                             metric.Name = ToMetricName(statValue.Key);
                             metric.Value = Convert.ToInt64(statValue.Value);
-                            tc.TrackMetric(metric);
+                            _telemetry.TrackMetric(metric);
                         } 
                         else if (statValue.Value.GetType() == typeof(Int32))
                         {
                             metric.Name = ToMetricName(statValue.Key);
                             metric.Value = Convert.ToInt32(statValue.Value);
-                            tc.TrackMetric(metric);
+                            _telemetry.TrackMetric(metric);
                         }
                         else if (statValue.Value.GetType() == typeof(Int16))
                         {
                             metric.Name = ToMetricName(statValue.Key);
                             metric.Value = Convert.ToInt16(statValue.Value);
-                            tc.TrackMetric(metric);
+                            _telemetry.TrackMetric(metric);
                         }
                         else if (statValue.Value.GetType() == typeof(double))
                         {
                             metric.Name = ToMetricName(statValue.Key);
                             metric.Value = Convert.ToDouble(statValue.Value);
-                            tc.TrackMetric(metric);
+                            _telemetry.TrackMetric(metric);
                         }
                     }
                 }
@@ -324,5 +327,45 @@ namespace ChatterBox.Client.Universal.Background
             }
         }
 
+        public void TrackEvent(String name)
+        {
+            Task.Run(() => _telemetry.TrackEvent(name));
+        }
+
+        public void TrackEvent(String name, IDictionary<string, string> props)
+        {
+            if (props == null)
+            {
+                Task.Run(() => _telemetry.TrackEvent(name));
+            }
+            else
+            {
+                Task.Run(() => _telemetry.TrackEvent(name, props));
+            }
+        }
+
+        public void TrackMetric(String name, double value) {
+            MetricTelemetry metric = new MetricTelemetry(name, value);
+            metric.Timestamp = System.DateTimeOffset.UtcNow;
+            Task.Run(() => _telemetry.TrackMetric(metric));
+        }
+
+        private Stopwatch _callWatch;
+        public void startCallWatch()
+        {
+            _telemetry.Context.Operation.Name = "Call Duration tracking";
+
+            _callWatch = System.Diagnostics.Stopwatch.StartNew();
+        }
+
+        public void stopCallWatch()
+        {
+            _callWatch.Stop();
+            DateTime currentDateTime = DateTime.Now;
+            TimeSpan time = _callWatch.Elapsed;
+            Task.Run(() => _telemetry.TrackRequest("Call Duration", currentDateTime,
+               time,
+               "200", true));  // Response code, success
+        }
     }
 }
