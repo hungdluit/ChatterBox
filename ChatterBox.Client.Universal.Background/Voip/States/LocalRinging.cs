@@ -70,7 +70,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             // TODO: Detect if UI is visible, and use an outgoing call if it is
             //       so there's not popup and we can answer on the UI.
             var vCC = VoipCallCoordinator.GetDefault();
-            var call = vCC.RequestNewOutgoingCall(_message.FromUserId, _message.FromUserId, "ChatterBox Universal",
+            var call = vCC.RequestNewOutgoingCall(_message.FromUserId, _message.FromName, "ChatterBox Universal",
                 VoipPhoneCallMedia.Audio);
             if (call != null)
             {

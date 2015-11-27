@@ -49,7 +49,6 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            ShowDialog("Started");
             //Register IoC types
             if (!Container.IsRegistered<HubClient>())
             {
