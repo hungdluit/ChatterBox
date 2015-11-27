@@ -5,6 +5,7 @@ using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Common.Communication.Messages.Relay;
+using System.Collections.Generic;
 
 namespace ChatterBox.Client.Win8dot1.Voip
 {
@@ -39,22 +40,22 @@ namespace ChatterBox.Client.Win8dot1.Voip
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
 
-        void TrackStatsManagerEvent(string name, IDictionary<string, string> props)
+        public void TrackStatsManagerEvent(string name, IDictionary<string, string> props)
         {
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
 
-        void TrackStatsManagerMetric(string name, double value)
+        public void TrackStatsManagerMetric(string name, double value)
         {
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
 
-        void StartStatsManagerCallWatch()
+        public void StartStatsManagerCallWatch()
         {
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
 
-        void StopStatsManagerCallWatch()
+        public void StopStatsManagerCallWatch()
         {
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
