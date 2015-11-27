@@ -5,7 +5,7 @@
     "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "Unity": "4.0.1",
-    "WebRTC": "1.1.174"
+    "WebRTC": "1.1.191"
   },
   "frameworks": {
     "uap10.0": {}
