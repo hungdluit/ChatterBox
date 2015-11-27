@@ -17,6 +17,7 @@ using System;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Universal.Background.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
+using System.Collections.Generic;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -125,6 +126,22 @@ namespace ChatterBox.Client.Universal.Background
         public void ToggleStatsManagerConnectionState(bool enable)
         {
             RTCStatsManager.IsStatsCollectionEnabled = enable;
+        }
+
+        public void TrackStatsManagerEvent(String name, IDictionary<string, string> props) {
+            RTCStatsManager.TrackEvent(name, props);
+        }
+
+        public void TrackStatsManagerMetric(String name, double value) {
+            RTCStatsManager.TrackMetric(name, value);
+        }
+
+        public void StartStatsManagerCallWatch() {
+            RTCStatsManager.StartCallWatch();
+        }
+
+        public void StopStatsManagerCallWatch() {
+            RTCStatsManager.StopCallWatch();
         }
         #endregion
     }
