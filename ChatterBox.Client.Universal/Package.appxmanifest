@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><Package IgnorableNamespaces="uap mp" xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10">
-  <Identity Name="MacadamianTechnologies.ChatterboxWebRTC" Publisher="CN=0BF51448-0221-4D5C-A9D3-036C6B759273" Version="1.1.174.0"/>
+  <Identity Name="MacadamianTechnologies.ChatterboxWebRTC" Publisher="CN=0BF51448-0221-4D5C-A9D3-036C6B759273" Version="1.1.193.0"/>
   <mp:PhoneIdentity PhoneProductId="4f7ed8bf-6259-4e99-b2bd-894a32f8a963" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   <Properties>
     <DisplayName>Chatterbox WebRTC</DisplayName>
