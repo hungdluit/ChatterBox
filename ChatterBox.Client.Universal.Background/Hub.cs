@@ -137,11 +137,11 @@ namespace ChatterBox.Client.Universal.Background
         }
 
         public void StartStatsManagerCallWatch() {
-            RTCStatsManager.StartCallWatch();
+            RTCStatsManager.startCallWatch();
         }
 
         public void StopStatsManagerCallWatch() {
-            RTCStatsManager.StopCallWatch();
+            RTCStatsManager.stopCallWatch();
         }
         #endregion
     }
