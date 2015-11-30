@@ -91,6 +91,11 @@ namespace ChatterBox.Client.Universal.Services
             RunOnUiThread(() => OnVoipStateUpdate?.Invoke(state));
         }
 
+        public void OnUpdateFrameFormat(FrameFormat frameFormat)
+        {
+           RunOnUiThread(() => OnFrameFormatUpdate?.Invoke(frameFormat));
+        }
+
         #endregion
 
         #region IForegroundUpdateService Members
@@ -99,6 +104,7 @@ namespace ChatterBox.Client.Universal.Services
         public event Action OnRegistrationStatusUpdated;
         public event Action OnRelayMessagesUpdated;
         public event Action<VoipState> OnVoipStateUpdate;
+        public event Action<FrameFormat> OnFrameFormatUpdate;
 
         #endregion
 
@@ -120,6 +126,11 @@ namespace ChatterBox.Client.Universal.Services
         #endregion
 
         #region IVoipChannel Members
+
+        public void SetForegroundProcessId(uint processId)
+        {
+            InvokeHubChannel<IVoipChannel>(processId);
+        }
 
         public void Answer()
         {

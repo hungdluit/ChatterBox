@@ -13,6 +13,7 @@ using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
+using System.Diagnostics;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -30,6 +31,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private string _name;
         private ImageSource _profileSource;
         private string _userId;
+        private long _localSwapChainHandle;
+        private long _remoteSwapChainHandle;
+        private Windows.Foundation.Size _localNativeVideoSize;
+        private Windows.Foundation.Size _remoteNativeVideoSize;
 
         public ConversationViewModel(IClientChannel clientChannel,
             IForegroundUpdateService foregroundUpdateService,
@@ -39,9 +44,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _voipChannel = voipChannel;
             foregroundUpdateService.OnRelayMessagesUpdated += OnRelayMessagesUpdated;
             foregroundUpdateService.OnVoipStateUpdate += OnVoipStateUpdate;
+            foregroundUpdateService.OnFrameFormatUpdate += OnFrameFormatUpdate;
             SendInstantMessageCommand = new DelegateCommand(OnSendInstantMessageCommandExecute,
                 OnSendInstantMessageCommandCanExecute);
             CallCommand = new DelegateCommand(OnCallCommandExecute, OnCallCommandCanExecute);
+            VideoCallCommand = new DelegateCommand(OnVideoCallCommandExecute, OnVideoCallCommandCanExecute);
             HangupCommand = new DelegateCommand(OnHangupCommandExecute, OnHangupCommandCanExecute);
             AnswerCommand = new DelegateCommand(OnAnswerCommandExecute, OnAnswerCommandCanExecute);
             RejectCommand = new DelegateCommand(OnRejectCommandExecute, OnRejectCommandCanExecute);
@@ -50,6 +57,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         public DelegateCommand AnswerCommand { get; }
         public DelegateCommand CallCommand { get; }
+        public DelegateCommand VideoCallCommand { get; }
         public DelegateCommand CloseConversationCommand { get; }
         public DelegateCommand HangupCommand { get; }
 
@@ -125,6 +133,20 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
+        bool _isPeerVideoAvailable;
+        public bool IsPeerVideoAvailable
+        {
+            get { return _isPeerVideoAvailable; }
+            set { SetProperty(ref _isPeerVideoAvailable, value); }
+        }
+
+        bool _isSelfVideoAvailable;
+        public bool IsSelfVideoAvailable
+        {
+            get { return _isSelfVideoAvailable; }
+            set { SetProperty(ref _isSelfVideoAvailable, value); }
+        }
+
         public string Name
         {
             get { return _name; }
@@ -148,10 +170,71 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _userId, value); }
         }
 
+        public long LocalSwapChainPanelHandle
+        {
+            get
+            {
+                return _localSwapChainHandle;
+            }
+            set
+            {
+                IsSelfVideoAvailable = value > 0;
+                _localSwapChainHandle = value;
+                // Don't use SetPropert() because it does nothing if the value
+                // doesn't change but in this case it must always update the
+                // swap chain panel.
+                OnPropertyChanged("LocalSwapChainPanelHandle");
+            }
+        }
+
+        public long RemoteSwapChainPanelHandle
+        {
+            get
+            {
+                return _remoteSwapChainHandle;
+            }
+            set
+            {
+                IsPeerVideoAvailable = value > 0;
+                _remoteSwapChainHandle = value;
+                // Don't use SetPropert() because it does nothing if the value
+                // doesn't change but in this case it must always update the
+                // swap chain panel.
+                OnPropertyChanged("RemoteSwapChainPanelHandle");
+            }
+        }
+
+        public Windows.Foundation.Size LocalNativeVideoSize
+        {
+            get
+            {
+                return _localNativeVideoSize;
+            }
+            set
+            {
+                SetProperty(ref _localNativeVideoSize, value);
+            }
+        }
+
+        public Windows.Foundation.Size RemoteNativeVideoSize
+        {
+            get
+            {
+                return _remoteNativeVideoSize;
+            }
+            set
+            {
+                SetProperty(ref _remoteNativeVideoSize, value);
+            }
+        }
+
         public void Initialize()
         {
             var voipState = _voipChannel.GetVoipState();
-            OnVoipStateUpdate(voipState);
+            if (voipState != null)
+            {
+                OnVoipStateUpdate(voipState);
+            }
         }
 
         private bool OnAnswerCommandCanExecute()
@@ -173,7 +256,23 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _voipChannel.Call(new OutgoingCallRequest
             {
-                PeerUserId = UserId
+                PeerUserId = UserId,
+                Video = false
+            });
+            IsSelfVideoAvailable = true;
+        }
+
+        private bool OnVideoCallCommandCanExecute()
+        {
+            return !IsInCallMode && !IsOtherConversationInCallMode;
+        }
+
+        private void OnVideoCallCommandExecute()
+        {
+            _voipChannel.Call(new OutgoingCallRequest
+            {
+                PeerUserId = UserId,
+                Video = true
             });
         }
 
@@ -260,6 +359,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     IsRemoteRinging = false;
                     IsCallConnected = false;
                     IsOtherConversationInCallMode = false;
+                    LocalSwapChainPanelHandle = 0;
+                    RemoteSwapChainPanelHandle = 0;
                     break;
                 case VoipStateEnum.LocalRinging:
                     if (voipState.PeerId == UserId)
@@ -341,6 +442,30 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+        private void OnFrameFormatUpdate(FrameFormat obj)
+        {
+            if (!IsInCallMode)
+            {
+                return;
+            }
+
+            if(obj.IsLocal)
+            {
+                LocalSwapChainPanelHandle = obj.SwapChainHandle;
+                var s = new Windows.Foundation.Size();
+                s.Width = (float)obj.Width;
+                s.Height = (float)obj.Height;
+                LocalNativeVideoSize = s;
+            }
+            else
+            {
+                RemoteSwapChainPanelHandle = obj.SwapChainHandle;
+                var s = new Windows.Foundation.Size();
+                s.Width = (float)obj.Width;
+                s.Height = (float)obj.Height;
+                RemoteNativeVideoSize = s;
             }
         }
 

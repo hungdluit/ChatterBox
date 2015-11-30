@@ -37,7 +37,8 @@ namespace ChatterBox.Client.Universal.Background
                       .RegisterType<IIdle, VoipState_Idle>()
                       .RegisterType<ILocalRinging, VoipState_LocalRinging>()
                       .RegisterType<IRemoteRinging, VoipState_RemoteRinging>()
-                      .RegisterType<IHangingUp, VoipState_HangingUp>();
+                      .RegisterType<IHangingUp, VoipState_HangingUp>()
+                      .RegisterType<IVideoRenderHelper, VideoRenderHelper>();
 
             VoipChannel = new VoipChannel(_container);
             SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, VoipChannel);
@@ -126,6 +127,11 @@ namespace ChatterBox.Client.Universal.Background
         public void ToggleStatsManagerConnectionState(bool enable)
         {
             RTCStatsManager.IsStatsCollectionEnabled = enable;
+        }
+
+        public void OnUpdateFrameFormat(FrameFormat frameFormat)
+        {
+            ForegroundClient.OnUpdateFrameFormat(frameFormat);
         }
 
         public void TrackStatsManagerEvent(String name, IDictionary<string, string> props) {

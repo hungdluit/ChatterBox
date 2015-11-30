@@ -18,9 +18,38 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public VoipContext(IUnityContainer container)
         {
+            _isWebRTCInitialized = false;
             UnityContainer = container;
             var idleState = container.Resolve<IIdle>();
             SwitchState((BaseVoipState)idleState);
+
+            ResetRenderers();
+        }
+
+        private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
+        {
+            var hub = UnityContainer.Resolve<IHub>();
+            hub.OnUpdateFrameFormat(
+                new FrameFormat()
+                {
+                    IsLocal = true,
+                    SwapChainHandle = swapChainHandle,
+                    Width = width,
+                    Height = height
+                });
+        }
+
+        private void RemoteVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
+        {
+            var hub = UnityContainer.Resolve<IHub>();
+            hub.OnUpdateFrameFormat(
+                new FrameFormat()
+                {
+                    IsLocal = false,
+                    SwapChainHandle = swapChainHandle,
+                    Width = width,
+                    Height = height
+                });
         }
 
         private RTCPeerConnection _peerConnection { get; set; }
@@ -42,18 +71,33 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     {
                         if (evt.Candidate != null)
                         {
-                            State.SendLocalIceCandidate(evt.Candidate);
+                            lock (this)
+                            {
+                                State.SendLocalIceCandidate(evt.Candidate);
+                            }
                         }
                     };
 
                     hub.InitialiazeStatsManager(_peerConnection);
                     hub.ToggleStatsManagerConnectionState(true);
+                    _peerConnection.OnAddStream += evt =>
+                    {
+                        if (evt.Stream != null)
+                        {
+                            Task.Run(() =>
+                            {
+                                lock (this)
+                                {
+                                    State.OnAddStream(evt.Stream);
+                                }
+                            });
+                        }
+                    };
                 }
                 else
                 {
                     hub.ToggleStatsManagerConnectionState( false);
                 }
-
             }
         }
 
@@ -114,5 +158,48 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 fn(State);
             }
         }
+
+        private UInt32 _foregroundProcessId;
+        public UInt32 ForegroundProcessId
+        {
+            get
+            {
+                lock(this)
+                {
+                    return _foregroundProcessId;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    _foregroundProcessId = value;
+                }
+            }
+        }
+
+        public IVideoRenderHelper LocalVideoRenderer { get; private set; }
+        public IVideoRenderHelper RemoteVideoRenderer { get; private set; }
+
+        public void ResetRenderers()
+        {
+            if (LocalVideoRenderer != null)
+            {
+                LocalVideoRenderer.Teardown();
+            }
+            if (RemoteVideoRenderer != null)
+            {
+                RemoteVideoRenderer.Teardown();
+            }
+
+            LocalVideoRenderer = UnityContainer.Resolve<IVideoRenderHelper>();
+            RemoteVideoRenderer = UnityContainer.Resolve<IVideoRenderHelper>();
+
+            LocalVideoRenderer.RenderFormatUpdate += LocalVideoRenderer_RenderFormatUpdate;
+            RemoteVideoRenderer.RenderFormatUpdate += RemoteVideoRenderer_RenderFormatUpdate;
+            GC.Collect();
+        }
+        //public readonly Renderer LocalVideoRenderer = new Renderer();
+        //public readonly Renderer RemoteVideoRenderer = new Renderer();
     }
 }

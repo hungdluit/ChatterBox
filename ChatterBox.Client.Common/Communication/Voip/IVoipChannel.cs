@@ -6,6 +6,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
 {
     public interface IVoipChannel
     {
+        void SetForegroundProcessId(uint processId);
         void Answer();
         // Locally initiated calls
         void Call(OutgoingCallRequest request);

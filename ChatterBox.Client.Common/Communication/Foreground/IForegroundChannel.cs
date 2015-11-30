@@ -8,5 +8,6 @@ namespace ChatterBox.Client.Common.Communication.Foreground
         void OnSignaledRegistrationStatusUpdated();
         void OnSignaledRelayMessagesUpdated();
         void OnVoipState(VoipState state);
+        void OnUpdateFrameFormat(FrameFormat frameFormat);
     }
 }

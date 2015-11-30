@@ -30,6 +30,7 @@ namespace ChatterBox.Client.Universal.Background.Voip.States
                 _voipCallContext.VoipCall = null;
             }
             var idleState = Context.UnityContainer.Resolve<IIdle>();
+            Context.ResetRenderers();
             Context.SwitchState((BaseVoipState)idleState);
         }
     }

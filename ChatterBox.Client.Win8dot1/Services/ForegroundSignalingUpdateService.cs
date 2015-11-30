@@ -16,6 +16,7 @@ namespace ChatterBox.Client.Win8dot1.Services
         public event Action OnRegistrationStatusUpdated;
         public event Action OnRelayMessagesUpdated;
         public event Action<VoipState> OnVoipStateUpdate;
+        public event Action<FrameFormat> OnFrameFormatUpdate;
 
         private CoreDispatcher _uiDispatcher;
 
@@ -47,6 +48,11 @@ namespace ChatterBox.Client.Win8dot1.Services
         protected void RunOnUiThread(Action fn)
         {
             _uiDispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(fn));
+        }
+
+        public void OnUpdateFrameFormat(FrameFormat frameFormat)
+        {
+            RunOnUiThread(() => OnFrameFormatUpdate?.Invoke(frameFormat));
         }
     }
 }

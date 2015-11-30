@@ -9,10 +9,11 @@ namespace ChatterBox.Client.Presentation.Shared.Views
             InitializeComponent();
         }
 
+
         private void VideoGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SelfPlaceholder.Width = SelfVideo.Width = e.NewSize.Width*0.25D;
-            SelfPlaceholder.Height = SelfVideo.Height = e.NewSize.Height*0.25D;
+            SelfPlaceholder.Width = SelfVideo.Width = e.NewSize.Width * 0.25D;
+            SelfPlaceholder.Height = SelfVideo.Height = e.NewSize.Height * 0.25D;
         }
     }
 }

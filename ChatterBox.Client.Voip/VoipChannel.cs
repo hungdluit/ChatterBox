@@ -24,6 +24,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         private VoipContext _context;
 
         private IUnityContainer _container;
+        private UInt32 _foregroundProcessId;
 
         private VoipContext Context
         {
@@ -31,7 +32,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
             {
                 // Create on demand.
                 if (_context == null)
+                {
                     _context = new VoipContext(_container);
+                    _context.ForegroundProcessId = _foregroundProcessId;
+                }
                 return _context;
             }
         }
@@ -42,6 +46,11 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         #region IVoipChannel Members
+
+        public void SetForegroundProcessId(uint processId)
+        {
+            _foregroundProcessId = processId;
+        }
 
 
         public void Answer()

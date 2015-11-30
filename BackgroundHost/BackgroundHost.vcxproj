@@ -47,6 +47,11 @@
     <None Include="ChatterBox.Client.Universal_StoreKey.pfx" />
     <None Include="ChatterBox.Client.Universal_TemporaryKey.pfx" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChatterBoxClient.Universal.BackgroundRenderer\ChatterBoxClient.Universal.BackgroundRenderer.vcxproj">
+      <Project>{974fcab6-06ed-40d5-954b-11157513f077}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4497E847-8611-4545-BDBE-CE9744C7013C}</ProjectGuid>
     <Keyword>WindowsRuntimeComponent</Keyword>

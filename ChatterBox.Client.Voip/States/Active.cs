@@ -12,6 +12,17 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_ActiveCall : BaseVoipState
     {
+        internal override async void OnAddStream(MediaStream stream)
+        {
+            var tracks = stream.GetVideoTracks();
+            if (tracks.Count > 0)
+            {
+                var media = await Media.CreateMediaAsync();
+                var source = media.CreateMediaStreamSource(tracks[0], 30, "PEER");
+                Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
+            }
+        }
+
         public override void Hangup()
         {
             var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();

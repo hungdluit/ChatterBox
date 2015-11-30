@@ -40,6 +40,12 @@
           <uap:AppService Name="ForegroundAppServiceTask" ServerName="BackgroundHost"/>
         </uap:Extension>
         <uap:Extension Category="windows.voipCall"/>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-voip-call" />
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-voip-video" />
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -59,6 +65,13 @@
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="ChatterBox.Client.Universal.BackgroundHost.Dummy"/>
       </OutOfProcessServer>
+    </Extension>
+    
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>ChatterBoxClient.Universal.BackgroundRenderer.dll</Path>
+        <ActivatableClass ActivatableClassId="ChatterBoxClient.Universal.BackgroundRenderer.SchemeHandler" ThreadingModel="both"/>
+      </InProcessServer>
     </Extension>
   </Extensions>
 </Package>

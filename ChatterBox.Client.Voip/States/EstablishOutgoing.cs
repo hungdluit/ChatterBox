@@ -44,17 +44,36 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             };
             Context.PeerConnection = new RTCPeerConnection(config);
 
-            var media = await Media.CreateMediaAsync();
-            var stream = await media.GetUserMedia(new RTCMediaStreamConstraints
+            _media = await Media.CreateMediaAsync();
+            await _media.EnumerateAudioVideoCaptureDevices();
+            var stream = await _media.GetUserMedia(new RTCMediaStreamConstraints
             {
-                videoEnabled = false,
+                videoEnabled = _request.Video,
                 audioEnabled = true
             });
             Context.PeerConnection.AddStream(stream);
             var sdpOffer = await Context.PeerConnection.CreateOffer();
             await Context.PeerConnection.SetLocalDescription(sdpOffer);
 
+            var tracks = stream.GetVideoTracks();
+            if (tracks.Count > 0)
+            {
+                var source = _media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
+                Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
+            }
+
             Context.SendToPeer(RelayMessageTags.SdpOffer, sdpOffer.Sdp);
+        }
+
+        Media _media;
+
+        internal override void OnAddStream(MediaStream stream)
+        {
+            var tracks = stream.GetVideoTracks();
+            if (tracks.Count > 0)
+            {
+                var source = _media.CreateMediaStreamSource(tracks[0], 30, "PEER");
+            }
         }
 
         public override async void OnIceCandidate(RelayMessage message)

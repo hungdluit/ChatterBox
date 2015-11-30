@@ -106,9 +106,13 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\FrameFormatEventArgs.cs" />
     <Compile Include="Services\HubClient.cs" />
     <Compile Include="Services\PushNotificationHelper.cs" />
     <Compile Include="Services\TaskHelper.cs" />
+    <Compile Include="Views\CallView.xaml.cs">
+      <DependentUpon>CallView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -146,10 +150,24 @@
       <Project>{626BEE3A-EB2F-415F-9E30-9AAF6B9C430A}</Project>
       <Name>ChatterBox.Client.Universal.Background</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Client.WebRTCSwapChainPanel\ChatterBox.Client.WebRTCSwapChainPanel.vcxproj">
+      <Project>{ee989715-f6b1-4bdc-8bfc-ba5ca5567abb}</Project>
+      <Name>ChatterBox.Client.WebRTCSwapChainPanel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5EE2034E-0977-42B0-8F9D-5F65BDACCFF4}</Project>
       <Name>ChatterBox.Common.Communication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ChatterBoxClient.Universal.BackgroundRenderer\ChatterBoxClient.Universal.BackgroundRenderer.vcxproj">
+      <Project>{974fcab6-06ed-40d5-954b-11157513f077}</Project>
+      <Name>ChatterBoxClient.Universal.BackgroundRenderer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Views\CallView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="..\ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
