@@ -33,6 +33,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             set
             {
                 _peerConnection = value;
+                var hub = UnityContainer.Resolve<IHub>();
                 if (_peerConnection != null)
                 {
                     // Register to the events from the peer connection.
@@ -44,7 +45,15 @@ namespace ChatterBox.Client.Common.Communication.Voip
                             State.SendLocalIceCandidate(evt.Candidate);
                         }
                     };
+
+                    hub.InitialiazeStatsManager(_peerConnection);
+                    hub.ToggleStatsManagerConnectionState(true);
                 }
+                else
+                {
+                    hub.ToggleStatsManagerConnectionState( false);
+                }
+
             }
         }
 

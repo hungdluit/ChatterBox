@@ -17,6 +17,7 @@ using System;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Universal.Background.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
+using System.Collections.Generic;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -43,6 +44,8 @@ namespace ChatterBox.Client.Universal.Background
         }
 
         public ForegroundClient ForegroundClient { get; } = new ForegroundClient();
+
+        public StatsManager RTCStatsManager { get; } = new StatsManager();
 
         public AppServiceConnection ForegroundConnection
         {
@@ -116,6 +119,30 @@ namespace ChatterBox.Client.Universal.Background
             ForegroundClient.OnVoipState(voipState);
         }
 
+        public void InitialiazeStatsManager(webrtc_winrt_api.RTCPeerConnection pc) {
+            RTCStatsManager.Initialize(pc);
+        }
+
+        public void ToggleStatsManagerConnectionState(bool enable)
+        {
+            RTCStatsManager.IsStatsCollectionEnabled = enable;
+        }
+
+        public void TrackStatsManagerEvent(String name, IDictionary<string, string> props) {
+            RTCStatsManager.TrackEvent(name, props);
+        }
+
+        public void TrackStatsManagerMetric(String name, double value) {
+            RTCStatsManager.TrackMetric(name, value);
+        }
+
+        public void StartStatsManagerCallWatch() {
+            RTCStatsManager.startCallWatch();
+        }
+
+        public void StopStatsManagerCallWatch() {
+            RTCStatsManager.stopCallWatch();
+        }
         #endregion
     }
 }

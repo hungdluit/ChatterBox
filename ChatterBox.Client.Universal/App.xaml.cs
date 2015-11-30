@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,50 +54,39 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            if (e.PreviousExecutionState == ApplicationExecutionState.Running)
+			if (e.PreviousExecutionState == ApplicationExecutionState.Running)
             {
                 Resume();
                 return;
             }
 
-            Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
-
-
-            var registerAgain = false;
-            if (e.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
-                e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            //Register IoC types
+            if (!Container.IsRegistered<HubClient>())
             {
-                RegistrationSettings.Reset();
-                registerAgain = true;
+                Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
+                Container.RegisterType<TaskHelper>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<HubClient>(new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
+                Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
             }
 
-            var helper = new TaskHelper();
+            if (!Container.Resolve<HubClient>().IsConnected)
+            {
+                await Container.Resolve<HubClient>().Connect();
+            }
 
-            await RegisterForPush(helper);
+            await RegisterForPush(Container.Resolve<TaskHelper>());
 
-            var signalingTask = await RegisterSignalingTask(helper, registerAgain);
+            var signalingTask = await RegisterSignalingTask(Container.Resolve<TaskHelper>(), false);
             if (signalingTask == null)
             {
                 var message = new MessageDialog("The signaling task is required.");
                 await message.ShowAsync();
                 return;
             }
-
-            Container
-                .RegisterType<HubClient>(new ContainerControlledLifetimeManager())
-                .RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(),
-                    new ContainerControlledLifetimeManager())
-                .RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),
-                    new ContainerControlledLifetimeManager())
-                .RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(),
-                    new ContainerControlledLifetimeManager())
-                .RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),
-                    new ContainerControlledLifetimeManager());
-
-            Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
-
-            var client = Container.Resolve<HubClient>();
-            await client.Connect();
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -152,6 +142,7 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            //ShowDialog("OnSuspending");
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
@@ -188,7 +179,18 @@ namespace ChatterBox.Client.Universal
 
         private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
         {
-            return await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName, new SocketActivityTrigger(), registerAgain).AsTask();
+            if (helper.GetTask(nameof(SignalingTask)) == null)
+            {
+                return await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName, new SocketActivityTrigger(), registerAgain).AsTask();
+            }
+
+            return null;
+        }
+
+        public async void ShowDialog(string message)
+        {
+            var messageDialog = new MessageDialog(message);
+            await messageDialog.ShowAsync();
         }
     }
 }
