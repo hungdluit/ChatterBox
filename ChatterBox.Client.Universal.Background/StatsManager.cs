@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using webrtc_winrt_api;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
+using System.Threading;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -18,13 +19,14 @@ namespace ChatterBox.Client.Universal.Background
 
         RTCPeerConnection _peerConnection;
         TelemetryClient _telemetry;
+        Timer _metricsTimer;
+        AudioVideoMetricsCollector _metricsCollector;
         public void Initialize(RTCPeerConnection pc)
         {
             if (pc != null)
             {
                 _peerConnection = pc;
                 _peerConnection.OnRTCStatsReportsReady += PeerConnection_OnRTCStatsReportsReady;
-                
             }
             else
             {
@@ -39,6 +41,9 @@ namespace ChatterBox.Client.Universal.Background
                 _peerConnection.ToggleRTCStats(false);
                 _peerConnection = null;
             }
+            if(_metricsTimer != null) {
+                _metricsTimer.Dispose();
+            }
         }
 
         private bool _isStatsCollectionEnabled;
@@ -51,6 +56,16 @@ namespace ChatterBox.Client.Universal.Background
                 if (_peerConnection != null)
                 {
                     _peerConnection.ToggleRTCStats(value);
+                    if (_isStatsCollectionEnabled)
+                    {
+                        AutoResetEvent autoEvent = new AutoResetEvent(false);
+                        _metricsCollector = new AudioVideoMetricsCollector(_telemetry);
+                        TimerCallback tcb = _metricsCollector.TrackMetrics;
+                        _metricsTimer = new Timer(tcb, autoEvent, 60000, 60000);
+                    }
+                    else {
+                        Reset();
+                    }
                 }
                 else
                 {
@@ -61,41 +76,55 @@ namespace ChatterBox.Client.Universal.Background
 
         private void ProcessReports(IList<RTCStatsReport> reports)
         {
-                foreach (var report in reports)
-                {
-                    MetricTelemetry metric = new MetricTelemetry();
-                    metric.Timestamp = System.DateTimeOffset.
-                                        FromUnixTimeMilliseconds(
-                                        Convert.ToInt64(report.Timestamp));
-                    IDictionary<RTCStatsValueName, Object> statsValues = report.Values;
-                    foreach (var statValue in statsValues)
+            foreach (var report in reports)
+            {
+                if (report.StatsType == RTCStatsType.StatsReportTypeSsrc) {
+                    IDictionary<RTCStatsValueName, Object> statValues = report.Values;
+                    if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameTrackId))
                     {
-                        if (statValue.Value.GetType() == typeof(Int64))
+                        string trackId = statValues[RTCStatsValueName.StatsValueNameTrackId].ToString();
+                        if (trackId == "audio_label")
                         {
-                            metric.Name = ToMetricName(statValue.Key);
-                            metric.Value = Convert.ToInt64(statValue.Value);
-                            _telemetry.TrackMetric(metric);
-                        } 
-                        else if (statValue.Value.GetType() == typeof(Int32))
-                        {
-                            metric.Name = ToMetricName(statValue.Key);
-                            metric.Value = Convert.ToInt32(statValue.Value);
-                            _telemetry.TrackMetric(metric);
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNamePacketsSent)) {
+                                _metricsCollector._audioPacketsSent += Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNamePacketsSent]);
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNamePacketsLost))
+                            {
+                                _metricsCollector._audioPacketsLost += Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNamePacketsLost]);
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameCurrentDelayMs))
+                            {
+                                _metricsCollector._audioCurrentDelayMs += Convert.ToDouble(statValues[RTCStatsValueName.StatsValueNameCurrentDelayMs]);
+                                _metricsCollector._audioDelayCount++;
+                            }
                         }
-                        else if (statValue.Value.GetType() == typeof(Int16))
+                        else if (trackId == "video_label")
                         {
-                            metric.Name = ToMetricName(statValue.Key);
-                            metric.Value = Convert.ToInt16(statValue.Value);
-                            _telemetry.TrackMetric(metric);
-                        }
-                        else if (statValue.Value.GetType() == typeof(double))
-                        {
-                            metric.Name = ToMetricName(statValue.Key);
-                            metric.Value = Convert.ToDouble(statValue.Value);
-                            _telemetry.TrackMetric(metric);
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNamePacketsSent))
+                            {
+                                _metricsCollector._videoPacketsSent += Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNamePacketsSent]);
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNamePacketsLost))
+                            {
+                                _metricsCollector._videoPacketsLost += Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNamePacketsLost]);
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameCurrentDelayMs))
+                            {
+                                _metricsCollector._videoCurrentDelayMs += Convert.ToDouble(statValues[RTCStatsValueName.StatsValueNameCurrentDelayMs]);
+                                _metricsCollector._videoDelayCount++;
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameFrameHeightSent))
+                            {
+                                _metricsCollector.FrameHeight = Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNameFrameHeightSent]);
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameFrameWidthSent))
+                            {
+                                _metricsCollector.FrameWidth = Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNameFrameWidthSent]);
+                            }
                         }
                     }
                 }
+            }
         }
 
         private void PeerConnection_OnRTCStatsReportsReady(RTCStatsReportsReadyEvent evt)
@@ -340,6 +369,7 @@ namespace ChatterBox.Client.Universal.Background
             }
             else
             {
+                props.Add("Timestamp", System.DateTimeOffset.UtcNow.ToString(@"hh\:mm\:ss"));
                 Task.Run(() => _telemetry.TrackEvent(name, props));
             }
         }
@@ -351,14 +381,14 @@ namespace ChatterBox.Client.Universal.Background
         }
 
         private Stopwatch _callWatch;
-        public void startCallWatch()
+        public void StartCallWatch()
         {
             _telemetry.Context.Operation.Name = "Call Duration tracking";
 
-            _callWatch = System.Diagnostics.Stopwatch.StartNew();
+            _callWatch = Stopwatch.StartNew();
         }
 
-        public void stopCallWatch()
+        public void StopCallWatch()
         {
             _callWatch.Stop();
             DateTime currentDateTime = DateTime.Now;
@@ -366,6 +396,122 @@ namespace ChatterBox.Client.Universal.Background
             Task.Run(() => _telemetry.TrackRequest("Call Duration", currentDateTime,
                time,
                "200", true));  // Response code, success
+            _metricsCollector.TrackCurrentDelayMetrics();
         }
     }
+
+    class AudioVideoMetricsCollector
+    {
+        private TelemetryClient _telemetry;
+        public int _audioPacketsSent;
+        public int _audioPacketsLost;
+        public int _videoPacketsSent;
+        public int _videoPacketsLost;
+        public double _audioCurrentDelayMs;
+        public int _audioDelayCount;
+        public double _videoCurrentDelayMs;
+        public int _videoDelayCount;
+        private  int _frameHeight;
+        public int FrameHeight
+        {
+            get { return _frameHeight; }
+            set
+            {
+                if (_frameHeight > value)
+                {
+                    TrackVideoResolutionDowngrade(_frameHeight, value, "Height");
+                }
+                _frameHeight = value;
+            }
+        }
+
+        private int _frameWidth;
+        public int FrameWidth
+        {
+            get { return _frameWidth; }
+            set
+            {
+                if (_frameWidth > value)
+                {
+                    TrackVideoResolutionDowngrade(_frameWidth, value, "Width");
+                }
+                _frameWidth = value;
+            }
+        }
+
+        public AudioVideoMetricsCollector(TelemetryClient tc)
+        {
+            _telemetry = tc;
+            ResetPackets();
+            ResetDelays();
+            _frameHeight = 0;
+            _frameWidth = 0;
+        }
+
+        private void ResetPackets()
+        {
+            _audioPacketsSent = 0;
+            _audioPacketsLost = 0;
+            _videoPacketsSent = 0;
+            _videoPacketsLost = 0;
+        }
+        private void ResetDelays()
+        {
+            _audioCurrentDelayMs = 0;
+            _audioDelayCount = 0;
+            _videoCurrentDelayMs = 0;
+            _videoDelayCount = 0;
+        }
+
+        public void TrackMetrics(Object state)
+        {
+            double audioPacketRatio = (_audioPacketsSent != 0) ? (double) _audioPacketsLost / _audioPacketsSent : 0;
+            double videoPacketRatio = (_videoPacketsSent != 0) ? (double) _videoPacketsLost / _videoPacketsSent : 0;
+
+            if (_audioPacketsSent > 0) {
+                MetricTelemetry metric = new MetricTelemetry("Audio Packet Lost Ratio", audioPacketRatio);
+                metric.Timestamp = System.DateTimeOffset.UtcNow;
+                Task.Run(() => _telemetry.TrackMetric(metric));
+            }
+
+            if (_videoPacketsSent > 0)
+            {
+                MetricTelemetry metric = new MetricTelemetry("Video Packet Lost Ratio", videoPacketRatio);
+                metric.Timestamp = System.DateTimeOffset.UtcNow;
+                Task.Run(() => _telemetry.TrackMetric(metric));
+            }
+
+            // reset flags for the new time period
+            ResetPackets();
+        }
+
+        public void TrackCurrentDelayMetrics()
+        {
+            if (_audioDelayCount > 0)
+            {
+                MetricTelemetry metric = new MetricTelemetry("Audio Current Delay Ratio", _audioCurrentDelayMs / _audioDelayCount);
+                metric.Timestamp = System.DateTimeOffset.UtcNow;
+                Task.Run(() => _telemetry.TrackMetric(metric));
+            }
+            if (_videoDelayCount > 0)
+            {
+                MetricTelemetry metric = new MetricTelemetry("Video Current Delay Ratio", _videoCurrentDelayMs / _videoDelayCount);
+                metric.Timestamp = System.DateTimeOffset.UtcNow;
+                Task.Run(() => _telemetry.TrackMetric(metric));
+            }
+            ResetDelays();
+        }
+
+        private void TrackVideoResolutionDowngrade(int oldValue, int newValue, string name)
+        {
+            IDictionary<string, string> properties = new Dictionary<string, string> {
+                { "Timestamp", System.DateTimeOffset.UtcNow.ToString(@"hh\:mm\:ss") } };
+            IDictionary<string, double> metrics = new Dictionary<string, double> {
+                { "Old " + name, oldValue},
+                { "New " + name, newValue} };
+            Task.Run(() => _telemetry.TrackEvent("Video " + name + " Downgrade", properties, metrics));
+        }
+    }
+
+   
 }
