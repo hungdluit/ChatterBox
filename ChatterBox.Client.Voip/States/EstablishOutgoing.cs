@@ -73,6 +73,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             if (tracks.Count > 0)
             {
                 var source = _media.CreateMediaStreamSource(tracks[0], 30, "PEER");
+                Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
             }
         }
 

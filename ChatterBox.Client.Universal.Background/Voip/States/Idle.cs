@@ -30,8 +30,6 @@ namespace ChatterBox.Client.Universal.Background.Voip.States
             Context.PeerId = null;
         }
 
-        static private webrtc_winrt_api.MediaStream _stream;
-
         public override void OnIncomingCall(RelayMessage message)
         {
             var localRingingState = Context.UnityContainer.Resolve<ILocalRinging>(new ParameterOverride("message", message));
