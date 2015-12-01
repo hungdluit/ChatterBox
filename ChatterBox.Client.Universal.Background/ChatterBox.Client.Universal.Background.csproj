@@ -123,9 +123,14 @@
     <Compile Include="Voip\States\Idle.cs" />
     <Compile Include="Voip\States\LocalRinging.cs" />
     <Compile Include="Voip\States\RemoteRinging.cs" />
+    <Compile Include="Voip\VideoRenderHelper.cs" />
     <Compile Include="Voip\VoipCallContext.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BackgroundHost\BackgroundHost.vcxproj">
+      <Project>{4497e847-8611-4545-bdbe-ce9744c7013c}</Project>
+      <Name>BackgroundHost</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Client.Common\ChatterBox.Client.Common.csproj">
       <Project>{9E96F63A-7E37-4F90-B9A2-93DA25E663A1}</Project>
       <Name>ChatterBox.Client.Common</Name>
@@ -133,6 +138,10 @@
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5EE2034E-0977-42B0-8F9D-5F65BDACCFF4}</Project>
       <Name>ChatterBox.Common.Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBoxClient.Universal.BackgroundRenderer\ChatterBoxClient.Universal.BackgroundRenderer.vcxproj">
+      <Project>{974fcab6-06ed-40d5-954b-11157513f077}</Project>
+      <Name>ChatterBoxClient.Universal.BackgroundRenderer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

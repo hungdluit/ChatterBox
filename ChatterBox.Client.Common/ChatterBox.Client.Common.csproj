@@ -76,12 +76,14 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\Foreground\Dto\FrameFormat.cs" />
     <Compile Include="Communication\Foreground\Dto\VoipState.cs" />
     <Compile Include="Communication\Foreground\IForegroundChannel.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionOwner.cs" />
     <Compile Include="Communication\Signaling\Dto\ConnectionStatus.cs" />
     <Compile Include="Communication\Signaling\ISignalingSocketChannel.cs" />
     <Compile Include="Communication\Voip\Dto\Dtos.cs" />
+    <Compile Include="Communication\Voip\IVideoRenderHelper.cs" />
     <Compile Include="Communication\Voip\IVoipChannel.cs" />
     <Compile Include="Notifications\PushNotificationHelper.cs" />
     <Compile Include="Notifications\ToastNotificationService.cs" />

@@ -30,21 +30,27 @@
             <uap:Task Type="phoneCall"/>
           </BackgroundTasks>
         </Extension>
-		<Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Common.Background.PushNotificationTask">
-          <BackgroundTasks>
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.SignalingTask">
           <BackgroundTasks ServerName="BackgroundHost">
             <Task Type="systemEvent"/>
             <uap:Task Type="chatMessageNotification"/>
           </BackgroundTasks>
         </Extension>
+		<Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Common.Background.PushNotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
         <uap:Extension Category="windows.appService" EntryPoint="ChatterBox.Client.Universal.Background.Tasks.ForegroundAppServiceTask">
           <uap:AppService Name="ForegroundAppServiceTask" ServerName="BackgroundHost"/>
         </uap:Extension>
         <uap:Extension Category="windows.voipCall"/>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-voip-call" />
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-voip-video" />
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -64,6 +70,13 @@
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="ChatterBox.Client.Universal.BackgroundHost.Dummy"/>
       </OutOfProcessServer>
+    </Extension>
+    
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>ChatterBoxClient.Universal.BackgroundRenderer.dll</Path>
+        <ActivatableClass ActivatableClassId="ChatterBoxClient.Universal.BackgroundRenderer.SchemeHandler" ThreadingModel="both"/>
+      </InProcessServer>
     </Extension>
   </Extensions>
 </Package>

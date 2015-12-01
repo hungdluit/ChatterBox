@@ -75,7 +75,15 @@ namespace ChatterBox.Client.Universal
 
             if (!Container.Resolve<HubClient>().IsConnected)
             {
-                await Container.Resolve<HubClient>().Connect();
+                var client = Container.Resolve<HubClient>();
+                await client.Connect().ContinueWith(connected =>
+                {
+                    if (connected.Result)
+                    {
+                        client.SetForegroundProcessId(
+                            ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
+                    }
+                });
             }
 
             await RegisterForPush(Container.Resolve<TaskHelper>());

@@ -12,6 +12,10 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         #region IVoipChannel Members
 
+        public virtual void SetForegroundProcessId(uint processId)
+        {
+        }
+
         public virtual void Answer()
         {
         }
@@ -87,5 +91,13 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public virtual void SendLocalIceCandidate(RTCIceCandidate candidate)
         {
         }
+
+        internal virtual void OnAddStream(MediaStream stream)
+        {
+        }
+
+        //internal virtual void UpdateSwapChainHandle(long handle, bool local)
+        //{
+        //}
     }
 }

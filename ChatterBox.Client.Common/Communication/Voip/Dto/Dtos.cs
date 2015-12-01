@@ -3,6 +3,7 @@
     public sealed class OutgoingCallRequest
     {
         public string PeerUserId { get; set; }
+        public bool Video { get; set; }
     }
 
     public sealed class IncomingCallReject

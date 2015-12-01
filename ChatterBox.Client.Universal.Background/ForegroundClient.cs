@@ -34,6 +34,11 @@ namespace ChatterBox.Client.Universal.Background
             SendToForeground(state);
         }
 
+        public void OnUpdateFrameFormat(FrameFormat frameFormat)
+        {
+           SendToForeground(frameFormat);
+        }
+
         #endregion
 
         private ValueSet SendToForeground(object arg = null, [CallerMemberName] string method = null)
