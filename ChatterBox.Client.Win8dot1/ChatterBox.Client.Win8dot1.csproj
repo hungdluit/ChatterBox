@@ -120,10 +120,6 @@
       <Project>{9e96f63a-7e37-4f90-b9a2-93da25e663a1}</Project>
       <Name>ChatterBox.Client.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ChatterBox.Client.Win8dot1.Background\ChatterBox.Client.Win8dot1.Background.csproj">
-      <Project>{60e75dab-56f8-426b-8167-deb0a5380ecb}</Project>
-      <Name>ChatterBox.Client.Win8dot1.Background</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Common.Communication\ChatterBox.Common.Communication.csproj">
       <Project>{5ee2034e-0977-42b0-8f9d-5f65bdaccff4}</Project>
       <Name>ChatterBox.Common.Communication</Name>
