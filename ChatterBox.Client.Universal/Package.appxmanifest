@@ -42,7 +42,7 @@
           </BackgroundTasks>
         </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="ChatterBox.Client.Common.Background.PushNotificationTask">
-          <BackgroundTasks ServerName="BackgroundHost">
+          <BackgroundTasks>
             <Task Type="pushNotification" />
           </BackgroundTasks>
         </Extension>
