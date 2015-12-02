@@ -3,7 +3,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using ChatterBox.Client.Common.Notifications;
-using ChatterBox.Client.Universal.Background.DeferralWrappers;
+using ChatterBox.Client.Common.Background.DeferralWrappers;
 using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace ChatterBox.Client.Universal.Background.Tasks

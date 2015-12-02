@@ -19,6 +19,10 @@ using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
 using ChatterBox.Client.Common.Signaling;
+using ChatterBox.Client.Common.Notifications;
+using ChatterBox.Client.Common.Background;
+using Windows.ApplicationModel.Background;
+using ChatterBox.Client.Universal.Background.Tasks;
 
 namespace ChatterBox.Client.Universal
 {
@@ -38,6 +42,7 @@ namespace ChatterBox.Client.Universal
                 WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
+            Resuming += OnResuming;
         }
 
         public UnityContainer Container { get; } = new UnityContainer();
@@ -49,6 +54,12 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+			if (e.PreviousExecutionState == ApplicationExecutionState.Running)
+            {
+                Resume();
+                return;
+            }
+
             //Register IoC types
             if (!Container.IsRegistered<HubClient>())
             {
@@ -61,8 +72,6 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
             }
-
-            PushNotificationHelper.RegisterPushNotificationChannel();
 
             if (!Container.Resolve<HubClient>().IsConnected)
             {
@@ -77,17 +86,15 @@ namespace ChatterBox.Client.Universal
                 });
             }
 
-            if (Container.Resolve<TaskHelper>().GetSignalingTask() == null)
+            await RegisterForPush(Container.Resolve<TaskHelper>());
+
+            var signalingTask = await RegisterSignalingTask(Container.Resolve<TaskHelper>(), false);
+            if (signalingTask == null)
             {
-                var signalingTask = await Container.Resolve<TaskHelper>().RegisterSignalingTask(false);
-                if (signalingTask == null)
-                {
-                    var message = new MessageDialog("The signaling task is required.");
-                    await message.ShowAsync();
-                    return;
-                }
+                var message = new MessageDialog("The signaling task is required.");
+                await message.ShowAsync();
+                return;
             }
-         
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -114,7 +121,15 @@ namespace ChatterBox.Client.Universal
             Window.Current.Activate();
         }
 
-        
+        private void Resume()
+        {
+            if (Container.IsRegistered(typeof(ISocketConnection)))
+            {
+                if (!Container.Resolve<ISocketConnection>().IsConnected)
+                    Container.Resolve<ISocketConnection>().Connect();
+            }
+            Window.Current.Activate();
+        }
 
         /// <summary>
         ///     Invoked when Navigation to a certain page fails
@@ -141,7 +156,10 @@ namespace ChatterBox.Client.Universal
             deferral.Complete();
         }
 
-       
+        private void OnResuming(object sender, object e)
+        {
+            Resume();
+        }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
@@ -149,6 +167,33 @@ namespace ChatterBox.Client.Universal
             base.OnWindowCreated(args);
         }
 
+        private static async System.Threading.Tasks.Task RegisterForPush(TaskHelper helper, bool registerAgain = true)
+        {
+            try
+            {
+                PushNotificationHelper.RegisterPushNotificationChannel();
+
+                var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, new PushNotificationTrigger(), registerAgain).AsTask();
+                if (pushNotificationTask == null)
+                {
+                    Debug.WriteLine("Push notification background task is not started");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Failed to register for push notification. Error: {e.Message}");
+            }
+        }
+
+        private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
+        {
+            if (helper.GetTask(nameof(SignalingTask)) == null)
+            {
+                return await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName, new SocketActivityTrigger(), registerAgain).AsTask();
+            }
+
+            return null;
+        }
 
         public async void ShowDialog(string message)
         {

@@ -108,8 +108,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\FrameFormatEventArgs.cs" />
     <Compile Include="Services\HubClient.cs" />
-    <Compile Include="Services\PushNotificationHelper.cs" />
-    <Compile Include="Services\TaskHelper.cs" />
     <Compile Include="Views\CallView.xaml.cs">
       <DependentUpon>CallView.xaml</DependentUpon>
     </Compile>

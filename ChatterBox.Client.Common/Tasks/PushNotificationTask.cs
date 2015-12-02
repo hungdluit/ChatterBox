@@ -4,11 +4,11 @@ using Windows.Networking.PushNotifications;
 using ChatterBox.Client.Common.Avatars;
 using ChatterBox.Client.Common.Notifications;
 using ChatterBox.Client.Common.Signaling.PersistedData;
-using ChatterBox.Client.Universal.Background.DeferralWrappers;
-using ChatterBox.Common.Communication.Messages.Relay;
+using ChatterBox.Client.Common.Background.DeferralWrappers;
 using ChatterBox.Common.Communication.Serialization;
+using ChatterBox.Common.Communication.Messages.Relay;
 
-namespace ChatterBox.Client.Universal.Background.Tasks
+namespace ChatterBox.Client.Common.Background
 {
     public sealed class PushNotificationTask : IBackgroundTask
     {

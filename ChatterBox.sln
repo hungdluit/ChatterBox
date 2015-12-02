@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Server", "ChatterBox.Server\ChatterBox.Server.csproj", "{6B237D83-603C-42AF-AABE-9A8013EF1805}"
 EndProject
@@ -205,6 +205,7 @@ Global
 		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x64.Build.0 = Release|x64
 		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x86.ActiveCfg = Release|Win32
 		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x86.Build.0 = Release|Win32
+		{4497E847-8611-4545-BDBE-CE9744C7013C}.Release|x86.Deploy.0 = Release|Win32
 		{974FCAB6-06ED-40D5-954B-11157513F077}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{974FCAB6-06ED-40D5-954B-11157513F077}.Debug|ARM.ActiveCfg = Debug|ARM
 		{974FCAB6-06ED-40D5-954B-11157513F077}.Debug|ARM.Build.0 = Debug|ARM

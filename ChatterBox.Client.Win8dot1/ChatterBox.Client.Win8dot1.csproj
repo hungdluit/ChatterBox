@@ -18,11 +18,11 @@
     </NuGetPackageImportStamp>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>BAB846E6247CD33FC0C578FDAA274AF24BD3DBF1</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>3EA9D965B77EF099A1892E870C0B601740802C4E</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>ChatterBox.Client.Win8dot1_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>

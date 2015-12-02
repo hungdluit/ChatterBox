@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -19,6 +20,9 @@ using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Client.Win8dot1.Voip.States;
 using ChatterBox.Client.Voip;
+using ChatterBox.Client.Common.Background;
+using Windows.ApplicationModel.Background;
+using ChatterBox.Client.Common.Notifications;
 
 namespace ChatterBox.Client.Win8dot1
 {
@@ -45,18 +49,24 @@ namespace ChatterBox.Client.Win8dot1
         ///     search results, and so forth.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
+            if (args.PreviousExecutionState == ApplicationExecutionState.Running)
+            {
+                Resume();
+                return;
+            }
+
             Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
 
-            var registerAgain = false;
             if (args.PreviousExecutionState == ApplicationExecutionState.ClosedByUser ||
                 args.PreviousExecutionState == ApplicationExecutionState.NotRunning ||
                 args.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
                 RegistrationSettings.Reset();
-                registerAgain = true;
             }
+
+            await RegisterForPush();
 
             Container
                 .RegisterType<ISignalingSocketChannel, SignalingSocketChannel>(new ContainerControlledLifetimeManager())
@@ -103,6 +113,19 @@ namespace ChatterBox.Client.Win8dot1
             Window.Current.Activate();
         }
 
+        private static async System.Threading.Tasks.Task RegisterForPush(bool registerAgain = true)
+        {
+            PushNotificationHelper.RegisterPushNotificationChannel();
+
+            var helper = new TaskHelper();
+
+            var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, new PushNotificationTrigger(), registerAgain);
+            if (pushNotificationTask == null)
+            {
+                Debug.WriteLine("Push notification background task is not started");
+            }
+        }
+
         /// <summary>
         ///     Invoked when application execution is being suspended.  Application state is saved
         ///     without knowing whether the application will be terminated or resumed with the contents
@@ -120,6 +143,16 @@ namespace ChatterBox.Client.Win8dot1
         {
             LayoutService.Instance.LayoutRoot = args.Window;
             base.OnWindowCreated(args);
+        }
+
+        private void Resume()
+        {
+            if (Container.IsRegistered(typeof(ISocketConnection)))
+            {
+                if (!Container.Resolve<ISocketConnection>().IsConnected)
+                    Container.Resolve<ISocketConnection>().Connect();
+            }
+            Window.Current.Activate();
         }
     }
 }

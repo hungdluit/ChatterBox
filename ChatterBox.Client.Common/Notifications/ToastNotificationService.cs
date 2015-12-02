@@ -24,6 +24,7 @@ namespace ChatterBox.Client.Common.Notifications
             var toastNode = toastXml.SelectSingleNode("/toast");
             var xmlElement = (XmlElement) toastNode;
             xmlElement?.SetAttribute("duration", "short");
+            xmlElement?.SetAttribute("launch", "push");
 
             ShowNotification(toastXml);
         }
@@ -32,7 +33,7 @@ namespace ChatterBox.Client.Common.Notifications
         {
             try
             {
-                ToastNotificationManager.CreateToastNotifier("ChatterBoxClientUniversalAppId")
+                ToastNotificationManager.CreateToastNotifier("ChatterBoxClientAppId")
                      .Show(new ToastNotification(toastXml));
             }
             catch (System.Exception ex)

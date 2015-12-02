@@ -112,13 +112,11 @@
     <Compile Include="ForegroundClient.cs" />
     <Compile Include="Hub.cs" />
     <Compile Include="DeferralWrappers\AppServiceDeferralWrapper.cs" />
-    <Compile Include="DeferralWrappers\BackgroundTaskDeferralWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalingSocketOperation.cs" />
     <Compile Include="SignalingSocketService.cs" />
     <Compile Include="StatsManager.cs" />
     <Compile Include="Tasks\ForegroundAppServiceTask.cs" />
-    <Compile Include="Tasks\PushNotificationTask.cs" />
     <Compile Include="Tasks\SignalingTask.cs" />
     <Compile Include="Tasks\VoipTask.cs" />
     <Compile Include="Voip\States\HangingUp.cs" />
