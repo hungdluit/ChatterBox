@@ -1,6 +1,7 @@
 ﻿using System;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.MVVM;
+using Windows.ApplicationModel;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -60,6 +61,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SignalingServerPort = int.Parse(SignalingSettings.SignalingServerPort);
             SignalingServerHost = SignalingSettings.SignalingServerHost;
             Domain = RegistrationSettings.Domain;
+        }
+
+        public string ApplicationVersion
+        {
+            get { return  "ChatterBox " + string.Format("Version: {0}.{1}.{2}.{3}",
+                    Package.Current.Id.Version.Major,
+                    Package.Current.Id.Version.Minor,
+                    Package.Current.Id.Version.Build,
+                    Package.Current.Id.Version.Revision);
+            }
         }
     }
 }
