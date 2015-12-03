@@ -97,6 +97,10 @@ namespace ChatterBox.Client.Universal.Background
                                 _metricsCollector._audioCurrentDelayMs += Convert.ToDouble(statValues[RTCStatsValueName.StatsValueNameCurrentDelayMs]);
                                 _metricsCollector._audioDelayCount++;
                             }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameCodecName))
+                            {
+                                _metricsCollector.AudioCodec = statValues[RTCStatsValueName.StatsValueNameCodecName].ToString();
+                            }
                         }
                         else if (trackId == "video_label")
                         {
@@ -120,6 +124,10 @@ namespace ChatterBox.Client.Universal.Background
                             if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameFrameWidthSent))
                             {
                                 _metricsCollector.FrameWidth = Convert.ToInt32(statValues[RTCStatsValueName.StatsValueNameFrameWidthSent]);
+                            }
+                            if (statValues.Keys.Contains(RTCStatsValueName.StatsValueNameCodecName))
+                            {
+                                _metricsCollector.VideoCodec = statValues[RTCStatsValueName.StatsValueNameCodecName].ToString();
                             }
                         }
                     }
@@ -411,6 +419,7 @@ namespace ChatterBox.Client.Universal.Background
         public int _audioDelayCount;
         public double _videoCurrentDelayMs;
         public int _videoDelayCount;
+
         private  int _frameHeight;
         public int FrameHeight
         {
@@ -439,6 +448,33 @@ namespace ChatterBox.Client.Universal.Background
             }
         }
 
+        private string _audioCodec;
+        public string AudioCodec
+        {
+            get { return _audioCodec; }
+            set
+            {
+                if (_audioCodec != value)
+                {
+                    _audioCodec = value;
+                    TrackCodecUseForCall(value, "Audio");
+                }
+            }
+        }
+
+        private string _videoCodec;
+        public string VideoCodec
+        {
+            get { return _videoCodec; }
+            set
+            {
+                if (_videoCodec != value)
+                {
+                    _videoCodec = value;
+                    TrackCodecUseForCall(value, "Video");
+                }
+            }
+        }
         public AudioVideoMetricsCollector(TelemetryClient tc)
         {
             _telemetry = tc;
@@ -510,6 +546,14 @@ namespace ChatterBox.Client.Universal.Background
                 { "Old " + name, oldValue},
                 { "New " + name, newValue} };
             Task.Run(() => _telemetry.TrackEvent("Video " + name + " Downgrade", properties, metrics));
+        }
+
+        private void TrackCodecUseForCall(string codecValue, string codecType)
+        {
+            IDictionary<string, string> properties = new Dictionary<string, string> {
+                { "Timestamp", System.DateTimeOffset.UtcNow.ToString(@"hh\:mm\:ss") },
+                { codecType + " codec used for call", codecValue}};
+            Task.Run(() => _telemetry.TrackEvent(codecType + " codec", properties));
         }
     }
 
