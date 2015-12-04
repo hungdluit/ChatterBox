@@ -29,6 +29,13 @@ namespace ChatterBox.Client.Universal.Background.Voip.States
                 _voipCallContext.VoipCall.NotifyCallEnded();
                 _voipCallContext.VoipCall = null;
             }
+
+            Context.LocalStream?.Stop();
+            Context.LocalStream = null;
+
+            Context.RemoteStream?.Stop();
+            Context.RemoteStream = null;
+
             var idleState = Context.UnityContainer.Resolve<IIdle>();
             Context.ResetRenderers();
             Context.SwitchState((BaseVoipState)idleState);

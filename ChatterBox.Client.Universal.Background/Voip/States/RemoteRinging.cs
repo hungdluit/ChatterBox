@@ -46,6 +46,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.SwitchState((BaseVoipState)hangingUpState);
         }
 
+        public override void OnRemoteHangup(RelayMessage message)
+        {
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
+        }
+
         public override void OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
