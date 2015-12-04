@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
@@ -13,6 +14,10 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         #region IVoipChannel Members
 
         public virtual void SetForegroundProcessId(uint processId)
+        {
+        }
+
+        public virtual void DisplayOrientationChanged(DisplayOrientations orientation)
         {
         }
 

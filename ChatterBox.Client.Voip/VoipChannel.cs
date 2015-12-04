@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using Microsoft.Practices.Unity;
@@ -46,6 +47,11 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         #region IVoipChannel Members
+
+        public void DisplayOrientationChanged(DisplayOrientations orientation)
+        {
+            Context.DisplayOrientation = orientation;
+        }
 
         public void SetForegroundProcessId(uint processId)
         {
