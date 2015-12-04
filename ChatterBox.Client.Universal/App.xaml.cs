@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -24,7 +23,6 @@ using ChatterBox.Client.Common.Notifications;
 using ChatterBox.Client.Common.Background;
 using Windows.ApplicationModel.Background;
 using ChatterBox.Client.Universal.Background.Tasks;
-using Microsoft.ApplicationInsights.DataContracts;
 
 namespace ChatterBox.Client.Universal
 {
@@ -41,23 +39,10 @@ namespace ChatterBox.Client.Universal
         {
             WindowsAppInitializer.InitializeAsync(
                 WindowsCollectors.Metadata |
-                WindowsCollectors.PageView |
                 WindowsCollectors.Session);
-            UnhandledException += CurrentDomain_UnhandledException;
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            ExceptionTelemetry excTelemetry = new ExceptionTelemetry((Exception)e.Exception);
-            excTelemetry.SeverityLevel = SeverityLevel.Critical;
-            excTelemetry.HandledAt = ExceptionHandledAt.Unhandled;
-            var telemetry = new TelemetryClient();
-            telemetry.TrackException(excTelemetry);
-
-            telemetry.Flush();
         }
 
         public UnityContainer Container { get; } = new UnityContainer();
