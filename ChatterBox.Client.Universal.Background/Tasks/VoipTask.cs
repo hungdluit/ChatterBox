@@ -12,18 +12,23 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
-            if (Hub.Instance.VoipTaskInstance != null)
+            try
             {
-                Debug.WriteLine("VoipTask already started.");
-                return;
+                if (Hub.Instance.VoipTaskInstance != null)
+                {
+                    Debug.WriteLine("VoipTask already started.");
+                    return;
+                }
+                _deferral = taskInstance.GetDeferral();
+                Hub.Instance.VoipTaskInstance = this;
+                Debug.WriteLine($"{DateTime.Now} VoipTask started.");
+                taskInstance.Canceled += (s, e) => CloseVoipTask();
             }
-
-            _deferral = taskInstance.GetDeferral();
-            Hub.Instance.VoipTaskInstance = this;
-            Debug.WriteLine($"{DateTime.Now} VoipTask started.");
-            taskInstance.Canceled += (s, e) => CloseVoipTask();
+            catch (Exception e)
+            {
+                Hub.Instance.RTCStatsManager.TrackException(e);
+            }
         }
-
         #endregion
 
         public void CloseVoipTask()
