@@ -56,6 +56,7 @@ void Renderer::Teardown() {
 void Renderer::SetupRenderer(uint32 foregroundProcessId, Windows::Media::Core::IMediaSource^ streamSource)
 {
     OutputDebugString(L"Renderer::SetupRenderer\n");
+    _streamSource = streamSource;
     _foregroundProcessId = foregroundProcessId;
     SetupSchemeHandler();
     SetupDirectX();

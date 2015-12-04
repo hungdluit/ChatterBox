@@ -13,7 +13,6 @@ namespace ChatterBox.Client.Universal.Background
         internal SignalingSocketOperation()
         {
             SemaphoreSlim.Wait();
-            Debug.WriteLine("SignalingSocketOperation - Create");
         }
 
         public static string SignalingSocketId { get; } = nameof(SignalingSocketId);
@@ -44,7 +43,6 @@ namespace ChatterBox.Client.Universal.Background
         {
             _socket?.TransferOwnership(SignalingSocketId);
             SemaphoreSlim.Release();
-            Debug.WriteLine("SignalingSocketOperation - Dispose");
         }
 
         #endregion

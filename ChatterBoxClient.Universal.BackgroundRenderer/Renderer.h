@@ -49,6 +49,7 @@ private:
     Microsoft::WRL::ComPtr<IMFMediaEngineEx> _mediaEngineEx;
     DWORD _foregroundProcessId;
     HANDLE _foregroundSwapChainHandle;
+    Windows::Media::Core::IMediaSource^ _streamSource;
 };
 
 }}}

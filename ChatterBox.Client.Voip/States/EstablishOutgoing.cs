@@ -21,12 +21,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             _request = request;
         }
 
-        public override void Hangup()
-        {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
-        }
-
         public override async void OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
@@ -46,16 +40,16 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             _media = await Media.CreateMediaAsync();
             await _media.EnumerateAudioVideoCaptureDevices();
-            var stream = await _media.GetUserMedia(new RTCMediaStreamConstraints
+            Context.LocalStream = await _media.GetUserMedia(new RTCMediaStreamConstraints
             {
                 videoEnabled = _request.Video,
                 audioEnabled = true
             });
-            Context.PeerConnection.AddStream(stream);
+            Context.PeerConnection.AddStream(Context.LocalStream);
             var sdpOffer = await Context.PeerConnection.CreateOffer();
             await Context.PeerConnection.SetLocalDescription(sdpOffer);
 
-            var tracks = stream.GetVideoTracks();
+            var tracks = Context.LocalStream.GetVideoTracks();
             if (tracks.Count > 0)
             {
                 var source = _media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
@@ -69,6 +63,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         internal override void OnAddStream(MediaStream stream)
         {
+            Context.RemoteStream = stream;
             var tracks = stream.GetVideoTracks();
             if (tracks.Count > 0)
             {
@@ -97,6 +92,18 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
+        }
+
+        public override void Hangup()
+        {
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
+        }
+
+        public override void OnRemoteHangup(RelayMessage message)
+        {
+            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
+            Context.SwitchState((BaseVoipState)hangingUpState);
         }
     }
 }

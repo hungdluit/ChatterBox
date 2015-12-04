@@ -52,10 +52,13 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 });
         }
 
-        private RTCPeerConnection _peerConnection { get; set; }
 
         public IUnityContainer UnityContainer { get; private set; }
 
+        public MediaStream LocalStream { get; set; }
+        public MediaStream RemoteStream { get; set; }
+
+        private RTCPeerConnection _peerConnection { get; set; }
         public RTCPeerConnection PeerConnection
         {
             get { return _peerConnection; }
@@ -96,13 +99,13 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 }
                 else
                 {
-                    hub.ToggleStatsManagerConnectionState( false);
+                    hub.ToggleStatsManagerConnectionState(false);
                 }
             }
         }
 
         public string PeerId { get; set; }
-        private BaseVoipState State { get; set; }        
+        private BaseVoipState State { get; set; }
 
         internal VoipState GetVoipState()
         {
@@ -199,7 +202,5 @@ namespace ChatterBox.Client.Common.Communication.Voip
             RemoteVideoRenderer.RenderFormatUpdate += RemoteVideoRenderer_RenderFormatUpdate;
             GC.Collect();
         }
-        //public readonly Renderer LocalVideoRenderer = new Renderer();
-        //public readonly Renderer RemoteVideoRenderer = new Renderer();
     }
 }

@@ -14,6 +14,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
     {
         internal override async void OnAddStream(MediaStream stream)
         {
+            Context.RemoteStream = stream;
             var tracks = stream.GetVideoTracks();
             if (tracks.Count > 0)
             {

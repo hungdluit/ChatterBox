@@ -39,14 +39,14 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             var media = await Media.CreateMediaAsync();
             await media.EnumerateAudioVideoCaptureDevices();
-            var stream = await media.GetUserMedia(new RTCMediaStreamConstraints
+            Context.LocalStream = await media.GetUserMedia(new RTCMediaStreamConstraints
             {
                 videoEnabled = true,
                 audioEnabled = true
             });
-            Context.PeerConnection.AddStream(stream);
+            Context.PeerConnection.AddStream(Context.LocalStream);
 
-            var tracks = stream.GetVideoTracks();
+            var tracks = Context.LocalStream.GetVideoTracks();
             if (tracks.Count > 0)
             {
                 var source = media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
@@ -56,6 +56,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         internal override async void OnAddStream(MediaStream stream)
         {
+            Context.RemoteStream = stream;
             var tracks = stream.GetVideoTracks();
             if (tracks.Count > 0)
             {
