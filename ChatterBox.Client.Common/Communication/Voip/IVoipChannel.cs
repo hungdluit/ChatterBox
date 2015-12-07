@@ -1,12 +1,14 @@
 ﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
+using Windows.Graphics.Display;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
     public interface IVoipChannel
     {
         void SetForegroundProcessId(uint processId);
+        void DisplayOrientationChanged(DisplayOrientations orientation);
         void Answer();
         // Locally initiated calls
         void Call(OutgoingCallRequest request);

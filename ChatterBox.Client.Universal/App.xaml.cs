@@ -82,8 +82,10 @@ namespace ChatterBox.Client.Universal
                     {
                         client.SetForegroundProcessId(
                             ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
+
+                        RegisterForDisplayOrientationChange();
                     }
-                });
+                }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             await RegisterForPush(Container.Resolve<TaskHelper>());
@@ -129,6 +131,8 @@ namespace ChatterBox.Client.Universal
                     Container.Resolve<ISocketConnection>().Connect();
             }
             Window.Current.Activate();
+
+            RegisterForDisplayOrientationChange();
         }
 
         /// <summary>
@@ -165,6 +169,22 @@ namespace ChatterBox.Client.Universal
         {
             LayoutService.Instance.LayoutRoot = args.Window;
             base.OnWindowCreated(args);
+        }
+
+        private void RegisterForDisplayOrientationChange()
+        {
+            var display_info = Windows.Graphics.Display.DisplayInformation.GetForCurrentView();
+            display_info.OrientationChanged -= this.OnOrientationChanged;
+            display_info.OrientationChanged += this.OnOrientationChanged;
+
+            var client = Container.Resolve<HubClient>();
+            client.DisplayOrientationChanged(display_info.CurrentOrientation);
+        }
+
+        private void OnOrientationChanged(Windows.Graphics.Display.DisplayInformation sender, object args)
+        {
+            var client = Container.Resolve<HubClient>();
+            client.DisplayOrientationChanged(sender.CurrentOrientation);
         }
 
         private static async System.Threading.Tasks.Task RegisterForPush(TaskHelper helper, bool registerAgain = true)

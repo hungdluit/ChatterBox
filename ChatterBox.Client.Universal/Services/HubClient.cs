@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.UI.Core;
+using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
@@ -191,6 +192,10 @@ namespace ChatterBox.Client.Universal.Services
         public void Reject(IncomingCallReject reason)
         {
             InvokeHubChannel<IVoipChannel>(reason);
+        }
+        public void DisplayOrientationChanged(DisplayOrientations orientation)
+        {
+            InvokeHubChannel<IVoipChannel>(orientation);
         }
 
         #endregion

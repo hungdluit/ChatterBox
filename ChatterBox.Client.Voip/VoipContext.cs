@@ -8,6 +8,7 @@ using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Graphics.Display;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Common.Communication.Voip
@@ -124,6 +125,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             if (!_isWebRTCInitialized)
             {
                 WebRTC.Initialize(null);
+                Media.SetDisplayOrientation(_displayOrientation);
                 _isWebRTCInitialized = true;
             }
         }
@@ -177,6 +179,29 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 lock (this)
                 {
                     _foregroundProcessId = value;
+                }
+            }
+        }
+
+        private DisplayOrientations _displayOrientation;
+        public DisplayOrientations DisplayOrientation
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _displayOrientation;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    _displayOrientation = value;
+                    if(_isWebRTCInitialized)
+                    {
+                        Media.SetDisplayOrientation(_displayOrientation);
+                    }
                 }
             }
         }
