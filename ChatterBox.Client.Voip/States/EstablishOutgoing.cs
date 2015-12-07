@@ -11,6 +11,7 @@ using Microsoft.Practices.Unity;
 using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.States;
+using System.Threading.Tasks;
 using System.Linq;
 using Windows.UI.Core;
 using ChatterBox.Client.Voip.Utils;
@@ -34,19 +35,19 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override void Hangup()
+        public override async Task Hangup()
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override void OnRemoteHangup(RelayMessage message)
+        public override async Task OnRemoteHangup(RelayMessage message)
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override async void OnEnteringState()
+        public override async Task OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
 
@@ -85,7 +86,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.SendToPeer(RelayMessageTags.SdpOffer, sdpOffer.Sdp);
         }
 
-        internal override void OnAddStream(MediaStream stream)
+        internal override async Task OnAddStream(MediaStream stream)
         {
             Context.RemoteStream = stream;
             var tracks = stream.GetVideoTracks();
@@ -96,7 +97,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override async void OnIceCandidate(RelayMessage message)
+        public override async Task OnIceCandidate(RelayMessage message)
         {
             //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
@@ -105,14 +106,14 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             await Context.PeerConnection.AddIceCandidate(candidate);
         }
 
-        public override async void OnSdpAnswer(RelayMessage message)
+        public override async Task OnSdpAnswer(RelayMessage message)
         {
             await
                 Context.PeerConnection.SetRemoteDescription(new RTCSessionDescription(RTCSdpType.Answer, message.Payload));
-            Context.SwitchState(new VoipState_ActiveCall(_callRequest));
+            await Context.SwitchState(new VoipState_ActiveCall(_callRequest));
         }
 
-        public override void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public override async Task SendLocalIceCandidate(RTCIceCandidate candidate)
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));

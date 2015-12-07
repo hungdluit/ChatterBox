@@ -5,6 +5,7 @@ using System;
 using Microsoft.Practices.Unity;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -18,13 +19,13 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override void Call(OutgoingCallRequest request)
+        public override async Task Call(OutgoingCallRequest request)
         {
             var remoteRingingState = new VoipState_RemoteRinging(request);
-            Context.SwitchState(remoteRingingState);
+            await Context.SwitchState(remoteRingingState);
         }
 
-        public override void OnEnteringState()
+        public override async Task OnEnteringState()
         {
             // Entering idle state.
             Context.VoipCoordinator.OnEnterIdle();
@@ -34,13 +35,13 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.PeerId = null;
         }
 
-        public override void OnIncomingCall(RelayMessage message)
+        public override async Task OnIncomingCall(RelayMessage message)
         {
             var localRingingState = new VoipState_LocalRinging(message);
-            Context.SwitchState(localRingingState);
+            await Context.SwitchState(localRingingState);
         }
 
-        public override async void OnLeavingState()
+        public override async Task OnLeavingState()
         {
             Context.VoipCoordinator.OnLeavingIdle();
         }

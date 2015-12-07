@@ -33,22 +33,22 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override void Answer()
+        public override async Task Answer()
         {
             Context.VoipCoordinator.NotifyCallActive();
             Context.SendToPeer(RelayMessageTags.VoipAnswer, "");
 
             var establishIncomingState = new VoipState_EstablishIncoming(_message);
-            Context.SwitchState(establishIncomingState);
+            await Context.SwitchState(establishIncomingState);
         }
 
-        public override void Hangup()
+        public override async Task Hangup()
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override void OnEnteringState()
+        public override async Task OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
             Context.PeerId = _message.FromUserId;
@@ -57,19 +57,19 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.VoipCoordinator.OnEnterLocalRinging(this, _message);
         }
 
-        public override void OnRemoteHangup(RelayMessage message)
+        public override async Task OnRemoteHangup(RelayMessage message)
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override void Reject(IncomingCallReject reason)
+        public override async Task Reject(IncomingCallReject reason)
         {
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
             Context.VoipCoordinator.NotifyCallEnded();
 
             var idleState = new VoipState_Idle();
-            Context.SwitchState(idleState);
+            await Context.SwitchState(idleState);
         }
     }
 }

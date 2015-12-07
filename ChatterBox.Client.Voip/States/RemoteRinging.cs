@@ -32,19 +32,19 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override void Hangup()
+        public override async Task Hangup()
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override void OnRemoteHangup(RelayMessage message)
+        public override async Task OnRemoteHangup(RelayMessage message)
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override void OnEnteringState()
+        public override async Task OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
 
@@ -59,18 +59,18 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.VoipCoordinator.OnEnterRemoteRinging(this, _request);
         }
 
-        public override void OnOutgoingCallAccepted(RelayMessage message)
+        public override async Task OnOutgoingCallAccepted(RelayMessage message)
         {
             var establishOutgoingState = new VoipState_EstablishOutgoing(_request);
-            Context.SwitchState(establishOutgoingState);
+            await Context.SwitchState(establishOutgoingState);
         }
 
-        public override void OnOutgoingCallRejected(RelayMessage message)
+        public override async Task OnOutgoingCallRejected(RelayMessage message)
         {
             Context.VoipCoordinator.OnOutgoingCallRejected();
 
             var idleState = new VoipState_Idle();
-            Context.SwitchState(idleState);
+            await Context.SwitchState(idleState);
         }
     }
 }

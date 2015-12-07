@@ -139,14 +139,16 @@ namespace ChatterBox.Client.Universal.Background.Voip
             }
         }
 
-        private void VoipCall_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
+        private async void VoipCall_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
-            _currentState.Answer();
+            // TODO: Pass through VoipContext.WithState()
+            await _currentState.Answer();
         }
 
-        private void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        private async void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
         {
-            _currentState.Hangup();
+            // TODO: Pass through VoipContext.WithState()
+            await _currentState.Hangup();
         }
 
         private void Call_HoldRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)

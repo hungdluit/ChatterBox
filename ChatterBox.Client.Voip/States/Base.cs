@@ -4,11 +4,14 @@ using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
 using webrtc_winrt_api;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+
+#pragma warning disable 1998
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
-    internal abstract class BaseVoipState : IVoipChannel
+    internal abstract class BaseVoipState
     {
         public VoipContext Context { get; private set; }
 
@@ -16,7 +19,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         #region IVoipChannel Members
 
-        public virtual void SetForegroundProcessId(uint processId)
+        public virtual async Task SetForegroundProcessId(uint processId)
         {
         }
 
@@ -24,93 +27,84 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
         }
 
-        public virtual void Answer()
+        public virtual async Task Answer()
         {
         }
 
-        public virtual void Call(OutgoingCallRequest request)
+        public virtual async Task Call(OutgoingCallRequest request)
         {
         }
 
-        public VoipState GetVoipState()
+        public Task<VoipState> GetVoipState()
         {
             // Should never be called.  VoipContext handles it.
             throw new NotImplementedException();
         }
 
-        public virtual void Hangup()
+        public virtual async Task Hangup()
         {
         }
 
-        public virtual void OnIceCandidate(RelayMessage message)
+        public virtual async Task OnIceCandidate(RelayMessage message)
         {
         }
 
-        public virtual void OnIncomingCall(RelayMessage message)
+        public virtual async Task OnIncomingCall(RelayMessage message)
         {
         }
 
-        public virtual void OnOutgoingCallAccepted(RelayMessage message)
+        public virtual async Task OnOutgoingCallAccepted(RelayMessage message)
         {
         }
 
-        public virtual void OnOutgoingCallRejected(RelayMessage message)
+        public virtual async Task OnOutgoingCallRejected(RelayMessage message)
         {
         }
 
-        public virtual void OnRemoteHangup(RelayMessage message)
+        public virtual async Task OnRemoteHangup(RelayMessage message)
         {
         }
 
-        public virtual void OnSdpAnswer(RelayMessage message)
+        public virtual async Task OnSdpAnswer(RelayMessage message)
         {
         }
 
-        public virtual void OnSdpOffer(RelayMessage message)
+        public virtual async Task OnSdpOffer(RelayMessage message)
         {
         }
 
-        public virtual void Reject(IncomingCallReject reason)
+        public virtual async Task Reject(IncomingCallReject reason)
         {
         }
 
         #endregion
 
-        public void EnterState(VoipContext context)
+        public async Task EnterState(VoipContext context)
         {
             Context = context;
-            OnEnteringState();
+            await OnEnteringState();
         }
 
-        public void LeaveState()
+        public async Task LeaveState()
         {
-            OnLeavingState();
+            await OnLeavingState();
             Context = null;
         }
 
-        public virtual void OnEnteringState()
+        public virtual async Task OnEnteringState()
         {
         }
 
-        public virtual void OnLeavingState()
+        public virtual async Task OnLeavingState()
         {
         }
 
-        public virtual void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public virtual async Task SendLocalIceCandidate(RTCIceCandidate candidate)
         {
         }
 
-        internal virtual void OnAddStream(MediaStream stream)
+        internal virtual async Task OnAddStream(MediaStream stream)
         {
-        }
-
-        //internal virtual void UpdateSwapChainHandle(long handle, bool local)
-        //{
-        //}
-		
-        public void RegisterVideoElements(MediaElement self, MediaElement peer)
-        {
-            throw new NotImplementedException();
         }
     }
 }

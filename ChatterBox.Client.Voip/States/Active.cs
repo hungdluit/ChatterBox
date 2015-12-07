@@ -7,6 +7,7 @@ using ChatterBox.Common.Communication.Serialization;
 using webrtc_winrt_api;
 using ChatterBox.Client.Voip.States.Interfaces;
 using Microsoft.Practices.Unity;
+using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
@@ -20,7 +21,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             _callRequest = callRequest;
         }
 
-        internal override async void OnAddStream(MediaStream stream)
+        internal override async Task OnAddStream(MediaStream stream)
         {
             Context.RemoteStream = stream;
             var tracks = stream.GetVideoTracks();
@@ -39,13 +40,13 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override void Hangup()
+        public override async Task Hangup()
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override async void OnIceCandidate(RelayMessage message)
+        public override async Task OnIceCandidate(RelayMessage message)
         {
             //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
@@ -54,13 +55,13 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             await Context.PeerConnection.AddIceCandidate(candidate);
         }
 
-        public override void OnRemoteHangup(RelayMessage message)
+        public override async Task OnRemoteHangup(RelayMessage message)
         {
             var hangingUpState = new VoipState_HangingUp();
-            Context.SwitchState(hangingUpState);
+            await Context.SwitchState(hangingUpState);
         }
 
-        public override void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public override async Task SendLocalIceCandidate(RTCIceCandidate candidate)
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));

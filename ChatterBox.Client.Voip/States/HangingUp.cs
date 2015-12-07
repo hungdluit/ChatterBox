@@ -6,6 +6,7 @@ using ChatterBox.Common.Communication.Messages.Relay;
 using Microsoft.Practices.Unity;
 using System.Collections.Generic;
 using webrtc_winrt_api;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -19,7 +20,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override void OnEnteringState()
+        public override async Task OnEnteringState()
         {
             Context.SendToPeer(RelayMessageTags.VoipHangup, "");
             if (Context.PeerConnection != null)
@@ -40,7 +41,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.VoipCoordinator.OnEnterHangingUp();
 
             var idleState = new VoipState_Idle();
-            Context.SwitchState(idleState);
+            await Context.SwitchState(idleState);
         }
 
         private void StopVideoTracks(IList<MediaVideoTrack> tracks)

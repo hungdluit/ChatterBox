@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Graphics.Display;
 using webrtc_winrt_api;
+using System.Threading;
 using Windows.UI.Core;
 
 namespace ChatterBox.Client.Common.Communication.Voip
@@ -31,7 +32,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             VoipCoordinator.Context = this;
 
             var idleState = new VoipState_Idle();
-            SwitchState(idleState);
+            SwitchState(idleState).Wait();
 
             WebRTC.Initialize(_dispatcher);
 
@@ -93,10 +94,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     {
                         if (evt.Candidate != null)
                         {
-                            lock (this)
+                            Task.Run(async () =>
                             {
-                                State.SendLocalIceCandidate(evt.Candidate);
-                            }
+                                await WithState(async st => await st.SendLocalIceCandidate(evt.Candidate));
+                            });
                         }
                     };
                     _hub.InitialiazeStatsManager(_peerConnection);
@@ -105,12 +106,9 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     {
                         if (evt.Stream != null)
                         {
-                            Task.Run(() =>
+                            Task.Run(async () =>
                             {
-                                lock (this)
-                                {
-                                    State.OnAddStream(evt.Stream);
-                                }
+                                await WithState(async st => await st.OnAddStream(evt.Stream));
                             });
                         }
                     };
@@ -148,24 +146,33 @@ namespace ChatterBox.Client.Common.Communication.Voip
             });
         }
 
-        public void SwitchState(BaseVoipState newState)
+        public async Task SwitchState(BaseVoipState newState)
         {
-            lock (this)
+            Debug.WriteLine($"VoipContext.SwitchState {State?.GetType().Name} -> {newState.GetType().Name}");
+            if (State != null)
             {
-                Debug.WriteLine($"VoipContext.SwitchState {State?.GetType().Name} -> {newState.GetType().Name}");
-                State?.LeaveState();
-                State = newState;
-                State.EnterState(this);
-
-                Task.Run(() => _hub.OnVoipState(GetVoipState()));
+                await State.LeaveState();
             }
+            State = newState;
+            await State.EnterState(this);
+
+            Task.Run(() => _hub.OnVoipState(GetVoipState()));
         }
 
-        public void WithState(Action<BaseVoipState> fn)
+        // Semaphore used to make sure only one call
+        // is executed at any given time.
+        private readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+
+        public async Task WithState(Func<BaseVoipState, Task> fn)
         {
-            lock (this)
+            await _sem.WaitAsync();
+            try
             {
-                fn(State);
+                await fn(State);
+            }
+            finally
+            {
+                _sem.Release();
             }
         }
 
