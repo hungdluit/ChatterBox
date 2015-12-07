@@ -21,8 +21,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public VoipState_RemoteRinging(OutgoingCallRequest request)
         {
-            _request = request;
-            IsVideoEnabled = request.VideoEnabled;
+            _request = request;            
         }
 
         public override VoipStateEnum VoipState
@@ -50,6 +49,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Debug.Assert(Context.PeerConnection == null);
 
             Context.PeerId = _request.PeerUserId;
+
+            Context.IsVideoEnabled = _request.VideoEnabled;
 
             var payload = JsonConvert.Serialize(_request);
 

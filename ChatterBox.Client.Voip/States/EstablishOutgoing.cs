@@ -24,7 +24,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public VoipState_EstablishOutgoing(OutgoingCallRequest request)
         {
             _callRequest = request;
-            IsVideoEnabled = request.VideoEnabled;
         }
 
         public override VoipStateEnum VoipState

@@ -112,7 +112,5 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             throw new NotImplementedException();
         }
-
-        public bool IsVideoEnabled { get; set; }
     }
 }

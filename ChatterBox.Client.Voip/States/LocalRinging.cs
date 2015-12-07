@@ -22,8 +22,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public VoipState_LocalRinging(RelayMessage message)
         {
             _message = message;
-            _callRequest = (OutgoingCallRequest)JsonConvert.Deserialize(message.Payload, typeof(OutgoingCallRequest));
-            IsVideoEnabled = _callRequest.VideoEnabled;
+            _callRequest = (OutgoingCallRequest)JsonConvert.Deserialize(message.Payload, typeof(OutgoingCallRequest));            
         }
 
         public override VoipStateEnum VoipState
@@ -53,6 +52,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             Debug.Assert(Context.PeerConnection == null);
             Context.PeerId = _message.FromUserId;
+            Context.IsVideoEnabled = _callRequest.VideoEnabled;
 
             Context.VoipCoordinator.OnEnterLocalRinging(this, _message);
         }

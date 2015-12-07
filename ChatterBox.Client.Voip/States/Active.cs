@@ -18,7 +18,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public VoipState_ActiveCall(OutgoingCallRequest callRequest)
         {
             _callRequest = callRequest;
-            IsVideoEnabled = callRequest.VideoEnabled;
         }
 
         internal override async void OnAddStream(MediaStream stream)

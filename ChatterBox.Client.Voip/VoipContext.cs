@@ -71,7 +71,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public Media Media { get; set; }
 
-        public MediaStream MediaStream { get; set; }
+        public bool IsVideoEnabled { get; set; }
 
         public IVoipCoordinator VoipCoordinator { get; set; }
 
@@ -133,7 +133,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 PeerId = PeerId,
                 HasPeerConnection = PeerConnection != null,
                 State = State.VoipState,
-                IsVideoEnabled = State.IsVideoEnabled
+                IsVideoEnabled = IsVideoEnabled
             };
         }
 
