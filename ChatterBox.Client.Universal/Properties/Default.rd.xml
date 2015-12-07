@@ -45,6 +45,7 @@
     <Type Name="ChatterBox.Client.Universal.Background.ForegroundClient" Dynamic="All" />
     <Type Name="ChatterBox.Client.Universal.Background.Hub" Dynamic="Required All" />
 
+	<Namespace Name="Windows.Graphics.Display" Dynamic="All" Serialize="All"  Browse="All"  DataContractJsonSerializer="All"  Activate="All" />
 
   </Application>
 </Directives>
