@@ -5,6 +5,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Serialization;
 
@@ -37,6 +38,11 @@ namespace ChatterBox.Client.Universal.Background
         public void OnUpdateFrameFormat(FrameFormat frameFormat)
         {
            SendToForeground(frameFormat);
+        }
+
+        public ForegroundState GetForegroundState()
+        {
+            return SendToForeground<ForegroundState>();
         }
 
         #endregion

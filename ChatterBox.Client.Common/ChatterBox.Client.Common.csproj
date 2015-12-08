@@ -76,6 +76,7 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\Foreground\Dto\ForegroundState.cs" />
     <Compile Include="Communication\Foreground\Dto\FrameFormat.cs" />
     <Compile Include="Communication\Foreground\Dto\VoipState.cs" />
     <Compile Include="Communication\Foreground\IForegroundChannel.cs" />

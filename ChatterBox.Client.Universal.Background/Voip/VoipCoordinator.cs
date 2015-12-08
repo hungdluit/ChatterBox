@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation.Metadata;
+using ChatterBox.Client.Common.Avatars;
 
 namespace ChatterBox.Client.Universal.Background.Voip
 {
@@ -34,7 +35,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
                 VoipCall.HoldRequested += Call_HoldRequested;
                 VoipCall.RejectRequested += Call_RejectRequested;
                 VoipCall.ResumeRequested += Call_ResumeRequested;
-                VoipCall.AnswerRequested += VoipCall_AnswerRequested;
+                VoipCall.AnswerRequested += Call_AnswerRequested;
 
                 VoipCall.NotifyCallActive();
             }
@@ -48,46 +49,48 @@ namespace ChatterBox.Client.Universal.Background.Voip
             _message = message;
             Context.PeerId = _message.FromUserId;
 
-#if true // Temporary workaround for loss of connection between FG/BG.  Don't use OS call prompt.
+            var foregroundIsVisible = false;
+            var state = Hub.Instance.ForegroundClient.GetForegroundState();
+            if (state != null) foregroundIsVisible = state.IsForegroundVisible;
 
-            // TODO: Detect if UI is visible, and use an outgoing call if it is
-            //       so there's not popup and we can answer on the UI.
-            var vCC = VoipCallCoordinator.GetDefault();
-            VoipCall = vCC.RequestNewOutgoingCall(_message.FromUserId, _message.FromUserId, "ChatterBox Universal",
-                VoipPhoneCallMedia.Audio);
-            if (VoipCall != null)
+            var voipCallCoordinatorCc = VoipCallCoordinator.GetDefault();
+
+            if (foregroundIsVisible)
             {
-                VoipCall.EndRequested += Call_EndRequested;
-                VoipCall.HoldRequested += Call_HoldRequested;
-                VoipCall.RejectRequested += Call_RejectRequested;
-                VoipCall.ResumeRequested += Call_ResumeRequested;
+                VoipCall = voipCallCoordinatorCc.RequestNewOutgoingCall(_message.FromUserId, _message.FromName, "ChatterBox Universal",
+                    VoipPhoneCallMedia.Audio);
+                if (VoipCall != null)
+                {
+                    VoipCall.EndRequested += Call_EndRequested;
+                    VoipCall.HoldRequested += Call_HoldRequested;
+                    VoipCall.RejectRequested += Call_RejectRequested;
+                    VoipCall.ResumeRequested += Call_ResumeRequested;
 
-                VoipCall.NotifyCallActive();
+                    VoipCall.NotifyCallActive();
+                }
             }
-#else
-
-            var vCC = VoipCallCoordinator.GetDefault();
-            var call = vCC.RequestNewIncomingCall(
-                _message.FromUserId, _message.FromName, _message.FromUserId,
-                new Uri(AvatarLink.For(_message.FromAvatar), UriKind.RelativeOrAbsolute),
-                "ChatterBox Universal",
-                null,
-                "",
-                null,
-                VoipPhoneCallMedia.Audio,
-                new TimeSpan(0, 1, 20));
-
-            if (call != null)
+            else
             {
-                call.AnswerRequested += Call_AnswerRequested;
-                call.EndRequested += Call_EndRequested;
-                call.HoldRequested += Call_HoldRequested;
-                call.RejectRequested += Call_RejectRequested;
-                call.ResumeRequested += Call_ResumeRequested;
+                VoipCall = voipCallCoordinatorCc.RequestNewIncomingCall(_message.FromUserId, _message.FromName, _message.FromName,
+                    new Uri(AvatarLink.For(_message.FromAvatar), UriKind.RelativeOrAbsolute),
+                    "ChatterBox Universal",
+                    null,
+                    "",
+                    null,
+                    VoipPhoneCallMedia.Audio,
+                    new TimeSpan(0, 1, 20));
 
-                Context.VoipCall = call;
+                if (VoipCall != null)
+                {
+                    VoipCall.AnswerRequested += Call_AnswerRequested;
+                    VoipCall.EndRequested += Call_EndRequested;
+                    VoipCall.HoldRequested += Call_HoldRequested;
+                    VoipCall.RejectRequested += Call_RejectRequested;
+                    VoipCall.ResumeRequested += Call_ResumeRequested;
+                }
             }
-#endif
+
+
         }
 
         public void OnEnterIdle()
@@ -139,7 +142,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
             }
         }
 
-        private async void VoipCall_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
+        private async void Call_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
             // TODO: Pass through VoipContext.WithState()
             await _currentState.Answer();

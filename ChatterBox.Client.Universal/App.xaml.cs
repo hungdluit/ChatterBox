@@ -206,12 +206,11 @@ namespace ChatterBox.Client.Universal
 
         private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
         {
-            if (helper.GetTask(nameof(SignalingTask)) == null)
-            {
-                return await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName, new SocketActivityTrigger(), registerAgain).AsTask();
-            }
+            var signalingTask = helper.GetTask(nameof(SignalingTask)) ??
+                    await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName,
+                            new SocketActivityTrigger(), registerAgain).AsTask();
+            return signalingTask;
 
-            return null;
         }
 
         public async void ShowDialog(string message)

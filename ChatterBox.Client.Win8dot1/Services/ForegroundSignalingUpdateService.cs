@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using Windows.UI.Core;
+using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 
 namespace ChatterBox.Client.Win8dot1.Services
 {
@@ -53,6 +54,11 @@ namespace ChatterBox.Client.Win8dot1.Services
         public void OnUpdateFrameFormat(FrameFormat frameFormat)
         {
             RunOnUiThread(() => OnFrameFormatUpdate?.Invoke(frameFormat));
+        }
+
+        public ForegroundState GetForegroundState()
+        {
+            return new ForegroundState { IsForegroundVisible = true };
         }
     }
 }
