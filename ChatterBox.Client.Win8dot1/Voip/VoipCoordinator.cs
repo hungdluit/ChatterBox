@@ -19,6 +19,7 @@ namespace ChatterBox.Client.Win8dot1.Voip
         {
         }
 
+       
         public void OnEnterLocalRinging(RelayMessage message)
         {
         }

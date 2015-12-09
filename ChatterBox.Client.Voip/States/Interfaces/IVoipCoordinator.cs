@@ -1,10 +1,5 @@
-﻿using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Client.Common.Communication.Voip.States;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ChatterBox.Client.Voip.States.Interfaces
@@ -22,8 +17,6 @@ namespace ChatterBox.Client.Voip.States.Interfaces
         void OnEnterLocalRinging(RelayMessage message);
 
         void OnEnterIdle();
-
-        void OnEnterHangingUp();
 
         Task OnLeavingIdle();
 

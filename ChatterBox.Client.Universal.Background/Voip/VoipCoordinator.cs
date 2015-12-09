@@ -1,6 +1,4 @@
-﻿using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Client.Common.Communication.Voip.States;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Common.Communication.Messages.Relay;
@@ -124,15 +122,6 @@ namespace ChatterBox.Client.Universal.Background.Voip
             var ret = await _hub.WebRtcTaskTrigger.RequestAsync();
             Debug.WriteLine($"VoipTask Trigger -> {ret}");
 #endif
-        }
-
-        public void OnEnterHangingUp()
-        {
-            if (VoipCall != null)
-            {
-                VoipCall.NotifyCallEnded();
-                VoipCall = null;
-            }
         }
 
         private void Call_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)

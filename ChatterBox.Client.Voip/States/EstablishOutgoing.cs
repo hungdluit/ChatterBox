@@ -72,7 +72,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.PeerConnection.AddStream(Context.LocalStream);
             var sdpOffer = await Context.PeerConnection.CreateOffer();
             var sdpString = sdpOffer.Sdp;
-            //SdpUtils.SelectCodecs(ref sdpString, Context.AudioCodec, Context.VideoCodec);
+            SdpUtils.SelectCodecs(ref sdpString, Context.AudioCodec, Context.VideoCodec);
             sdpOffer.Sdp = sdpString;
             await Context.PeerConnection.SetLocalDescription(sdpOffer);
 
