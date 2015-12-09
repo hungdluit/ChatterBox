@@ -141,7 +141,9 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         private void Call_RejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
         {
-            throw new NotImplementedException();
+            Hub.Instance.VoipChannel.Reject(new IncomingCallReject() {
+                Reason = "Rejected"
+            });
         }
 
         private void Call_ResumeRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
