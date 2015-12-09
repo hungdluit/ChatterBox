@@ -38,6 +38,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.RemoteStream?.Stop();
             Context.RemoteStream = null;
 
+            Context.ResetRenderers();
+
             var idleState = new VoipState_Idle();
             await Context.SwitchState(idleState);
         }
