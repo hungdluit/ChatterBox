@@ -13,7 +13,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
 {
     internal class VoipCoordinator : IVoipCoordinator
     {
-        public void OnEnterRemoteRinging(OutgoingCallRequest request)
+        public void StartOutgoingCall(OutgoingCallRequest request)
         {
             var vCC = VoipCallCoordinator.GetDefault();
             VoipCall = vCC.RequestNewOutgoingCall(request.PeerUserId, request.PeerUserId, "ChatterBox Universal",
@@ -30,7 +30,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
             }
         }
 
-        public void OnEnterLocalRinging(RelayMessage message)
+        public void StartIncomingCall(RelayMessage message)
         {
 
             Debug.WriteLine("GetForegroundState");
@@ -78,7 +78,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         }
 
-        public void OnEnterIdle()
+        public void StopVoip()
         {
             if (VoipCall != null)
             {
@@ -89,7 +89,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
             Hub.Instance.VoipTaskInstance?.CloseVoipTask();
         }
 
-        public async Task OnLeavingIdle()
+        public async Task StartVoipTask()
         {
             // Leaving the idle state means there's a call that's happening.
             // Trigger the VoipTask to prevent this background task from terminating.
@@ -126,6 +126,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         private void Call_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
+            VoipCall.NotifyCallActive();
             Hub.Instance.VoipChannel.Answer();
         }
 
@@ -149,21 +150,6 @@ namespace ChatterBox.Client.Universal.Background.Voip
         private void Call_ResumeRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
         {
             throw new NotImplementedException();
-        }
-
-        public void OnOutgoingCallRejected()
-        {
-            VoipCall.NotifyCallEnded();
-        }
-
-        public void NotifyCallActive()
-        {
-            VoipCall.NotifyCallActive();
-        }
-
-        public void NotifyCallEnded()
-        {
-            VoipCall.NotifyCallEnded();
         }
 
         public VoipPhoneCall VoipCall { get; set; }

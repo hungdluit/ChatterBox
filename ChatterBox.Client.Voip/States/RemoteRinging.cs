@@ -56,7 +56,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             Context.SendToPeer(RelayMessageTags.VoipCall, payload);
 
-            Context.VoipCoordinator.OnEnterRemoteRinging(_request);
+            Context.VoipCoordinator.StartOutgoingCall(_request);
         }
 
         public override async Task OnOutgoingCallAccepted(RelayMessage message)

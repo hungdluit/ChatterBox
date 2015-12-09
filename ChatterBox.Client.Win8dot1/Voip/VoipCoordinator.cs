@@ -7,32 +7,19 @@ namespace ChatterBox.Client.Win8dot1.Voip
 {
     internal class VoipCoordinator : IVoipCoordinator
     {
-        public void NotifyCallActive()
+        public void StartOutgoingCall(OutgoingCallRequest request)
         {
         }
 
-        public void NotifyCallEnded()
+        public void StartIncomingCall(RelayMessage message)
         {
         }
 
-        public void OnEnterIdle()
+        public void StopVoip()
         {
         }
 
-       
-        public void OnEnterLocalRinging(RelayMessage message)
-        {
-        }
-
-        public void OnEnterRemoteRinging(OutgoingCallRequest request)
-        {
-        }
-
-        public async Task OnLeavingIdle()
-        {
-        }
-
-        public void OnOutgoingCallRejected()
+        public async Task StartVoipTask()
         {
         }
     }

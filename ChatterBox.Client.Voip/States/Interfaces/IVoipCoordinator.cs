@@ -12,18 +12,12 @@ namespace ChatterBox.Client.Voip.States.Interfaces
     /// </remarks>
     internal interface IVoipCoordinator
     {
-        void OnEnterRemoteRinging(OutgoingCallRequest request);
+        void StartOutgoingCall(OutgoingCallRequest request);
 
-        void OnEnterLocalRinging(RelayMessage message);
+        void StartIncomingCall(RelayMessage message);
 
-        void OnEnterIdle();
+        void StopVoip();
 
-        Task OnLeavingIdle();
-
-        void OnOutgoingCallRejected();
-
-        void NotifyCallActive();
-
-        void NotifyCallEnded();
+        Task StartVoipTask();
     }
 }
