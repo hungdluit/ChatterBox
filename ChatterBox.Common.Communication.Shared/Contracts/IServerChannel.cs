@@ -15,5 +15,6 @@ namespace ChatterBox.Common.Communication.Contracts
         void ServerHeartBeat();
         void ServerReceivedInvalidMessage(InvalidMessage reply);
         void ServerRelay(RelayMessage message);
+        void ServerConnectionError();
     }
 }

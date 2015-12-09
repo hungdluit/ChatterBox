@@ -9,22 +9,27 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
             <TextBlock Text="{Binding Status}"
+                       Grid.Row="0"
+                       HorizontalAlignment="Center"
                        Margin="12,5" />
-            <StackPanel Orientation="Horizontal">
-                <Button HorizontalAlignment="Right" FontFamily="Segoe UI Symbol" Content="&#xE115;"
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Grid.Row="1">
+                <Button FontFamily="Segoe UI Symbol" Content="&#xE115;"
                         Margin="5" Command="{Binding ShowSettings}" />
                 <Button Command="{Binding ConnectCommand}"
-                        HorizontalAlignment="Center"
                         Margin="12,5"
                         Width="120"
                         Content="Reconnect" />
             </StackPanel>
-
-        </StackPanel>
-
-    </Grid>
+        </Grid>
+    </Border>
 </UserControl>

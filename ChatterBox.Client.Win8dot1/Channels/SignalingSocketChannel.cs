@@ -1,18 +1,14 @@
 ﻿using ChatterBox.Client.Common.Communication.Signaling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Signaling.Dto;
-using Windows.Networking.Sockets;
-using Windows.Networking;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Common.Signaling;
-using System.IO;
-using System.Diagnostics;
-using ChatterBox.Common.Communication.Helpers;
 using Microsoft.Practices.Unity;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using Windows.Networking;
+using Windows.Networking.Sockets;
 
 namespace ChatterBox.Client.Win8dot1.Channels
 {
@@ -29,7 +25,7 @@ namespace ChatterBox.Client.Win8dot1.Channels
         }
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
-        {            
+        {
             _streamSocket = new StreamSocket();
             _streamSocket.ConnectAsync(new HostName(SignalingSettings.SignalingServerHost),
                                        SignalingSettings.SignalingServerPort, SocketProtectionLevel.PlainSocket)
@@ -65,6 +61,7 @@ namespace ChatterBox.Client.Win8dot1.Channels
                 catch (Exception exception)
                 {
                     Debug.WriteLine($"Reading error: {exception.Message}");
+                    _signalingClient.ServerConnectionError();
                     _isConnected = false;
                 }
             });

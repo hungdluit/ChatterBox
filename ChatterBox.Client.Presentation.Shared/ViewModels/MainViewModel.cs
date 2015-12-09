@@ -22,14 +22,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SettingsViewModel = settingsViewModel;
 
             WelcomeViewModel.OnCompleted += WelcomeCompleted;
-            ConnectingViewModel.OnRegistered += ConnectingViewModel_ConnectionEstablished;
+            ConnectingViewModel.OnRegistered += ConnectingViewModel_OnRegistered;
+            ConnectingViewModel.OnRegistrationFailed += ConnectingViewModel_OnRegistrationFailed;
             ShowSettingsCommand = new DelegateCommand(() => IsSettingsVisible = true);
 
             WelcomeViewModel.OnShowSettings += () => IsSettingsVisible = true;
             ContactsViewModel.OnShowSettings += () => IsSettingsVisible = true;
             ConnectingViewModel.OnShowSettings += () => IsSettingsVisible = true;
             SettingsViewModel.OnClose += SettingsViewModelOnClose;
-        }
+        }        
 
         public ConnectingViewModel ConnectingViewModel { get; }
         public ContactsViewModel ContactsViewModel { get; }
@@ -54,9 +55,14 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public DelegateCommand ShowSettingsCommand { get; set; }
         public WelcomeViewModel WelcomeViewModel { get; }
 
-        private void ConnectingViewModel_ConnectionEstablished()
+        private void ConnectingViewModel_OnRegistered()
         {
             IsActive = true;
+        }
+
+        private void ConnectingViewModel_OnRegistrationFailed()
+        {
+            IsActive = false;
         }
 
         public void OnNavigatedTo()

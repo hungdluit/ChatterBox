@@ -1,15 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using ChatterBox.Common.Communication.Contracts;
+﻿using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
 using Common.Logging;
+using System;
+using System.IO;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Server
 {
@@ -22,7 +22,7 @@ namespace ChatterBox.Server
             TcpClient = tcpClient;
         }
 
-        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IServerChannel));
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IServerChannel));
         public Guid Id { get; } = Guid.NewGuid();
         private ILog Logger => LogManager.GetLogger(ToString());
         public TcpClient TcpClient { get; set; }
@@ -86,6 +86,10 @@ namespace ChatterBox.Server
         }
 
         public void ServerRelay(RelayMessage message)
+        {
+        }
+
+        public void ServerConnectionError()
         {
         }
 

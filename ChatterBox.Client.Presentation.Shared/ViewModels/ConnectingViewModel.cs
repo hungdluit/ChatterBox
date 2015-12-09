@@ -24,16 +24,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _connection.OnRegistering += OnRegistering;
 
             foregroundUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
-            
-			ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
-			ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
+
+            ConnectCommand = new DelegateCommand(OnConnectCommandExecute, OnConnectCommandCanExecute);
+            ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
         }
 
         public DelegateCommand ConnectCommand { get; }
 
         public DelegateCommand ShowSettings { get; set; }
 
-		public string Status
+        public string Status
         {
             get { return _status; }
             set { SetProperty(ref _status, value); }
@@ -56,7 +56,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private bool OnConnectCommandCanExecute()
         {
-            return !_connection.IsConnecting && _connection.IsConnectingFailed;
+            return !_connection.IsConnected ||
+                  (!_connection.IsConnecting && _connection.IsConnectingFailed);
         }
 
         private void OnConnectCommandExecute()
@@ -64,11 +65,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             EstablishConnection();
         }
 
-        public event Action OnRegistered;
-
         private void OnRegistrationStatusUpdated()
         {
-            if (SignalingStatus.IsRegistered) OnRegistered?.Invoke();
+            if (SignalingStatus.IsRegistered)
+            {
+                OnRegistered?.Invoke();
+            }
+            else
+            {
+                OnRegistrationFailed?.Invoke();
+                Status = "Connection to the server has been terminated.";
+                ConnectCommand.RaiseCanExecuteChanged();
+            }
         }
 
         private void OnConnectingStarted(object sender, object e)
@@ -84,11 +92,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void OnConnectingFinished(object sender, object e)
         {
             if (_connection.IsConnectingFailed)
-                Status = "Failed to connect to the server. Check you settings and try again.";
+                Status = "Failed to connect to the server. Check your settings and try again.";
 
             ConnectCommand.RaiseCanExecuteChanged();
         }
-		
-		public event Action OnShowSettings;
+
+        public event Action OnRegistered;
+        public event Action OnRegistrationFailed;
+        public event Action OnShowSettings;
     }
 }
