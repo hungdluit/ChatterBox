@@ -25,13 +25,8 @@ namespace ChatterBox.Client.Universal.Background
 
         private Hub()
         {
-            var renderResolver = new Func<IVideoRenderHelper>(() => new VideoRenderHelper());
+           
 
-            var voipCoordinator = new VoipCoordinator(this);
-            var voipContext = new VoipContext(this, null, renderResolver, voipCoordinator);
-            VoipChannel = new VoipChannel(this, null, voipCoordinator, voipContext);
-
-            SignalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, VoipChannel);
         }
 
         public ForegroundClient ForegroundClient { get; } = new ForegroundClient();
@@ -68,9 +63,42 @@ namespace ChatterBox.Client.Universal.Background
             }
         }
 
-        public SignalingClient SignalingClient { get; }
+
+        private SignalingClient _signalingClient;
+
+        public SignalingClient SignalingClient
+        {
+            get
+            {
+                if (_signalingClient == null)
+                {
+                    _signalingClient = new SignalingClient(SignalingSocketService, ForegroundClient, VoipChannel);
+                }
+
+                return _signalingClient;
+            }
+        }
+
         public SignalingSocketService SignalingSocketService { get; } = new SignalingSocketService();
-        public IVoipChannel VoipChannel { get; }
+
+        private IVoipChannel _voipChannel;
+
+        public IVoipChannel VoipChannel
+        {
+            get
+            {
+                if (_voipChannel == null)
+                {
+                    var renderResolver = new Func<IVideoRenderHelper>(() => new VideoRenderHelper());
+
+                    var voipCoordinator = new VoipCoordinator();
+                    var voipContext = new VoipContext(this, null, renderResolver, voipCoordinator);
+                    _voipChannel = new VoipChannel(this, null, voipContext);
+                }
+                return _voipChannel;
+            }
+        }
+
         public VoipTask VoipTaskInstance { get; set; }
 
         private void HandleForegroundRequest(

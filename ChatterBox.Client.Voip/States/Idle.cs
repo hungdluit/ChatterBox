@@ -43,7 +43,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnLeavingState()
         {
-            Context.VoipCoordinator.OnLeavingIdle();
+            await Context.VoipCoordinator.OnLeavingIdle();
         }
     }
 }

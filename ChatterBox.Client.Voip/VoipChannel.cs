@@ -1,50 +1,34 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
-using Microsoft.Practices.Unity;
 using ChatterBox.Common.Communication.Messages.Relay;
 using Windows.Networking.Connectivity;
 using System.Collections.Generic;
-using ChatterBox.Client.Voip;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
-using ChatterBox.Client.Voip.States.Interfaces;
+using ChatterBox.Client.Voip;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
     internal class VoipChannel : IVoipChannel
     {
+        private readonly IHub _hub;
         DateTimeOffset _callStartDateTime;
 
         // This variable should not be used outside of the getter below.
-        private VoipContext _context;
 
-        private UInt32 _foregroundProcessId;
-        private IHub _hub;
-        private CoreDispatcher _dispatcher;
-        private IVoipCoordinator _coordinator;
+        private CoreDispatcher Dispatcher { get; }
 
-        private VoipContext Context
-        {
-            get
-            {
-                return _context;
-            }
-        }
+        private VoipContext Context { get; }
 
-        public VoipChannel(IHub hub, 
-                           CoreDispatcher dispatcher,
-                           IVoipCoordinator coordinator,
+        public VoipChannel(IHub hub, CoreDispatcher dispatcher,
                            VoipContext context)
         {
             _hub = hub;
-            _dispatcher = dispatcher;
-            _coordinator = coordinator;
-            _context = context;
+            Dispatcher = dispatcher;
+            Context = context;
         }
 
         #region IVoipChannel Members
@@ -56,8 +40,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public void SetForegroundProcessId(uint processId)
         {
-            _foregroundProcessId = processId;
-            _context.ForegroundProcessId = processId;
+            Context.ForegroundProcessId = processId;
         }
 
 
@@ -182,8 +165,8 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public void RegisterVideoElements(MediaElement self, MediaElement peer)
         {
-            Context.LocalVideoRenderer.SetMediaElement(_dispatcher, self);
-            Context.RemoteVideoRenderer.SetMediaElement(_dispatcher, peer);
+            Context.LocalVideoRenderer.SetMediaElement(Dispatcher, self);
+            Context.RemoteVideoRenderer.SetMediaElement(Dispatcher, peer);
         }
     }
 }

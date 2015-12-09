@@ -54,7 +54,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.PeerId = _message.FromUserId;
             Context.IsVideoEnabled = _callRequest.VideoEnabled;
 
-            Context.VoipCoordinator.OnEnterLocalRinging(this, _message);
+            Context.VoipCoordinator.OnEnterLocalRinging(_message);
         }
 
         public override async Task OnRemoteHangup(RelayMessage message)

@@ -6,6 +6,7 @@ using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Common.Communication.Messages.Relay;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation.Metadata;
 using ChatterBox.Client.Common.Avatars;
@@ -14,18 +15,8 @@ namespace ChatterBox.Client.Universal.Background.Voip
 {
     internal class VoipCoordinator : IVoipCoordinator
     {
-        private Hub _hub;
-
-        public VoipCoordinator(Hub hub)
+        public void OnEnterRemoteRinging(OutgoingCallRequest request)
         {
-            _hub = hub;
-        }
-
-        public void OnEnterRemoteRinging(BaseVoipState currentState,
-                                    OutgoingCallRequest request)
-        {
-            _currentState = currentState;
-
             var vCC = VoipCallCoordinator.GetDefault();
             VoipCall = vCC.RequestNewOutgoingCall(request.PeerUserId, request.PeerUserId, "ChatterBox Universal",
                 VoipPhoneCallMedia.Audio);
@@ -41,14 +32,10 @@ namespace ChatterBox.Client.Universal.Background.Voip
             }
         }
 
-        public void OnEnterLocalRinging(BaseVoipState currentState,
-                                   RelayMessage message)
+        public void OnEnterLocalRinging(RelayMessage message)
         {
-            Debug.Assert(Context.PeerConnection == null);
-            _currentState = currentState;
-            _message = message;
-            Context.PeerId = _message.FromUserId;
 
+            Debug.WriteLine("GetForegroundState");
             var foregroundIsVisible = false;
             var state = Hub.Instance.ForegroundClient.GetForegroundState();
             if (state != null) foregroundIsVisible = state.IsForegroundVisible;
@@ -57,7 +44,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
             if (foregroundIsVisible)
             {
-                VoipCall = voipCallCoordinatorCc.RequestNewOutgoingCall(_message.FromUserId, _message.FromName, "ChatterBox Universal",
+                VoipCall = voipCallCoordinatorCc.RequestNewOutgoingCall(message.FromUserId, message.FromName, "ChatterBox Universal",
                     VoipPhoneCallMedia.Audio);
                 if (VoipCall != null)
                 {
@@ -71,8 +58,8 @@ namespace ChatterBox.Client.Universal.Background.Voip
             }
             else
             {
-                VoipCall = voipCallCoordinatorCc.RequestNewIncomingCall(_message.FromUserId, _message.FromName, _message.FromName,
-                    new Uri(AvatarLink.For(_message.FromAvatar), UriKind.RelativeOrAbsolute),
+                VoipCall = voipCallCoordinatorCc.RequestNewIncomingCall(message.FromUserId, message.FromName, message.FromName,
+                    new Uri(AvatarLink.For(message.FromAvatar), UriKind.RelativeOrAbsolute),
                     "ChatterBox Universal",
                     null,
                     "",
@@ -95,15 +82,15 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         public void OnEnterIdle()
         {
-            _hub.VoipTaskInstance?.CloseVoipTask();
+            Hub.Instance.VoipTaskInstance?.CloseVoipTask();
         }
 
-        public async void OnLeavingIdle()
+        public async Task OnLeavingIdle()
         {
             // Leaving the idle state means there's a call that's happening.
             // Trigger the VoipTask to prevent this background task from terminating.
 #if true // VoipCallCoordinator support
-            if (_hub.VoipTaskInstance == null &&
+            if (Hub.Instance.VoipTaskInstance == null &&
                 ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1))
             {
                 var vcc = VoipCallCoordinator.GetDefault();
@@ -142,16 +129,14 @@ namespace ChatterBox.Client.Universal.Background.Voip
             }
         }
 
-        private async void Call_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
+        private void Call_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
-            // TODO: Pass through VoipContext.WithState()
-            await _currentState.Answer();
+            Hub.Instance.VoipChannel.Answer();
         }
 
-        private async void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
+        private void Call_EndRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
         {
-            // TODO: Pass through VoipContext.WithState()
-            await _currentState.Hangup();
+            Hub.Instance.VoipChannel.Hangup();
         }
 
         private void Call_HoldRequested(VoipPhoneCall sender, CallStateChangeEventArgs args)
@@ -184,9 +169,6 @@ namespace ChatterBox.Client.Universal.Background.Voip
             VoipCall.NotifyCallEnded();
         }
 
-        public VoipContext Context { get; set; }
         public VoipPhoneCall VoipCall { get; set; }
-        private BaseVoipState _currentState { get; set; }
-        private RelayMessage _message { get; set; }
     }
 }
