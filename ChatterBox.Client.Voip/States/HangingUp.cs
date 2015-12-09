@@ -32,9 +32,11 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             StopTracks(Context.LocalStream?.GetTracks());
             Context.LocalStream?.Stop();
+            Context.LocalStream = null;
 
             StopTracks(Context.RemoteStream?.GetTracks());
             Context.RemoteStream?.Stop();
+            Context.RemoteStream = null;
 
             var idleState = new VoipState_Idle();
             await Context.SwitchState(idleState);
