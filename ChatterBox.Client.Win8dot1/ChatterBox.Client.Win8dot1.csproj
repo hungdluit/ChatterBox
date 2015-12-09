@@ -27,7 +27,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP;WIN81</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -36,13 +36,13 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WIN81</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP;WIN81</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -52,7 +52,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WIN81</DefineConstants>
     <Optimize>true</Optimize>
     <NoStdLib>true</NoStdLib>
     <DebugType>pdbonly</DebugType>
@@ -65,7 +65,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP;WIN81</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WIN81</DefineConstants>
     <Optimize>true</Optimize>
     <NoStdLib>true</NoStdLib>
     <DebugType>pdbonly</DebugType>
@@ -95,14 +95,10 @@
     <Compile Include="Services\SignalingSocketOperation.cs" />
     <Compile Include="Services\SignalingSocketService.cs" />
     <Compile Include="Services\ForegroundSignalingUpdateService.cs" />
-    <Compile Include="Views\CallView.xaml.cs">
-      <DependentUpon>CallView.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Services\WebRTCSettingsService.cs" />
     <Compile Include="Voip\Hub.cs" />
-    <Compile Include="Voip\States\HangingUp.cs" />
-    <Compile Include="Voip\States\Idle.cs" />
-    <Compile Include="Voip\States\LocalRinging.cs" />
-    <Compile Include="Voip\States\RemoteRinging.cs" />
+    <Compile Include="Voip\VideoRenderHelper.cs" />
+    <Compile Include="Voip\VoipCoordinator.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -159,12 +155,7 @@
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Page Include="Views\CallView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\ChatterBox.Client.Presentation.Shared\ChatterBox.Client.Presentation.Shared.projitems" Label="Shared" />
   <Import Project="..\ChatterBox.Client.Voip\ChatterBox.Client.Voip.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' ">

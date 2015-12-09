@@ -3,7 +3,7 @@ using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Voip
 {
-    internal  static class DtoExtensions
+    internal static class DtoExtensions
     {
         public static RTCIceCandidate FromDto(DtoIceCandidate obj)
         {

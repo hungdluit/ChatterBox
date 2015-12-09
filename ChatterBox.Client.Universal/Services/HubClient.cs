@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.UI.Core;
+using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
@@ -21,6 +22,8 @@ using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
 using ChatterBox.Client.Common.Background;
+using Windows.UI.Xaml.Controls;
+using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 
 namespace ChatterBox.Client.Universal.Services
 {
@@ -94,7 +97,12 @@ namespace ChatterBox.Client.Universal.Services
 
         public void OnUpdateFrameFormat(FrameFormat frameFormat)
         {
-           RunOnUiThread(() => OnFrameFormatUpdate?.Invoke(frameFormat));
+            RunOnUiThread(() => OnFrameFormatUpdate?.Invoke(frameFormat));
+        }
+
+        public ForegroundState GetForegroundState()
+        {
+            return new ForegroundState { IsForegroundVisible = true };
         }
 
         #endregion
@@ -192,6 +200,10 @@ namespace ChatterBox.Client.Universal.Services
         {
             InvokeHubChannel<IVoipChannel>(reason);
         }
+        public void DisplayOrientationChanged(DisplayOrientations orientation)
+        {
+            InvokeHubChannel<IVoipChannel>(orientation);
+        }
 
         #endregion
 
@@ -205,19 +217,19 @@ namespace ChatterBox.Client.Universal.Services
             _appConnection.ServiceClosed += OnServiceClosed;
             _appConnection.RequestReceived += OnRequestReceived;
             var status = await _appConnection.OpenAsync();
-            IsConnected=( status == AppServiceConnectionStatus.Success);
+            IsConnected = (status == AppServiceConnectionStatus.Success);
             return IsConnected;
         }
 
         private void InvokeHubChannel<TContract>(object arg = null, [CallerMemberName] string method = null)
         {
-            _appConnection.InvokeChannel(typeof (TContract), arg, method);
+            _appConnection.InvokeChannel(typeof(TContract), arg, method);
         }
 
         private TResult InvokeHubChannel<TContract, TResult>(object arg = null, [CallerMemberName] string method = null)
             where TResult : class
         {
-            return (TResult) _appConnection.InvokeChannel(typeof (TContract), arg, method, typeof (TResult));
+            return (TResult)_appConnection.InvokeChannel(typeof(TContract), arg, method, typeof(TResult));
         }
 
         private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -237,6 +249,10 @@ namespace ChatterBox.Client.Universal.Services
         public void OnSignaledDataUpdated()
         {
             RunOnUiThread(() => OnUpdate?.Invoke());
+        }
+
+        public void RegisterVideoElements(MediaElement self, MediaElement peer)
+        {
         }
 
         public event Action OnUpdate;

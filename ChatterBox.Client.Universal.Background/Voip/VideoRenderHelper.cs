@@ -1,13 +1,8 @@
 ﻿using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBoxClient.Universal.BackgroundRenderer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using webrtc_winrt_api;
-using Windows.ApplicationModel.Calls;
 using Windows.Media.Core;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Universal.Background.Voip
 {
@@ -29,6 +24,10 @@ namespace ChatterBox.Client.Universal.Background.Voip
         public void Teardown()
         {
             _renderer.Teardown();
+        }
+
+        public void SetMediaElement(CoreDispatcher dispatcher, MediaElement mediaElement)
+        {
         }
 
         private Renderer _renderer = new Renderer();

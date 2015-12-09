@@ -1,12 +1,15 @@
 ﻿using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
+using Windows.Graphics.Display;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
     public interface IVoipChannel
     {
         void SetForegroundProcessId(uint processId);
+        void DisplayOrientationChanged(DisplayOrientations orientation);
         void Answer();
         // Locally initiated calls
         void Call(OutgoingCallRequest request);
@@ -23,5 +26,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void OnSdpAnswer(RelayMessage message);
         void OnSdpOffer(RelayMessage message);
         void Reject(IncomingCallReject reason);
+        void RegisterVideoElements(MediaElement self, MediaElement peer);
     }
 }

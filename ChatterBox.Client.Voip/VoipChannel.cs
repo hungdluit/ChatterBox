@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using Microsoft.Practices.Unity;
@@ -9,74 +10,73 @@ using ChatterBox.Common.Communication.Messages.Relay;
 using Windows.Networking.Connectivity;
 using System.Collections.Generic;
 using ChatterBox.Client.Voip;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
+using ChatterBox.Client.Voip.States.Interfaces;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
     internal class VoipChannel : IVoipChannel
     {
-        // Semaphore used to make sure only one call on the channel
-        // is executed at any given time.
-        private readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
-
         DateTimeOffset _callStartDateTime;
 
         // This variable should not be used outside of the getter below.
         private VoipContext _context;
 
-        private IUnityContainer _container;
         private UInt32 _foregroundProcessId;
+        private IHub _hub;
+        private CoreDispatcher _dispatcher;
+        private IVoipCoordinator _coordinator;
 
         private VoipContext Context
         {
             get
             {
-                // Create on demand.
-                if (_context == null)
-                {
-                    _context = new VoipContext(_container);
-                    _context.ForegroundProcessId = _foregroundProcessId;
-                }
                 return _context;
             }
         }
 
-        public VoipChannel(IUnityContainer container)
+        public VoipChannel(IHub hub, 
+                           CoreDispatcher dispatcher,
+                           IVoipCoordinator coordinator,
+                           VoipContext context)
         {
-            _container = container;
+            _hub = hub;
+            _dispatcher = dispatcher;
+            _coordinator = coordinator;
+            _context = context;
         }
 
         #region IVoipChannel Members
 
+        public void DisplayOrientationChanged(DisplayOrientations orientation)
+        {
+            Context.DisplayOrientation = orientation;
+        }
+
         public void SetForegroundProcessId(uint processId)
         {
             _foregroundProcessId = processId;
+            _context.ForegroundProcessId = processId;
         }
 
 
         public void Answer()
         {
             Debug.WriteLine("VoipChannel.Answer");
-            Post(() => Context.WithState(st => st.Answer()));
+            Context.WithState(st => st.Answer()).Wait();
             TrackCallStarted();
         }
 
         public void Call(OutgoingCallRequest request)
         {
             Debug.WriteLine("VoipChannel.Call");
-            Post(() => Context.WithState(st => st.Call(request)));
+            Context.WithState(st => st.Call(request)).Wait();
         }
 
         public VoipState GetVoipState()
         {
-            _sem.Wait();
-            try
-            {
-                return Context.GetVoipState();
-            }
-            finally
-            {
-                _sem.Release();
-            }
+            return Context.GetVoipState();
         }
 
         // Hangup can happen on both sides
@@ -88,81 +88,61 @@ namespace ChatterBox.Client.Common.Communication.Voip
             {
                 TrackCallEnded();
             }
-            Post(() => Context.WithState(st => st.Hangup()));
+            Context.WithState(st => st.Hangup()).Wait();
         }
 
         public void OnIceCandidate(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnIceCandidate");
-            Post(() => Context.WithState(st => st.OnIceCandidate(message)));
+            Context.WithState(st => st.OnIceCandidate(message)).Wait();
         }
 
         // Remotely initiated calls
         public void OnIncomingCall(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnIncomingCall");
-            Post(() => Context.WithState(st => st.OnIncomingCall(message)));
+            Context.WithState(st => st.OnIncomingCall(message)).Wait();
         }
 
         public void OnOutgoingCallAccepted(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnOutgoingCallAccepted");
-            Post(() => Context.WithState(st => st.OnOutgoingCallAccepted(message)));
+            Context.WithState(st => st.OnOutgoingCallAccepted(message)).Wait();
             TrackCallStarted();
         }
 
         public void OnOutgoingCallRejected(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnOutgoingCallRejected");
-            Post(() => Context.WithState(st => st.OnOutgoingCallRejected(message)));
+            Context.WithState(st => st.OnOutgoingCallRejected(message)).Wait();
         }
 
         public void OnRemoteHangup(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnRemoteHangup");
-            Post(() => Context.WithState(st => st.OnRemoteHangup(message)));
+            Context.WithState(st => st.OnRemoteHangup(message)).Wait();
         }
 
         // WebRTC signaling
         public void OnSdpAnswer(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnSdpAnswer");
-            Post(() => Context.WithState(st => st.OnSdpAnswer(message)));
+            Context.WithState(st => st.OnSdpAnswer(message)).Wait();
         }
 
         public void OnSdpOffer(RelayMessage message)
         {
             Debug.WriteLine("VoipChannel.OnSdpOffer");
-            Post(() => Context.WithState(st => st.OnSdpOffer(message)));
+            Context.WithState(st => st.OnSdpOffer(message)).Wait();
         }
 
         public void Reject(IncomingCallReject reason)
         {
             Debug.WriteLine("VoipChannel.Reject");
-            Post(() => Context.WithState(st => st.Reject(reason)));
+            Context.WithState(st => st.Reject(reason)).Wait();
         }
 
         #endregion
-
-        private void Post(Action fn)
-        {
-            Task.Run(async () =>
-            {
-                await _sem.WaitAsync();
-                try
-                {
-                    fn();
-                }
-                catch(Exception ex)
-                {
-                    Debug.WriteLine($"Exception: {ex.Message} {Environment.NewLine}{ex.StackTrace}");
-                }
-                finally
-                {
-                    _sem.Release();
-                }
-            });
-        }
 
         private void TrackCallStarted()
         {
@@ -185,22 +165,25 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     break;
             }
             var properties = new Dictionary<string, string> { { "Connection Type", connType } };
-            var hub = Context.UnityContainer.Resolve<IHub>();
-            hub.TrackStatsManagerEvent("CallStarted", properties);
+            _hub.TrackStatsManagerEvent("CallStarted", properties);
             // start call watch to count duration for tracking as request
-            hub.StartStatsManagerCallWatch();
+            _hub.StartStatsManagerCallWatch();
         }
 
         private void TrackCallEnded() {
             // log call duration as CallEnded event property
             string duration = DateTimeOffset.Now.Subtract(_callStartDateTime).Duration().ToString(@"hh\:mm\:ss");
             var properties = new Dictionary<string, string> { { "Call Duration", duration } };
-            var hub = Context.UnityContainer.Resolve<IHub>();
-            hub.TrackStatsManagerEvent("CallEnded", properties);
+            _hub.TrackStatsManagerEvent("CallEnded", properties);
 
             // stop call watch, so the duration will be calculated and tracked as request
-            hub.StopStatsManagerCallWatch();
+            _hub.StopStatsManagerCallWatch();
         }
 
+        public void RegisterVideoElements(MediaElement self, MediaElement peer)
+        {
+            Context.LocalVideoRenderer.SetMediaElement(_dispatcher, self);
+            Context.RemoteVideoRenderer.SetMediaElement(_dispatcher, peer);
+        }
     }
 }

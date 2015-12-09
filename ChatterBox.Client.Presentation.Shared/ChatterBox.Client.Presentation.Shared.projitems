@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DelegateCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MVVM\DispatcherBindableBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IForegroundUpdateService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IWebRTCSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LayoutService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LayoutType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ServicesBindingHelper.cs" />
@@ -32,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SettingsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\CallView.xaml.cs">
+      <DependentUpon>CallView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\ChatView.xaml.cs">
       <DependentUpon>ChatView.xaml</DependentUpon>
     </Compile>
@@ -55,6 +59,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\CallView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ChatView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

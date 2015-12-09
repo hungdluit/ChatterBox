@@ -1,28 +1,26 @@
-﻿using System;
-using System.Diagnostics;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
-using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+﻿using ChatterBox.Client.Common.Background;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Settings;
+using ChatterBox.Client.Common.Notifications;
+using ChatterBox.Client.Common.Signaling;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Presentation.Shared.ViewModels;
 using ChatterBox.Client.Presentation.Shared.Views;
+using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Universal.Services;
 using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
 using Microsoft.Practices.Unity;
-using ChatterBox.Client.Common.Signaling;
-using ChatterBox.Client.Common.Notifications;
-using ChatterBox.Client.Common.Background;
+using System;
+using System.Diagnostics;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
-using ChatterBox.Client.Universal.Background.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace ChatterBox.Client.Universal
 {
@@ -54,7 +52,7 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-			if (e.PreviousExecutionState == ApplicationExecutionState.Running)
+            if (e.PreviousExecutionState == ApplicationExecutionState.Running)
             {
                 Resume();
                 return;
@@ -66,11 +64,12 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance(CoreApplication.MainView.CoreWindow.Dispatcher);
                 Container.RegisterType<TaskHelper>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<HubClient>(new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
-                Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(),new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IForegroundUpdateService>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
             }
 
             if (!Container.Resolve<HubClient>().IsConnected)
@@ -82,8 +81,10 @@ namespace ChatterBox.Client.Universal
                     {
                         client.SetForegroundProcessId(
                             ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
+
+                        RegisterForDisplayOrientationChange();
                     }
-                });
+                }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             await RegisterForPush(Container.Resolve<TaskHelper>());
@@ -129,6 +130,8 @@ namespace ChatterBox.Client.Universal
                     Container.Resolve<ISocketConnection>().Connect();
             }
             Window.Current.Activate();
+
+            RegisterForDisplayOrientationChange();
         }
 
         /// <summary>
@@ -167,6 +170,22 @@ namespace ChatterBox.Client.Universal
             base.OnWindowCreated(args);
         }
 
+        private void RegisterForDisplayOrientationChange()
+        {
+            var display_info = Windows.Graphics.Display.DisplayInformation.GetForCurrentView();
+            display_info.OrientationChanged -= this.OnOrientationChanged;
+            display_info.OrientationChanged += this.OnOrientationChanged;
+
+            var client = Container.Resolve<HubClient>();
+            client.DisplayOrientationChanged(display_info.CurrentOrientation);
+        }
+
+        private void OnOrientationChanged(Windows.Graphics.Display.DisplayInformation sender, object args)
+        {
+            var client = Container.Resolve<HubClient>();
+            client.DisplayOrientationChanged(sender.CurrentOrientation);
+        }
+
         private static async System.Threading.Tasks.Task RegisterForPush(TaskHelper helper, bool registerAgain = true)
         {
             try
@@ -187,12 +206,11 @@ namespace ChatterBox.Client.Universal
 
         private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
         {
-            if (helper.GetTask(nameof(SignalingTask)) == null)
-            {
-                return await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName, new SocketActivityTrigger(), registerAgain).AsTask();
-            }
+            var signalingTask = helper.GetTask(nameof(SignalingTask)) ??
+                    await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName,
+                            new SocketActivityTrigger(), registerAgain).AsTask();
+            return signalingTask;
 
-            return null;
         }
 
         public async void ShowDialog(string message)

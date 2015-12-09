@@ -119,12 +119,8 @@
     <Compile Include="Tasks\ForegroundAppServiceTask.cs" />
     <Compile Include="Tasks\SignalingTask.cs" />
     <Compile Include="Tasks\VoipTask.cs" />
-    <Compile Include="Voip\States\HangingUp.cs" />
-    <Compile Include="Voip\States\Idle.cs" />
-    <Compile Include="Voip\States\LocalRinging.cs" />
-    <Compile Include="Voip\States\RemoteRinging.cs" />
     <Compile Include="Voip\VideoRenderHelper.cs" />
-    <Compile Include="Voip\VoipCallContext.cs" />
+    <Compile Include="Voip\VoipCoordinator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BackgroundHost\BackgroundHost.vcxproj">

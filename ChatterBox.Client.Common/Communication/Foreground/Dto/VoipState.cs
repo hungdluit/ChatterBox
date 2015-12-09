@@ -14,6 +14,7 @@
     public sealed class VoipState
     {
         public bool HasPeerConnection { get; set; }
+        public bool IsVideoEnabled { get; set; }
         public string PeerId { get; set; }
         public VoipStateEnum State { get; set; }
     }

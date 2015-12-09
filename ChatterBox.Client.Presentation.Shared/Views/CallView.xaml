@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
-    xmlns:webrtc="using:ChatterBox.Client.WebRTCSwapChainPanel"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -26,25 +25,17 @@
               SizeChanged="VideoGrid_SizeChanged"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
-            <webrtc:WebRTCSwapChainPanel Name="PeerVideo"
-                          Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          SwapChainPanelHandle="{Binding RemoteSwapChainPanelHandle, Mode=OneWay}"
-                          NativeVideoSize="{Binding RemoteNativeVideoSize}"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch" />
+            <ContentPresenter Name="PeerVideoPresenter"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" />
             <Image Name="PeerPlaceholder"
                    Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                    Source="{Binding ProfileSource}"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch" />
-
-            <webrtc:WebRTCSwapChainPanel Name="SelfVideo"
-                          Visibility="{Binding IsSelfVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          SwapChainPanelHandle="{Binding LocalSwapChainPanelHandle, Mode=OneWay}"
-                          NativeVideoSize="{Binding LocalNativeVideoSize}"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Bottom" />
-
+            <ContentPresenter Name="SelfVideoPresenter"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Bottom" />
             <Image Name="SelfPlaceholder"
                    Margin="5"
                    Source="{Binding OwnProfileSource}"

@@ -1,26 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Common.Signaling.Dto;
 using ChatterBox.Client.Voip;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Serialization;
 using webrtc_winrt_api;
-using ChatterBox.Client.Voip.States.Interfaces;
-using Microsoft.Practices.Unity;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using System.Linq;
+using Windows.UI.Core;
+using System.Threading.Tasks;
+using ChatterBox.Client.Common.Communication.Voip.Dto;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_EstablishIncoming : BaseVoipState
     {
-        public override void Hangup()
+        private RelayMessage _message;
+        private OutgoingCallRequest _callRequest;
+
+        public VoipState_EstablishIncoming(RelayMessage message)
         {
-            var hangingUpState = Context.UnityContainer.Resolve<IHangingUp>();
-            Context.SwitchState((BaseVoipState)hangingUpState);
+            _message = message;
+            _callRequest = (OutgoingCallRequest)JsonConvert.Deserialize(message.Payload, typeof(OutgoingCallRequest));
         }
 
-        public override async void OnEnteringState()
+        public override VoipStateEnum VoipState
+        {
+            get
+            {
+                return VoipStateEnum.EstablishIncoming;
+            }
+        }
+
+        public override async Task Hangup()
+        {
+            var hangingUpState = new VoipState_HangingUp();
+            await Context.SwitchState(hangingUpState);
+        }
+
+        public override async Task OnEnteringState()
         {
             Debug.Assert(Context.PeerConnection == null);
 
@@ -37,11 +56,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             };
             Context.PeerConnection = new RTCPeerConnection(config);
 
-            var media = await Media.CreateMediaAsync();
-            await media.EnumerateAudioVideoCaptureDevices();
-            Context.LocalStream = await media.GetUserMedia(new RTCMediaStreamConstraints
+            Context.LocalStream = await Context.Media.GetUserMedia(new RTCMediaStreamConstraints
             {
-                videoEnabled = true,
+                videoEnabled = _callRequest.VideoEnabled,
                 audioEnabled = true
             });
             Context.PeerConnection.AddStream(Context.LocalStream);
@@ -49,12 +66,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             var tracks = Context.LocalStream.GetVideoTracks();
             if (tracks.Count > 0)
             {
-                var source = media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
-                Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
+                var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
+                Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);                
             }
         }
 
-        internal override async void OnAddStream(MediaStream stream)
+        internal override async Task OnAddStream(MediaStream stream)
         {
             Context.RemoteStream = stream;
             var tracks = stream.GetVideoTracks();
@@ -66,26 +83,26 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             }
         }
 
-        public override async void OnIceCandidate(RelayMessage message)
+        public override async Task OnIceCandidate(RelayMessage message)
         {
             //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
                 DtoExtensions.FromDto(
-                    (DtoIceCandidate) JsonConvert.Deserialize(message.Payload, typeof (DtoIceCandidate)));
+                    (DtoIceCandidate)JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate)));
             await Context.PeerConnection.AddIceCandidate(candidate);
         }
 
-        public override async void OnSdpOffer(RelayMessage message)
+        public override async Task OnSdpOffer(RelayMessage message)
         {
             await
                 Context.PeerConnection.SetRemoteDescription(new RTCSessionDescription(RTCSdpType.Offer, message.Payload));
             var sdpAnswer = await Context.PeerConnection.CreateAnswer();
             await Context.PeerConnection.SetLocalDescription(sdpAnswer);
             Context.SendToPeer(RelayMessageTags.SdpAnswer, sdpAnswer.Sdp);
-            Context.SwitchState(new VoipState_ActiveCall());
+            await Context.SwitchState(new VoipState_ActiveCall(_callRequest));
         }
 
-        public override void SendLocalIceCandidate(RTCIceCandidate candidate)
+        public override async Task SendLocalIceCandidate(RTCIceCandidate candidate)
         {
             //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
