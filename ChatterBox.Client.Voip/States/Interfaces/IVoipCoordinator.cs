@@ -24,8 +24,6 @@ namespace ChatterBox.Client.Voip.States.Interfaces
 
         void OnEnterIdle();
 
-        void OnEnterHangingUp();
-
         void OnLeavingIdle();
 
         void OnOutgoingCallRejected();

@@ -31,10 +31,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
             VoipCoordinator = coordinator;
             VoipCoordinator.Context = this;
 
+            WebRTC.Initialize(_dispatcher);
+
             var idleState = new VoipState_Idle();
             SwitchState(idleState).Wait();
-
-            WebRTC.Initialize(_dispatcher);
 
             Media = Media.CreateMedia();
             Media.EnumerateAudioVideoCaptureDevices();
@@ -169,6 +169,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
             try
             {
                 await fn(State);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
             finally
             {

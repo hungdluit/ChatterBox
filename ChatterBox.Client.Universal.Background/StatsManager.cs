@@ -398,13 +398,16 @@ namespace ChatterBox.Client.Universal.Background
 
         public void StopCallWatch()
         {
-            _callWatch.Stop();
-            DateTime currentDateTime = DateTime.Now;
-            TimeSpan time = _callWatch.Elapsed;
-            Task.Run(() => _telemetry.TrackRequest("Call Duration", currentDateTime,
-               time,
-               "200", true));  // Response code, success
-            _metricsCollector.TrackCurrentDelayMetrics();
+            if (_callWatch != null)
+            {
+                _callWatch.Stop();
+                DateTime currentDateTime = DateTime.Now;
+                TimeSpan time = _callWatch.Elapsed;
+                Task.Run(() => _telemetry.TrackRequest("Call Duration", currentDateTime,
+                   time,
+                   "200", true));  // Response code, success
+                _metricsCollector.TrackCurrentDelayMetrics();
+            }
         }
     }
 

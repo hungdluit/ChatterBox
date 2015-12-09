@@ -95,6 +95,12 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         public void OnEnterIdle()
         {
+            if (VoipCall != null)
+            {
+                VoipCall.NotifyCallEnded();
+                VoipCall = null;
+            }
+
             _hub.VoipTaskInstance?.CloseVoipTask();
         }
 
@@ -116,8 +122,8 @@ namespace ChatterBox.Client.Universal.Background.Voip
                 }
                 catch (Exception ex)
                 {
-                    const int RTcTaskAlreadyRuningErrorCode = -2147024713;
-                    if (ex.HResult == RTcTaskAlreadyRuningErrorCode)
+                    const int RTcTaskAlreadyRunningErrorCode = -2147024713;
+                    if (ex.HResult == RTcTaskAlreadyRunningErrorCode)
                     {
                         Debug.WriteLine("VoipTask already running");
                     }
@@ -131,15 +137,6 @@ namespace ChatterBox.Client.Universal.Background.Voip
             var ret = await _hub.WebRtcTaskTrigger.RequestAsync();
             Debug.WriteLine($"VoipTask Trigger -> {ret}");
 #endif
-        }
-
-        public void OnEnterHangingUp()
-        {
-            if (VoipCall != null)
-            {
-                VoipCall.NotifyCallEnded();
-                VoipCall = null;
-            }
         }
 
         private async void Call_AnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
