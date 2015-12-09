@@ -30,30 +30,17 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
                 Context.PeerId = null;
             }
 
-            StopVideoTracks(Context.LocalStream?.GetVideoTracks());
-            StopAudioTracks(Context.LocalStream?.GetAudioTracks());
+            StopTracks(Context.LocalStream?.GetTracks());
             Context.LocalStream?.Stop();
 
-            StopVideoTracks(Context.RemoteStream?.GetVideoTracks());
-            StopAudioTracks(Context.RemoteStream?.GetAudioTracks());
+            StopTracks(Context.RemoteStream?.GetTracks());
             Context.RemoteStream?.Stop();
-
-            Context.VoipCoordinator.OnEnterHangingUp();
 
             var idleState = new VoipState_Idle();
             await Context.SwitchState(idleState);
         }
 
-        private void StopVideoTracks(IList<MediaVideoTrack> tracks)
-        {
-            if (tracks == null) return;
-            foreach (var track in tracks)
-            {
-                track.Stop();
-            }
-        }
-
-        private void StopAudioTracks(IList<MediaAudioTrack> tracks)
+        private void StopTracks(IList<IMediaStreamTrack> tracks)
         {
             if (tracks == null) return;
             foreach (var track in tracks)

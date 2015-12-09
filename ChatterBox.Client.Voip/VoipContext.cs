@@ -30,10 +30,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
             _renderResolver = renderResolver;
             VoipCoordinator = coordinator;
 
+            WebRTC.Initialize(_dispatcher);
+
             var idleState = new VoipState_Idle();
             SwitchState(idleState).Wait();
-
-            WebRTC.Initialize(_dispatcher);
 
             Media = Media.CreateMedia();
             Media.EnumerateAudioVideoCaptureDevices().AsTask().Wait();
@@ -171,9 +171,9 @@ namespace ChatterBox.Client.Common.Communication.Voip
             {
                 await fn(State);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Catch in WithState:" + exception);
+                Debug.WriteLine(ex.Message);
             }
             finally
             {

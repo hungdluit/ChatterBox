@@ -82,6 +82,12 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         public void OnEnterIdle()
         {
+            if (VoipCall != null)
+            {
+                VoipCall.NotifyCallEnded();
+                VoipCall = null;
+            }
+
             Hub.Instance.VoipTaskInstance?.CloseVoipTask();
         }
 
@@ -103,8 +109,8 @@ namespace ChatterBox.Client.Universal.Background.Voip
                 }
                 catch (Exception ex)
                 {
-                    const int RTcTaskAlreadyRuningErrorCode = -2147024713;
-                    if (ex.HResult == RTcTaskAlreadyRuningErrorCode)
+                    const int RTcTaskAlreadyRunningErrorCode = -2147024713;
+                    if (ex.HResult == RTcTaskAlreadyRunningErrorCode)
                     {
                         Debug.WriteLine("VoipTask already running");
                     }

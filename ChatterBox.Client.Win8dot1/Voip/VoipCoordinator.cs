@@ -15,10 +15,6 @@ namespace ChatterBox.Client.Win8dot1.Voip
         {
         }
 
-        public void OnEnterHangingUp()
-        {
-        }
-
         public void OnEnterIdle()
         {
         }
