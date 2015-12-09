@@ -66,10 +66,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public override async Task Reject(IncomingCallReject reason)
         {
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
-            Context.VoipCoordinator.NotifyCallEnded();
 
-            var idleState = new VoipState_Idle();
-            await Context.SwitchState(idleState);
+            var hangingUpState = new VoipState_HangingUp();
+            await Context.SwitchState(hangingUpState);
         }
     }
 }

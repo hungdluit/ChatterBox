@@ -67,10 +67,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnOutgoingCallRejected(RelayMessage message)
         {
-            Context.VoipCoordinator.OnOutgoingCallRejected();
-
-            var idleState = new VoipState_Idle();
-            await Context.SwitchState(idleState);
+            var hangingUpState = new VoipState_HangingUp();
+            await Context.SwitchState(hangingUpState);
         }
     }
 }
