@@ -489,6 +489,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void UpdateCommandStates()
         {
             CallCommand.RaiseCanExecuteChanged();
+            VideoCallCommand.RaiseCanExecuteChanged();
             AnswerCommand.RaiseCanExecuteChanged();
             HangupCommand.RaiseCanExecuteChanged();
             RejectCommand.RaiseCanExecuteChanged();
