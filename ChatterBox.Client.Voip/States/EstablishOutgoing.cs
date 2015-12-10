@@ -99,7 +99,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnIceCandidate(RelayMessage message)
         {
-            //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
                 DtoExtensions.FromDto(
                     (DtoIceCandidate)JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate)));
@@ -115,7 +114,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-            //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
         }
     }

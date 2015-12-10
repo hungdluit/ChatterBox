@@ -30,8 +30,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
                 var media = await Media.CreateMediaAsync();
                 var source = media.CreateMediaStreamSource(tracks[0], 30, "PEER");
                 Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
-		    }
-		}
+            }
+        }
         public override VoipStateEnum VoipState
         {
             get
