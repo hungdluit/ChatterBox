@@ -14,7 +14,11 @@ namespace ChatterBox.Client.Universal.Background
         public StatsManager()
         {
             _telemetry = new TelemetryClient();
-            _telemetry.Context.Operation.Id = Guid.NewGuid().ToString();
+            _telemetry.Context.Session.Id = Guid.NewGuid().ToString();
+        }
+
+        ~StatsManager() {
+            _telemetry.Flush();
         }
 
         RTCPeerConnection _peerConnection;
@@ -41,7 +45,7 @@ namespace ChatterBox.Client.Universal.Background
                 _peerConnection.ToggleRTCStats(false);
                 _peerConnection = null;
             }
-            if(_metricsTimer != null) {
+            if (_metricsTimer != null) {
                 _metricsTimer.Dispose();
             }
         }
@@ -137,8 +141,8 @@ namespace ChatterBox.Client.Universal.Background
 
         private void PeerConnection_OnRTCStatsReportsReady(RTCStatsReportsReadyEvent evt)
         {
-                IList<RTCStatsReport> reports = evt.rtcStatsReports;
-                Task.Run(()=> ProcessReports(reports));
+            IList<RTCStatsReport> reports = evt.rtcStatsReports;
+            Task.Run(() => ProcessReports(reports));
         }
 
         private string ToMetricName(RTCStatsValueName name)
@@ -384,6 +388,13 @@ namespace ChatterBox.Client.Universal.Background
             MetricTelemetry metric = new MetricTelemetry(name, value);
             metric.Timestamp = System.DateTimeOffset.UtcNow;
             Task.Run(() => _telemetry.TrackMetric(metric));
+        }
+
+        public void TrackException(Exception e) {
+            ExceptionTelemetry excTelemetry = new ExceptionTelemetry(e);
+            excTelemetry.SeverityLevel = SeverityLevel.Critical;
+            excTelemetry.HandledAt = ExceptionHandledAt.Unhandled;
+            _telemetry.TrackException(excTelemetry);
         }
 
         private Stopwatch _callWatch;

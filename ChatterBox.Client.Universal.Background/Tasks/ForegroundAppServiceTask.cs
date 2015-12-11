@@ -11,14 +11,25 @@ namespace ChatterBox.Client.Universal.Background.Tasks
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
-            var triggerDetail = (AppServiceTriggerDetails) taskInstance.TriggerDetails;
-            _deferral = taskInstance.GetDeferral();
+            try {
+                var triggerDetail = (AppServiceTriggerDetails) taskInstance.TriggerDetails;
+                _deferral = taskInstance.GetDeferral();
 
-            Hub.Instance.ForegroundConnection = triggerDetail.AppServiceConnection;
-            Hub.Instance.ForegroundTask = this;
+                Hub.Instance.ForegroundConnection = triggerDetail.AppServiceConnection;
+                Hub.Instance.ForegroundTask = this;
 
-            taskInstance.Canceled += (s, e) => Close();
-            triggerDetail.AppServiceConnection.ServiceClosed += (s, e) => Close();
+                taskInstance.Canceled += (s, e) => Close();
+                triggerDetail.AppServiceConnection.ServiceClosed += (s, e) => Close();
+            }
+            catch (System.Exception e)
+            {
+                Hub.Instance.RTCStatsManager.TrackException(e);
+                if (_deferral != null)
+                {
+                    _deferral.Complete();
+                }
+                throw e;
+            }
         }
 
         #endregion
