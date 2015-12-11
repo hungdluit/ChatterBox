@@ -68,7 +68,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             if (tracks.Count > 0)
             {
                 var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
-                Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);                
+                Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
             }
         }
 
@@ -86,7 +86,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnIceCandidate(RelayMessage message)
         {
-            //var candidate = new RTCIceCandidate { Candidate = message.Payload };
             var candidate =
                 DtoExtensions.FromDto(
                     (DtoIceCandidate)JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate)));
@@ -105,7 +104,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task SendLocalIceCandidate(RTCIceCandidate candidate)
         {
-            //Context.SendToPeer(RelayMessageTags.IceCandidate, candidate.Candidate);
             Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
         }
     }
