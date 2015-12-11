@@ -11,6 +11,7 @@ using Windows.UI.Core;
 using Windows.UI.Popups;
 using Microsoft.Practices.Unity;
 using ChatterBox.Client.Presentation.Shared.Services;
+using System.Collections.Generic;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -36,6 +37,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             CloseCommand = new DelegateCommand(OnCloseCommandExecute);
             SaveCommand = new DelegateCommand(OnSaveCommandExecute);
+            DeleteIceServerCommand = new DelegateCommand<IceServerViewModel>(OnDeleteIceServerCommandExecute);
+            AddIceServerCommand = new DelegateCommand(OnAddIceServerCommandExecute);
             Reset();
         }
 
@@ -93,6 +96,14 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 _localSettings.Values[nameof(SelectedCapResItem)] = SelectedCapResItem;
                 _localSettings.Values[SelectedFrameRateId] = (SelectedCapFPSItem != null) ? SelectedCapFPSItem.FrameRate : 0;
             }
+
+            var newList = new List<IceServer>();
+            foreach (var iceServerVm in IceServers)
+            {
+                iceServerVm.Apply();
+                newList.Add(iceServerVm.IceServer);
+            }
+            IceServerSettings.IceServers = newList;
 
             OnCloseCommandExecute();
         }
@@ -168,6 +179,23 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     _webrtcSettingsService.VideoCodec = videoCodec;
                 }
             }
+
+            IceServers = new ObservableCollection<IceServerViewModel>(
+                IceServerSettings.IceServers.Select(ices => new IceServerViewModel(ices)));
+        }
+
+        public DelegateCommand<IceServerViewModel> DeleteIceServerCommand { get; }
+
+        private void OnDeleteIceServerCommandExecute(IceServerViewModel iceServerVm)
+        {
+            IceServers.Remove(iceServerVm);
+        }
+
+        public DelegateCommand AddIceServerCommand { get; }
+
+        private void OnAddIceServerCommandExecute()
+        {
+            IceServers.Insert(0, new IceServerViewModel(new IceServer()));
         }
 
         #endregion
@@ -193,14 +221,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _signalingServerPort; }
             set { SetProperty(ref _signalingServerPort, value); }
         }
-		
-		public string ApplicationVersion
+
+        public string ApplicationVersion
         {
-            get { return  "ChatterBox " + string.Format("Version: {0}.{1}.{2}.{3}",
-                    Package.Current.Id.Version.Major,
-                    Package.Current.Id.Version.Minor,
-                    Package.Current.Id.Version.Build,
-                    Package.Current.Id.Version.Revision);
+            get
+            {
+                return "ChatterBox " + string.Format("Version: {0}.{1}.{2}.{3}",
+                  Package.Current.Id.Version.Major,
+                  Package.Current.Id.Version.Minor,
+                  Package.Current.Id.Version.Build,
+                  Package.Current.Id.Version.Revision);
             }
         }
 
@@ -276,7 +306,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             get { return _selectedCapFPSItem; }
             set { SetProperty(ref _selectedCapFPSItem, value); }
         }
-		
+
         private ObservableCollection<CodecInfo> _videoCodecs;
         /// <summary>
         /// The list of video codecs.
@@ -309,6 +339,25 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _selectedAudioCodec; }
             set { SetProperty(ref _selectedAudioCodec, value); }
+        }
+
+        private ObservableCollection<IceServerViewModel> _iceServers;
+        public ObservableCollection<IceServerViewModel> IceServers
+        {
+            get { return _iceServers; }
+            set { SetProperty(ref _iceServers, value); }
+        }
+
+        private IceServerViewModel _selectedIceServer;
+        public IceServerViewModel SelectedIceServer
+        {
+            get { return _selectedIceServer; }
+            set
+            {
+                if (_selectedIceServer != null) _selectedIceServer.IsSelected = false;
+                SetProperty(ref _selectedIceServer, value);
+                if (_selectedIceServer != null) _selectedIceServer.IsSelected = true;
+            }
         }
 
         #endregion
