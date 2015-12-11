@@ -28,7 +28,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public override async Task OnEnteringState()
         {
             // Entering idle state.
-            Context.VoipCoordinator.OnEnterIdle();
+            Context.VoipCoordinator.StopVoip();
 
             // Make sure the context is sane.
             Context.PeerConnection = null;
@@ -43,7 +43,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnLeavingState()
         {
-            Context.VoipCoordinator.OnLeavingIdle();
+            await Context.VoipCoordinator.StartVoipTask();
         }
     }
 }

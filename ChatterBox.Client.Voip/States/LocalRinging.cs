@@ -35,7 +35,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Answer()
         {
-            Context.VoipCoordinator.NotifyCallActive();
             Context.SendToPeer(RelayMessageTags.VoipAnswer, "");
 
             var establishIncomingState = new VoipState_EstablishIncoming(_message);
@@ -54,7 +53,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.PeerId = _message.FromUserId;
             Context.IsVideoEnabled = _callRequest.VideoEnabled;
 
-            Context.VoipCoordinator.OnEnterLocalRinging(this, _message);
+            Context.VoipCoordinator.StartIncomingCall(_message);
         }
 
         public override async Task OnRemoteHangup(RelayMessage message)
@@ -66,10 +65,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public override async Task Reject(IncomingCallReject reason)
         {
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
-            Context.VoipCoordinator.NotifyCallEnded();
 
-            var idleState = new VoipState_Idle();
-            await Context.SwitchState(idleState);
+            var hangingUpState = new VoipState_HangingUp();
+            await Context.SwitchState(hangingUpState);
         }
     }
 }

@@ -33,9 +33,9 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
         ///     Schedules the provided callback on the UI thread from a worker thread, and
         /// </summary>
         /// <param name="fn">The function to execute</param>
-        protected void RunOnUiThread(Action fn)
+        protected async void RunOnUiThread(Action fn)
         {
-            _uiDispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(fn));
+            await _uiDispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(fn));
         }
     }
 }

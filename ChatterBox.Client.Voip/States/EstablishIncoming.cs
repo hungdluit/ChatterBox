@@ -51,7 +51,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
                     new RTCIceServer {Url = "stun:stun1.l.google.com:19302"},
                     new RTCIceServer {Url = "stun:stun2.l.google.com:19302"},
                     new RTCIceServer {Url = "stun:stun3.l.google.com:19302"},
-                    new RTCIceServer {Url = "stun:stun4.l.google.com:19302"}
+                    new RTCIceServer {Url = "stun:stun4.l.google.com:19302"},
+                    new RTCIceServer {Url = "turn:40.76.194.255:3478", Credential="rtc123", Username="testrtc"}
                 }
             };
             Context.PeerConnection = new RTCPeerConnection(config);

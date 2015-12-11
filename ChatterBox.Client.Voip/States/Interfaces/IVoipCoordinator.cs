@@ -1,10 +1,6 @@
-﻿using ChatterBox.Client.Common.Communication.Voip;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Client.Common.Communication.Voip.States;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Client.Voip.States.Interfaces
 {
@@ -16,24 +12,12 @@ namespace ChatterBox.Client.Voip.States.Interfaces
     /// </remarks>
     internal interface IVoipCoordinator
     {
-        void OnEnterRemoteRinging(BaseVoipState currentState,
-                             OutgoingCallRequest request);
+        void StartOutgoingCall(OutgoingCallRequest request);
 
-        void OnEnterLocalRinging(BaseVoipState currentState,
-                            RelayMessage message);
+        void StartIncomingCall(RelayMessage message);
 
-        void OnEnterIdle();
+        void StopVoip();
 
-        void OnEnterHangingUp();
-
-        void OnLeavingIdle();
-
-        void OnOutgoingCallRejected();
-
-        void NotifyCallActive();
-
-        void NotifyCallEnded();
-
-        VoipContext Context { get; set; }
+        Task StartVoipTask();
     }
 }

@@ -29,15 +29,14 @@ namespace ChatterBox.Client.Common.Communication.Voip
             _dispatcher = dispatcher;
             _renderResolver = renderResolver;
             VoipCoordinator = coordinator;
-            VoipCoordinator.Context = this;
+
+            WebRTC.Initialize(_dispatcher);
 
             var idleState = new VoipState_Idle();
             SwitchState(idleState).Wait();
 
-            WebRTC.Initialize(_dispatcher);
-
             Media = Media.CreateMedia();
-            Media.EnumerateAudioVideoCaptureDevices();
+            Media.EnumerateAudioVideoCaptureDevices().AsTask().Wait();
 
             ResetRenderers();
         }
@@ -166,12 +165,19 @@ namespace ChatterBox.Client.Common.Communication.Voip
         public async Task WithState(Func<BaseVoipState, Task> fn)
         {
             await _sem.WaitAsync();
+            Debug.WriteLine("WithState - Semaphore - Got");
+
             try
             {
                 await fn(State);
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
             finally
             {
+                Debug.WriteLine("WithState - Semaphore - Release");
                 _sem.Release();
             }
         }
