@@ -321,8 +321,6 @@ namespace ChatterBox.Client.Universal.Background
                     return "googPlisSent";
                 case RTCStatsValueName.StatsValueNamePreferredJitterBufferMs:
                     return "googPreferredJitterBufferMs";
-                case RTCStatsValueName.StatsValueNameReadable:
-                    return "googReadable";
                 case RTCStatsValueName.StatsValueNameRemoteAddress:
                     return "googRemoteAddress";
                 case RTCStatsValueName.StatsValueNameRemoteCandidateId:
