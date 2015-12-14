@@ -44,10 +44,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
 
-        public void Answer()
+        public async void Answer()
         {
             Debug.WriteLine("VoipChannel.Answer");
-            Context.WithState(st => st.Answer()).Wait();
+            await Context.WithState(st => st.Answer());
             TrackCallStarted();
         }
 

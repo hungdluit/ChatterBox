@@ -36,9 +36,15 @@ namespace ChatterBox.Client.Common.Communication.Voip
             SwitchState(idleState).Wait();
 
             Media = Media.CreateMedia();
-            Media.EnumerateAudioVideoCaptureDevices().AsTask().Wait();
+            InitializeWebRTC();
 
             ResetRenderers();
+        }
+
+        private async void InitializeWebRTC()
+        {
+            await Media.EnumerateAudioVideoCaptureDevices();
+
         }
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
