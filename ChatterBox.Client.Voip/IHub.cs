@@ -23,5 +23,11 @@ namespace ChatterBox.Client.Voip
         void StartStatsManagerCallWatch();
 
         void StopStatsManagerCallWatch();
+
+        bool IsAppInsightsEnabled
+        {
+            get;
+            set;
+        }
     }
 }

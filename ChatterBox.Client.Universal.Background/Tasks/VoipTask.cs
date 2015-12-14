@@ -27,7 +27,10 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             }
             catch (Exception e)
             {
-                Hub.Instance.RTCStatsManager.TrackException(e);
+                if (Hub.Instance.IsAppInsightsEnabled)
+                {
+                    Hub.Instance.RTCStatsManager.TrackException(e);
+                }
                 if (_deferral != null)
                 {
                     _deferral.Complete();

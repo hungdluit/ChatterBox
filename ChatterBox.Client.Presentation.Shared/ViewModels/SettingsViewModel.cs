@@ -236,6 +236,37 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
+        public bool AppInsightsEnabled
+        {
+            get
+            {
+#if WIN10
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(AppInsightsEnabled)))
+                {
+                    return (bool) ApplicationData.Current.LocalSettings.Values[nameof(AppInsightsEnabled)];
+                }
+#endif
+                return false;
+            }
+            set
+            {
+#if WIN10
+                _localSettings.Values[nameof(AppInsightsEnabled)] = value;
+#endif
+            }
+        }
+
+        public bool IsWin10App
+        {
+            get
+            {
+#if WIN10
+                    return true;
+#endif
+                return false;
+           }
+        }
+
         #endregion
 
         #region WebRTC settings

@@ -31,5 +31,17 @@ namespace ChatterBox.Client.Common.Settings
             }
             set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(SignalingServerPort), value); }
         }
+
+        public static bool AppInsightsEnabled
+        {
+            get {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(AppInsightsEnabled)))
+                {
+                    return (bool) ApplicationData.Current.LocalSettings.Values[nameof(AppInsightsEnabled)];
+                }
+                return false;
+            }
+        }
+
     }
 }

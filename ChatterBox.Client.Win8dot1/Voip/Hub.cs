@@ -69,6 +69,15 @@ namespace ChatterBox.Client.Win8dot1.Voip
             Debug.WriteLine("Stats Manager is not integrated to 8.1 yet");
         }
 
+        public bool IsAppInsightsEnabled
+        {
+            get
+            {
+                return false;
+            }
+            set {}
+        }
+
         public void OnUpdateFrameFormat(FrameFormat frameFormat)
         {
         }
