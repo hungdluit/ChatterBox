@@ -20,14 +20,14 @@ Renderer::Renderer() :
 
 Renderer::~Renderer()
 {
-  OutputDebugString(L"Renderer::~Renderer()");
+  OutputDebugString(L"Renderer::~Renderer()\n");
   Teardown();
 }
 
 void Renderer::Teardown() {
-  OutputDebugString(L"Renderer::Teardown()");
+  OutputDebugString(L"Renderer::Teardown()\n");
   if (_mediaEngine != nullptr) {
-    OutputDebugString(L"_mediaEngine->Shutdown()");
+    OutputDebugString(L"_mediaEngine->Shutdown()\n");
     _mediaEngine->Shutdown();
     _mediaEngine.Reset();
   }
@@ -51,6 +51,8 @@ void Renderer::Teardown() {
       CloseHandle(foregroundProcess);
     }
   }
+
+  _streamSource = nullptr;
 }
 
 void Renderer::SetupRenderer(uint32 foregroundProcessId, Windows::Media::Core::IMediaSource^ streamSource)

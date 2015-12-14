@@ -64,6 +64,7 @@ IFACEMETHODIMP SchemeHandler::BeginCreateObject(
         }
         return hr;
     }
+    propMap->Clear();
     ComPtr<IMFAsyncResult> result;
     hr = MFCreateAsyncResult(frameSourceInspectable.Get(), pCallback, punkState, &result);
     if (FAILED(hr))

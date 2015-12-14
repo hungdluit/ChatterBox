@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using ChatterBox.Client.Voip;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -44,17 +45,23 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
 
-        public async void Answer()
+        public void Answer()
         {
-            Debug.WriteLine("VoipChannel.Answer");
-            await Context.WithState(st => st.Answer());
-            TrackCallStarted();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.Answer");
+                Context.WithState(st => st.Answer()).Wait();
+                TrackCallStarted();
+            });
         }
 
         public void Call(OutgoingCallRequest request)
         {
-            Debug.WriteLine("VoipChannel.Call");
-            Context.WithState(st => st.Call(request)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.Call");
+                Context.WithState(st => st.Call(request)).Wait();
+            });
         }
 
         public VoipState GetVoipState()
@@ -65,64 +72,92 @@ namespace ChatterBox.Client.Common.Communication.Voip
         // Hangup can happen on both sides
         public void Hangup()
         {
-            Debug.WriteLine("VoipChannel.Hangup");
-            // don't log CallEnded if it is not started yet
-            if (Context.GetVoipState().State != VoipStateEnum.RemoteRinging)
+            Task.Run(() =>
             {
-                TrackCallEnded();
-            }
-            Context.WithState(st => st.Hangup()).Wait();
+
+                Debug.WriteLine("VoipChannel.Hangup");
+                // don't log CallEnded if it is not started yet
+                if (Context.GetVoipState().State != VoipStateEnum.RemoteRinging)
+                {
+                    TrackCallEnded();
+                }
+                Context.WithState(st => st.Hangup()).Wait();
+            });
         }
 
         public void OnIceCandidate(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnIceCandidate");
-            Context.WithState(st => st.OnIceCandidate(message)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnIceCandidate");
+                Context.WithState(st => st.OnIceCandidate(message)).Wait();
+            });
         }
 
         // Remotely initiated calls
         public void OnIncomingCall(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnIncomingCall");
-            Context.WithState(st => st.OnIncomingCall(message)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnIncomingCall");
+                Context.WithState(st => st.OnIncomingCall(message)).Wait();
+            });
         }
 
         public void OnOutgoingCallAccepted(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnOutgoingCallAccepted");
-            Context.WithState(st => st.OnOutgoingCallAccepted(message)).Wait();
-            TrackCallStarted();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnOutgoingCallAccepted");
+                Context.WithState(st => st.OnOutgoingCallAccepted(message)).Wait();
+                TrackCallStarted();
+            });
         }
 
         public void OnOutgoingCallRejected(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnOutgoingCallRejected");
-            Context.WithState(st => st.OnOutgoingCallRejected(message)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnOutgoingCallRejected");
+                Context.WithState(st => st.OnOutgoingCallRejected(message)).Wait();
+            });
         }
 
         public void OnRemoteHangup(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnRemoteHangup");
-            Context.WithState(st => st.OnRemoteHangup(message)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnRemoteHangup");
+                Context.WithState(st => st.OnRemoteHangup(message)).Wait();
+            });
         }
 
         // WebRTC signaling
         public void OnSdpAnswer(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnSdpAnswer");
-            Context.WithState(st => st.OnSdpAnswer(message)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnSdpAnswer");
+                Context.WithState(st => st.OnSdpAnswer(message)).Wait();
+            });
         }
 
         public void OnSdpOffer(RelayMessage message)
         {
-            Debug.WriteLine("VoipChannel.OnSdpOffer");
-            Context.WithState(st => st.OnSdpOffer(message)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.OnSdpOffer");
+                Context.WithState(st => st.OnSdpOffer(message)).Wait();
+            });
         }
 
         public void Reject(IncomingCallReject reason)
         {
-            Debug.WriteLine("VoipChannel.Reject");
-            Context.WithState(st => st.Reject(reason)).Wait();
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.Reject");
+                Context.WithState(st => st.Reject(reason)).Wait();
+            });
         }
 
         #endregion
