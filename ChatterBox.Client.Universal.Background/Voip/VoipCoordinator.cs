@@ -15,9 +15,14 @@ namespace ChatterBox.Client.Universal.Background.Voip
     {
         public void StartOutgoingCall(OutgoingCallRequest request)
         {
+            var capabilities = VoipPhoneCallMedia.Audio;
+            if (request.VideoEnabled)
+            {
+                capabilities |= VoipPhoneCallMedia.Video;
+            }
             var vCC = VoipCallCoordinator.GetDefault();
             VoipCall = vCC.RequestNewOutgoingCall(request.PeerUserId, request.PeerUserId, "ChatterBox Universal",
-                VoipPhoneCallMedia.Audio);
+                capabilities);
             if (VoipCall != null)
             {
                 VoipCall.EndRequested += Call_EndRequested;
@@ -42,6 +47,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
             if (foregroundIsVisible)
             {
+                // TODO: As in the outgoing case, set capabilities to video if requested.
                 VoipCall = voipCallCoordinatorCc.RequestNewOutgoingCall(message.FromUserId, message.FromName, "ChatterBox Universal",
                     VoipPhoneCallMedia.Audio);
                 if (VoipCall != null)

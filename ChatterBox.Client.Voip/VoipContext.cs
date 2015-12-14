@@ -30,21 +30,33 @@ namespace ChatterBox.Client.Common.Communication.Voip
             _renderResolver = renderResolver;
             VoipCoordinator = coordinator;
 
-            WebRTC.Initialize(_dispatcher);
-
             var idleState = new VoipState_Idle();
             SwitchState(idleState).Wait();
-
-            Media = Media.CreateMedia();
-            InitializeWebRTC();
 
             ResetRenderers();
         }
 
-        private async void InitializeWebRTC()
+        /// <summary>
+        /// On Win10 in a background task, WebRTC initialization has to be done
+        /// when we have access to the resources.  That's inside an active
+        /// voip call.
+        /// This function must be called after VoipCoordinator.StartVoipTask()
+        /// </summary>
+        /// <returns></returns>
+        public async Task InitializeWebRTC()
         {
-            await Media.EnumerateAudioVideoCaptureDevices();
-
+            if (Media == null)
+            {
+                WebRTC.Initialize(_dispatcher);
+                Media = Media.CreateMedia();
+                Media.SetDisplayOrientation(_displayOrientation);
+                await Media.EnumerateAudioVideoCaptureDevices();
+                // TODO: Remove once those are driven by the UI.
+                var audioCaptureDevices = Media.GetAudioCaptureDevices();
+                Media.SelectAudioDevice(audioCaptureDevices[0]);
+                var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
+                Media.SelectAudioPlayoutDevice(audioPlayoutDevices[0]);
+            }
         }
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
@@ -75,7 +87,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public CodecInfo VideoCodec { get; set; }
 
-        public Media Media { get; set; }
+        public Media Media { get; private set; }
 
         public bool IsVideoEnabled { get; set; }
 
@@ -222,7 +234,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 lock (this)
                 {
                     _displayOrientation = value;
-                    Media.SetDisplayOrientation(_displayOrientation);
+                    if (Media != null)
+                    {
+                        Media.SetDisplayOrientation(_displayOrientation);
+                    }
                 }
             }
         }
