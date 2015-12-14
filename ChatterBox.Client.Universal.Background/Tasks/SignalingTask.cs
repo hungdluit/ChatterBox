@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ChatterBox.Client.Common.Background.DeferralWrappers;
+using ChatterBox.Client.Common.Notifications;
+using System;
 using Windows.ApplicationModel.Background;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
-using ChatterBox.Client.Common.Notifications;
-using ChatterBox.Client.Common.Background.DeferralWrappers;
 using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace ChatterBox.Client.Universal.Background.Tasks
@@ -18,7 +18,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
             {
                 try
                 {
-                    var details = (SocketActivityTriggerDetails) taskInstance.TriggerDetails;
+                    var details = (SocketActivityTriggerDetails)taskInstance.TriggerDetails;
                     switch (details.Reason)
                     {
                         case SocketActivityTriggerReason.SocketActivity:
@@ -46,12 +46,14 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                             Hub.Instance.SignalingClient.ClientHeartBeat();
                             break;
                         case SocketActivityTriggerReason.SocketClosed:
+                            Hub.Instance.SignalingClient.ServerConnectionError();
                             //ToastNotificationService.ShowToastNotification("Disconnected.");
                             break;
                     }
                 }
                 catch (Exception exception)
                 {
+                    Hub.Instance.SignalingClient.ServerConnectionError();
                     ToastNotificationService.ShowToastNotification(string.Format("Error in SignalingTask: {0}",
                         exception.Message));
                 }

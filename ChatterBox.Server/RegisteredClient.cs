@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
-using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using ChatterBox.Common.Communication.Contracts;
+﻿using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Interfaces;
 using ChatterBox.Common.Communication.Messages.Peers;
@@ -13,6 +6,13 @@ using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
 using Common.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.IO;
+using System.Linq;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Server
 {
@@ -25,7 +25,7 @@ namespace ChatterBox.Server
 
         private TcpClient ActiveConnection { get; set; }
         public int Avatar { get; set; }
-        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IServerChannel));
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IServerChannel));
         private ChannelInvoker ClientReadProxy { get; }
         private Guid ConnectionId { get; set; }
         public string Domain { get; set; }
@@ -114,6 +114,10 @@ namespace ChatterBox.Server
             EnqueueMessage(message);
         }
 
+        public void ServerConnectionError()
+        {
+        }
+
         #endregion
 
         private void EnqueueMessage(IMessage message, [CallerMemberName] string method = null)
@@ -184,7 +188,7 @@ namespace ChatterBox.Server
         public void SetActiveConnection(UnregisteredConnection connection, Registration message)
         {
             Logger.Debug("Handling new TCP connection.");
-            
+
             ConnectionId = Guid.NewGuid();
             ActiveConnection = connection.TcpClient;
 

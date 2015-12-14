@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using ChatterBox.Common.Communication.Contracts;
+﻿using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
 using Common.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.IO;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace ChatterBox.Client.Console
 {
@@ -25,7 +25,7 @@ namespace ChatterBox.Client.Console
             ServerReadProxy = new ChannelInvoker(this);
         }
 
-        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof (IClientChannel));
+        private ChannelWriteHelper ChannelWriteHelper { get; } = new ChannelWriteHelper(typeof(IClientChannel));
         public string Label { get; set; }
 
         private ILog Logger =>
@@ -122,6 +122,11 @@ namespace ChatterBox.Client.Console
             }
         }
 
+        public void ServerConnectionError()
+        {
+
+        }
+
         #endregion
 
         public void Connect(string host = "localhost", int port = 50000)
@@ -129,7 +134,7 @@ namespace ChatterBox.Client.Console
             TcpClient.Connect(host, port);
             var networkStream = TcpClient.GetStream();
             _reader = new StreamReader(networkStream);
-            _writer = new StreamWriter(networkStream) {AutoFlush = true};
+            _writer = new StreamWriter(networkStream) { AutoFlush = true };
             StartReading();
             StartWriting();
         }

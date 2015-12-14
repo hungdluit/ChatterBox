@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using ChatterBox.Client.Common.Avatars;
+﻿using ChatterBox.Client.Common.Avatars;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Notifications;
@@ -17,6 +9,14 @@ using ChatterBox.Common.Communication.Messages.Peers;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace ChatterBox.Client.Common.Signaling
 {
@@ -164,6 +164,12 @@ namespace ChatterBox.Client.Common.Signaling
             {
                 _voipChannel.OnRemoteHangup(message);
             }
+        }
+
+        public void ServerConnectionError()
+        {
+            SignalingStatus.IsRegistered = false;
+            _foregroundChannel.OnSignaledRegistrationStatusUpdated();
         }
 
         #endregion
