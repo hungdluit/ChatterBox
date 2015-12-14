@@ -100,8 +100,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             var newList = new List<IceServer>();
             foreach (var iceServerVm in IceServers)
             {
-                iceServerVm.Apply();
-                newList.Add(iceServerVm.IceServer);
+                if (iceServerVm.Apply())
+                {
+                    newList.Add(iceServerVm.IceServer);
+                }
             }
             IceServerSettings.IceServers = newList;
 

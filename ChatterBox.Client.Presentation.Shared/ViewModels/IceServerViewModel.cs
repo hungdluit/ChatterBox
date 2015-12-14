@@ -19,11 +19,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             Password = iceServer.Password;
         }
 
-        public void Apply()
+        public bool Apply()
         {
             IceServer.Url = Url;
             IceServer.Username = Username;
             IceServer.Password = Password;
+
+            return !string.IsNullOrEmpty(Url);
         }
 
         public IceServer IceServer { get; set; }    
