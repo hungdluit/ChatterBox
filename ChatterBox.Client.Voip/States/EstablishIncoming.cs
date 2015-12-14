@@ -72,8 +72,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             var tracks = stream.GetVideoTracks();
             if (tracks.Count > 0)
             {
-                var media = await Media.CreateMediaAsync();
-                var source = media.CreateMediaStreamSource(tracks[0], 30, "PEER");
+                var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "PEER");
                 Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
             }
         }
