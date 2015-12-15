@@ -56,6 +56,7 @@ namespace ChatterBox.Client.Universal
                 ExceptionTelemetry excTelemetry = new ExceptionTelemetry((Exception)e.Exception);
                 excTelemetry.SeverityLevel = SeverityLevel.Critical;
                 excTelemetry.HandledAt = ExceptionHandledAt.Unhandled;
+                excTelemetry.Timestamp = System.DateTimeOffset.UtcNow;
                 var telemetry = new TelemetryClient();
                 telemetry.TrackException(excTelemetry);
 

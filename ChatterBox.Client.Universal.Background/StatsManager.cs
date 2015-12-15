@@ -400,6 +400,7 @@ namespace ChatterBox.Client.Universal.Background
             ExceptionTelemetry excTelemetry = new ExceptionTelemetry(e);
             excTelemetry.SeverityLevel = SeverityLevel.Critical;
             excTelemetry.HandledAt = ExceptionHandledAt.Unhandled;
+            excTelemetry.Timestamp = System.DateTimeOffset.UtcNow;
             _telemetry.TrackException(excTelemetry);
         }
 
