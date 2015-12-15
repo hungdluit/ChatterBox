@@ -23,6 +23,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private int _signalingServerPort;
         private IWebRTCSettingsService _webrtcSettingsService;
         private CoreDispatcher _dispatcher;
+        private bool _appInsightsEnabled;
         private readonly string[] incompatibleAudioCodecs =
             new string[] { "CN32000", "CN16000", "CN8000", "red8000", "telephone-event8000" };
         private string SelectedFrameRateId = nameof(SelectedFrameRateId) + "Frame";
@@ -63,6 +64,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
             SignalingSettings.SignalingServerHost = SignalingServerHost;
             RegistrationSettings.Domain = Domain;
+
+#if WIN10
+            SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
+#endif
 
             if (SelectedCamera != null)
             {
@@ -115,6 +120,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SignalingServerPort = int.Parse(SignalingSettings.SignalingServerPort);
             SignalingServerHost = SignalingSettings.SignalingServerHost;
             Domain = RegistrationSettings.Domain;
+#if WIN10
+            AppInsightsEnabled = SignalingSettings.AppInsightsEnabled;
+#endif
 
             Cameras = new ObservableCollection<MediaDevice>(_webrtcSettingsService.VideoCaptureDevices);
             if (_localSettings.Values[nameof(SelectedCamera)] != null)
@@ -240,19 +248,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get
             {
-#if WIN10
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(nameof(AppInsightsEnabled)))
-                {
-                    return (bool) ApplicationData.Current.LocalSettings.Values[nameof(AppInsightsEnabled)];
-                }
-#endif
-                return false;
+                return _appInsightsEnabled;
             }
             set
             {
-#if WIN10
-                _localSettings.Values[nameof(AppInsightsEnabled)] = value;
-#endif
+                SetProperty(ref _appInsightsEnabled, value);
             }
         }
 

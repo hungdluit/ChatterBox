@@ -75,7 +75,7 @@ namespace ChatterBox.Client.Win8dot1.Voip
             {
                 return false;
             }
-            set {}
+            set {/*AppInsights is not supported for 8.1*/}
         }
 
         public void OnUpdateFrameFormat(FrameFormat frameFormat)

@@ -206,7 +206,7 @@
                     <TextBox Text="{Binding SignalingServerPort, Mode=TwoWay}" HorizontalAlignment="Stretch" Grid.Row="4" />
                     <TextBlock Text="Domain" Margin="5" Grid.Row="5" HorizontalAlignment="Left" />
                     <TextBox Text="{Binding Domain, Mode=TwoWay}" HorizontalAlignment="Stretch" Grid.Row="6" />
-                    <ToggleSwitch Header="AppInsight Logging"  Margin="10" Grid.Row="7" IsOn="{Binding AppInsightsEnabled, Mode=TwoWay}"
+                    <ToggleSwitch Header="AppInsight Logging" Grid.Row="7" IsOn="{Binding AppInsightsEnabled, Mode=TwoWay}"
                       Width="Auto" MinWidth="200" Visibility="{Binding IsWin10App}"/>
                     <TextBlock Text="About" Margin="10" HorizontalAlignment="Center" FontSize="18"
                                FontWeight="Bold" Grid.Row="8" />

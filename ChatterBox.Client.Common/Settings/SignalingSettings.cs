@@ -41,6 +41,7 @@ namespace ChatterBox.Client.Common.Settings
                 }
                 return false;
             }
+            set { ApplicationData.Current.LocalSettings.Values.AddOrUpdate(nameof(AppInsightsEnabled), value); }
         }
 
     }
