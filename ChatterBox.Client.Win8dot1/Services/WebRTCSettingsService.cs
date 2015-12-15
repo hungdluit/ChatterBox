@@ -12,6 +12,12 @@ namespace ChatterBox.Client.Win8dot1.Services
         public WebRTCSettingsService(VoipContext voipContext)
         {
             _voipContext = voipContext;
+            InitializeWebRTC();
+        }
+
+        private async void InitializeWebRTC()
+        {
+            await _voipContext.InitializeWebRTC();
         }
 
         private MediaDevice _audioDevice;

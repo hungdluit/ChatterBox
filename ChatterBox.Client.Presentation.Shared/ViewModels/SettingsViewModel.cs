@@ -38,8 +38,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             CloseCommand = new DelegateCommand(OnCloseCommandExecute);
             SaveCommand = new DelegateCommand(OnSaveCommandExecute);
             DeleteIceServerCommand = new DelegateCommand<IceServerViewModel>(OnDeleteIceServerCommandExecute);
-            AddIceServerCommand = new DelegateCommand(OnAddIceServerCommandExecute);
-            Reset();
+            AddIceServerCommand = new DelegateCommand(OnAddIceServerCommandExecute);            
         }
 
         #region Navigation
