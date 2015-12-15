@@ -22,6 +22,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace ChatterBox.Client.Universal
 {
@@ -40,6 +41,8 @@ namespace ChatterBox.Client.Universal
                 WindowsCollectors.Metadata |
                 WindowsCollectors.PageView |
                 WindowsCollectors.Session);
+            TelemetryConfiguration.Active.DisableTelemetry =
+                !ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled;
             UnhandledException += CurrentDomain_UnhandledException;
             InitializeComponent();
             Suspending += OnSuspending;
@@ -48,13 +51,16 @@ namespace ChatterBox.Client.Universal
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            ExceptionTelemetry excTelemetry = new ExceptionTelemetry((Exception)e.Exception);
-            excTelemetry.SeverityLevel = SeverityLevel.Critical;
-            excTelemetry.HandledAt = ExceptionHandledAt.Unhandled;
-            var telemetry = new TelemetryClient();
-            telemetry.TrackException(excTelemetry);
+            if (ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled)
+            {
+                ExceptionTelemetry excTelemetry = new ExceptionTelemetry((Exception)e.Exception);
+                excTelemetry.SeverityLevel = SeverityLevel.Critical;
+                excTelemetry.HandledAt = ExceptionHandledAt.Unhandled;
+                var telemetry = new TelemetryClient();
+                telemetry.TrackException(excTelemetry);
 
-            telemetry.Flush();
+                telemetry.Flush();
+            }
         }
 
         public UnityContainer Container { get; } = new UnityContainer();

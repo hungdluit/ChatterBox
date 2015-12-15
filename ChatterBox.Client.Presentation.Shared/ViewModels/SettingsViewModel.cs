@@ -23,6 +23,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private int _signalingServerPort;
         private IWebRTCSettingsService _webrtcSettingsService;
         private CoreDispatcher _dispatcher;
+        private bool _appInsightsEnabled;
         private readonly string[] incompatibleAudioCodecs =
             new string[] { "CN32000", "CN16000", "CN8000", "red8000", "telephone-event8000" };
         private string SelectedFrameRateId = nameof(SelectedFrameRateId) + "Frame";
@@ -62,6 +63,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
             SignalingSettings.SignalingServerHost = SignalingServerHost;
             RegistrationSettings.Domain = Domain;
+
+#if WIN10
+            SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
+#endif
 
             if (SelectedCamera != null)
             {
@@ -114,6 +119,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SignalingServerPort = int.Parse(SignalingSettings.SignalingServerPort);
             SignalingServerHost = SignalingSettings.SignalingServerHost;
             Domain = RegistrationSettings.Domain;
+#if WIN10
+            AppInsightsEnabled = SignalingSettings.AppInsightsEnabled;
+#endif
 
             Cameras = new ObservableCollection<MediaDevice>(_webrtcSettingsService.VideoCaptureDevices);
             if (_localSettings.Values[nameof(SelectedCamera)] != null)
@@ -233,6 +241,29 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                   Package.Current.Id.Version.Build,
                   Package.Current.Id.Version.Revision);
             }
+        }
+
+        public bool AppInsightsEnabled
+        {
+            get
+            {
+                return _appInsightsEnabled;
+            }
+            set
+            {
+                SetProperty(ref _appInsightsEnabled, value);
+            }
+        }
+
+        public bool IsWin10App
+        {
+            get
+            {
+#if WIN10
+                    return true;
+#endif
+                return false;
+           }
         }
 
         #endregion

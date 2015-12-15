@@ -6,6 +6,7 @@ using webrtc_winrt_api;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using System.Threading;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -76,6 +77,11 @@ namespace ChatterBox.Client.Universal.Background
                     Debug.WriteLine("StatsManager: Stats are not toggled as manager is not initialized yet.");
                 }
             }
+        }
+
+        public void DisableTelemetry(bool disable)
+        {
+            TelemetryConfiguration.Active.DisableTelemetry = disable;
         }
 
         private void ProcessReports(IList<RTCStatsReport> reports)
@@ -415,7 +421,10 @@ namespace ChatterBox.Client.Universal.Background
                 Task.Run(() => _telemetry.TrackRequest("Call Duration", currentDateTime,
                    time,
                    "200", true));  // Response code, success
-                _metricsCollector.TrackCurrentDelayMetrics();
+                if (_metricsCollector != null)
+                {
+                    _metricsCollector.TrackCurrentDelayMetrics();
+                }
             }
         }
     }

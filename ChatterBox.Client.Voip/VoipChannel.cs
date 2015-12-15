@@ -50,6 +50,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.Answer");
+                _hub.IsAppInsightsEnabled = ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled;
                 Context.WithState(st => st.Answer()).Wait();
                 TrackCallStarted();
             });
@@ -60,6 +61,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.Call");
+                _hub.IsAppInsightsEnabled = ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled;
                 Context.WithState(st => st.Call(request)).Wait();
             });
         }
@@ -164,6 +166,9 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         private void TrackCallStarted()
         {
+            if (!_hub.IsAppInsightsEnabled) {
+                return;
+            }
             _callStartDateTime = DateTimeOffset.Now;
             var currentConnection = NetworkInformation.GetInternetConnectionProfile();
             string connType;
@@ -189,6 +194,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         private void TrackCallEnded() {
+            if (!_hub.IsAppInsightsEnabled)
+            {
+                return;
+            }
             // log call duration as CallEnded event property
             string duration = DateTimeOffset.Now.Subtract(_callStartDateTime).Duration().ToString(@"hh\:mm\:ss");
             var properties = new Dictionary<string, string> { { "Call Duration", duration } };

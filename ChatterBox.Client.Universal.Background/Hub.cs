@@ -128,6 +128,18 @@ namespace ChatterBox.Client.Universal.Background
 
         #region IHub members
 
+        private bool _isAppInsightsEnabled = false;
+        public bool IsAppInsightsEnabled
+        {
+            get {
+                return _isAppInsightsEnabled;
+            }
+            set {
+                _isAppInsightsEnabled = value;
+                RTCStatsManager.DisableTelemetry(!_isAppInsightsEnabled);
+            }
+        }
+
         public void Relay(RelayMessage message)
         {
             SignalingClient.Relay(message);
@@ -172,6 +184,7 @@ namespace ChatterBox.Client.Universal.Background
         {
             RTCStatsManager.StopCallWatch();
         }
+
         #endregion
     }
 }

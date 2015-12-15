@@ -117,8 +117,12 @@ namespace ChatterBox.Client.Common.Communication.Voip
                             });
                         }
                     };
-                    _hub.InitialiazeStatsManager(_peerConnection);
-                    _hub.ToggleStatsManagerConnectionState(true);
+
+                    if (_hub.IsAppInsightsEnabled)
+                    {
+                        _hub.InitialiazeStatsManager(_peerConnection);
+                        _hub.ToggleStatsManagerConnectionState(true);
+                    }
                     _peerConnection.OnAddStream += evt =>
                     {
                         if (evt.Stream != null)
@@ -132,7 +136,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 }
                 else
                 {
-                    _hub.ToggleStatsManagerConnectionState(false);
+                    if (_hub.IsAppInsightsEnabled)
+                    {
+                        _hub.ToggleStatsManagerConnectionState(false);
+                    }
                 }
             }
         }
