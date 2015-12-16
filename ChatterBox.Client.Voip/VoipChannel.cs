@@ -130,6 +130,10 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.OnRemoteHangup");
+                if (Context.GetVoipState().State == VoipStateEnum.ActiveCall)
+                {
+                    TrackCallEnded();
+                }
                 Context.WithState(st => st.OnRemoteHangup(message)).Wait();
             });
         }
