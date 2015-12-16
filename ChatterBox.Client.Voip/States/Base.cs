@@ -99,7 +99,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
         }
 
-        public virtual async Task SendLocalIceCandidate(RTCIceCandidate candidate)
+        public virtual async Task SendLocalIceCandidates(RTCIceCandidate[] candidates)
         {
         }
 

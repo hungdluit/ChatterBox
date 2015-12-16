@@ -9,6 +9,7 @@ using ChatterBox.Client.Voip.States.Interfaces;
 using Microsoft.Practices.Unity;
 using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using System.Linq;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -47,10 +48,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnIceCandidate(RelayMessage message)
         {
-            var candidate =
-                DtoExtensions.FromDto(
-                    (DtoIceCandidate) JsonConvert.Deserialize(message.Payload, typeof (DtoIceCandidate)));
-            await Context.PeerConnection.AddIceCandidate(candidate);
+            var candidatesDto = (DtoIceCandidate[])JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate[]));
+            var candidates = candidatesDto.Select(DtoExtensions.FromDto);
+            foreach (var candidate in candidates)
+            {
+                await Context.PeerConnection.AddIceCandidate(candidate);
+            }
         }
 
         public override async Task OnRemoteHangup(RelayMessage message)
@@ -59,9 +62,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             await Context.SwitchState(hangingUpState);
         }
 
-        public override async Task SendLocalIceCandidate(RTCIceCandidate candidate)
+        public override async Task SendLocalIceCandidates(RTCIceCandidate[] candidates)
         {
-            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(DtoExtensions.ToDto(candidate)));
+            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(candidates.Select(DtoExtensions.ToDto).ToArray()));
         }
     }
 }

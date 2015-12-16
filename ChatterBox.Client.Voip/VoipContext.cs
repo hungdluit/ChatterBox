@@ -11,6 +11,7 @@ using Windows.Graphics.Display;
 using webrtc_winrt_api;
 using System.Threading;
 using Windows.UI.Core;
+using System.Collections.Generic;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -96,6 +97,31 @@ namespace ChatterBox.Client.Common.Communication.Voip
         public MediaStream LocalStream { get; set; }
         public MediaStream RemoteStream { get; set; }
 
+        private Timer _iceCandidateBufferTimer;
+        private List<RTCIceCandidate> _bufferedIceCandidates = new List<RTCIceCandidate>();
+        private SemaphoreSlim _iceBufferSemaphore = new SemaphoreSlim(1, 1);
+        private async Task QueueIceCandidate(RTCIceCandidate candidate)
+        {
+            await _iceBufferSemaphore.WaitAsync();
+            _bufferedIceCandidates.Add(candidate);
+            if (_iceCandidateBufferTimer == null)
+            {
+                // Flush the ice candidates in 100ms.
+                _iceCandidateBufferTimer = new Timer(FlushBufferedIceCandidates, null, 100, Timeout.Infinite);
+            }
+            _iceBufferSemaphore.Release();
+        }
+
+        private async void FlushBufferedIceCandidates(object state)
+        {
+            await _iceBufferSemaphore.WaitAsync();
+            _iceCandidateBufferTimer = null;
+            var candidates = _bufferedIceCandidates.ToArray();
+            _bufferedIceCandidates.Clear();
+            await WithState(async st => await st.SendLocalIceCandidates(candidates));
+            _iceBufferSemaphore.Release();
+        }
+
         private RTCPeerConnection _peerConnection { get; set; }
         public RTCPeerConnection PeerConnection
         {
@@ -111,10 +137,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
                     {
                         if (evt.Candidate != null)
                         {
-                            Task.Run(async () =>
-                            {
-                                await WithState(async st => await st.SendLocalIceCandidate(evt.Candidate));
-                            });
+                            QueueIceCandidate(evt.Candidate);
                         }
                     };
 
