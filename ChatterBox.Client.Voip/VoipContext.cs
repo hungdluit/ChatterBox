@@ -5,6 +5,7 @@ using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Client.Voip;
 using ChatterBox.Client.Voip.States.Interfaces;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Graphics.Display;
@@ -116,9 +117,16 @@ namespace ChatterBox.Client.Common.Communication.Voip
         {
             await _iceBufferSemaphore.WaitAsync();
             _iceCandidateBufferTimer = null;
-            var candidates = _bufferedIceCandidates.ToArray();
-            _bufferedIceCandidates.Clear();
-            await WithState(async st => await st.SendLocalIceCandidates(candidates));
+
+            // Chunk in groups of 10 to not blow the size limit
+            // on the storage used by the receiving side.
+            while (_bufferedIceCandidates.Count > 0)
+            {
+                var candidates = _bufferedIceCandidates.Take(10).ToArray();
+                _bufferedIceCandidates = _bufferedIceCandidates.Skip(10).ToList();
+                await WithState(async st => await st.SendLocalIceCandidates(candidates));
+            }
+
             _iceBufferSemaphore.Release();
         }
 

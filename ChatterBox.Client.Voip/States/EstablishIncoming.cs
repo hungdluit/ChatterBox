@@ -79,11 +79,10 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnIceCandidate(RelayMessage message)
         {
-            var candidatesDto = (DtoIceCandidate[])JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidate[]));
-            var candidates = candidatesDto.Select(DtoExtensions.FromDto);
-            foreach (var candidate in candidates)
+            var candidates = (DtoIceCandidates)JsonConvert.Deserialize(message.Payload, typeof(DtoIceCandidates));
+            foreach (var candidate in candidates.Candidates)
             {
-                await Context.PeerConnection.AddIceCandidate(candidate);
+                await Context.PeerConnection.AddIceCandidate(candidate.FromDto());
             }
         }
 
@@ -99,7 +98,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task SendLocalIceCandidates(RTCIceCandidate[] candidates)
         {
-            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(candidates.Select(DtoExtensions.ToDto).ToArray()));
+            Context.SendToPeer(RelayMessageTags.IceCandidate, JsonConvert.Serialize(candidates.ToDto()));
         }
     }
 }

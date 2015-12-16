@@ -13,4 +13,10 @@ namespace ChatterBox.Client.Common.Signaling.Dto
         [DataMember]
         public ushort SdpMLineIndex { get; set; }
     }
+
+    public sealed class DtoIceCandidates
+    {
+        [DataMember]
+        public DtoIceCandidate[] Candidates { get; set; }
+    }
 }
