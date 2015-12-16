@@ -27,5 +27,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void OnSdpOffer(RelayMessage message);
         void Reject(IncomingCallReject reason);
         void RegisterVideoElements(MediaElement self, MediaElement peer);
+
+        void ConfigureMicrophone(MicrophoneConfig config);
     }
 }

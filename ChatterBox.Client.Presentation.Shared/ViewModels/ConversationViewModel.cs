@@ -36,6 +36,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private long _remoteSwapChainHandle;
         private Windows.Foundation.Size _localNativeVideoSize;
         private Windows.Foundation.Size _remoteNativeVideoSize;
+        private bool _isMicEnabled;
 
         private MediaElement _selfVideoElement;
         private MediaElement _peerVideoElement;
@@ -57,6 +58,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             AnswerCommand = new DelegateCommand(OnAnswerCommandExecute, OnAnswerCommandCanExecute);
             RejectCommand = new DelegateCommand(OnRejectCommandExecute, OnRejectCommandCanExecute);
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
+            SwitchMicCommand = new DelegateCommand(SwitchMicCommandExecute, SwitchMicCommandCanExecute);
         }
 
         public DelegateCommand AnswerCommand { get; }
@@ -64,6 +66,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public DelegateCommand VideoCallCommand { get; }
         public DelegateCommand CloseConversationCommand { get; }
         public DelegateCommand HangupCommand { get; }
+        public DelegateCommand SwitchMicCommand { get; }
 
         public string InstantMessage
         {
@@ -232,6 +235,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
+        public bool IsMicEnabled
+        {
+            get
+            {
+                return _isMicEnabled;
+            }
+            set
+            {
+                SetProperty(ref _isMicEnabled, value);
+            }
+        }
+
         public void Initialize()
         {
             var voipState = _voipChannel.GetVoipState();
@@ -314,6 +329,20 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             });
         }
 
+        private bool SwitchMicCommandCanExecute()
+        {
+            return IsCallConnected || IsLocalRinging || IsRemoteRinging;
+        }
+
+        private void SwitchMicCommandExecute()
+        {
+            IsMicEnabled = !IsMicEnabled;
+            _voipChannel.ConfigureMicrophone(new MicrophoneConfig
+            {
+                Muted = !IsMicEnabled
+            });
+        }
+
         private void OnRelayMessagesUpdated()
         {
             var newMessages = SignaledRelayMessages.Messages
@@ -377,6 +406,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = true;
                         IsRemoteRinging = false;
                         IsCallConnected = false;
+                        IsMicEnabled = true; //Start new calls with mic enabled
                     }
                     else
                     {
@@ -390,6 +420,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = true;
                         IsCallConnected = false;
+                        IsMicEnabled = true; //Start new calls with mic enabled
                     }
                     else
                     {
@@ -493,6 +524,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             AnswerCommand.RaiseCanExecuteChanged();
             HangupCommand.RaiseCanExecuteChanged();
             RejectCommand.RaiseCanExecuteChanged();
+            SwitchMicCommand.RaiseCanExecuteChanged();
         }
 
         public event Action<ConversationViewModel> OnIsInCallMode;
