@@ -20,6 +20,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             Name = RegistrationSettings.Name;
 
             IsCompleted = ValidateStrings(Name, Domain);
+
+            if (string.IsNullOrEmpty(Name))
+            {
+                Name = NetworkInformation.GetHostNames().FirstOrDefault(h => h.Type == HostNameType.DomainName).DisplayName;
+            }
         }
 
         public DelegateCommand CompleteCommand { get; }
