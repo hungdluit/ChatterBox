@@ -230,7 +230,7 @@ namespace ChatterBox.Server
                         }
                     }
 
-                    await Task.Delay(100);
+                    await Task.Delay(10);
                 }
             });
         }
@@ -283,7 +283,7 @@ namespace ChatterBox.Server
                             Logger.Debug($"<< {message}");
                             await writer.WriteLineAsync(message);
                         }
-                        await Task.Delay(100);
+                        await Task.Delay(10);
                     }
                 }
                 catch (Exception exception)
