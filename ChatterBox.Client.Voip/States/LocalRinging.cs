@@ -1,16 +1,10 @@
 ﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
-using ChatterBox.Client.Common.Communication.Voip.States;
-using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Common.Communication.Messages.Relay;
-using Microsoft.Practices.Unity;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Common.Communication.Serialization;
+using System.Threading;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
@@ -18,6 +12,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
     {
         private readonly RelayMessage _message;
         private readonly OutgoingCallRequest _callRequest;
+        private Timer _callTimeout;
+        private const int _callDueTimeout = 1000 * 35; //35 seconds, should be bigger than RemoteRinging state timer
 
         public VoipState_LocalRinging(RelayMessage message)
         {
@@ -35,6 +31,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Answer()
         {
+            StopTimer();
+
             Context.SendToPeer(RelayMessageTags.VoipAnswer, "");
 
             var establishIncomingState = new VoipState_EstablishIncoming(_message);
@@ -43,6 +41,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Hangup()
         {
+            StopTimer();
+
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
@@ -54,20 +54,39 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.IsVideoEnabled = _callRequest.VideoEnabled;
 
             Context.VoipCoordinator.StartIncomingCall(_message);
+
+            _callTimeout = new Timer(CallTimeoutCallback, null, _callDueTimeout, Timeout.Infinite);
         }
 
         public override async Task OnRemoteHangup(RelayMessage message)
         {
+            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
 
         public override async Task Reject(IncomingCallReject reason)
         {
+            StopTimer();
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
 
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
+        }
+
+        private async void CallTimeoutCallback(object state)
+        {
+            await Hangup();
+            StopTimer();
+        }
+
+        private void StopTimer()
+        {
+            if (_callTimeout != null)
+            {
+                _callTimeout.Dispose();
+                _callTimeout = null;
+            }
         }
     }
 }

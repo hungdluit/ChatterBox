@@ -12,16 +12,19 @@ using System.Threading.Tasks;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Signaling.Dto;
 using ChatterBox.Common.Communication.Serialization;
+using System.Threading;
 
 namespace ChatterBox.Client.Common.Communication.Voip.States
 {
     internal class VoipState_RemoteRinging : BaseVoipState
     {
         private readonly OutgoingCallRequest _request;
+        private Timer _callTimeout;
+        private const int _callDueTimeout = 1000 * 30; // 30 seconds
 
         public VoipState_RemoteRinging(OutgoingCallRequest request)
         {
-            _request = request;            
+            _request = request;
         }
 
         public override VoipStateEnum VoipState
@@ -34,12 +37,14 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Hangup()
         {
+            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
 
         public override async Task OnRemoteHangup(RelayMessage message)
         {
+            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
@@ -57,18 +62,37 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
             Context.SendToPeer(RelayMessageTags.VoipCall, payload);
 
             Context.VoipCoordinator.StartOutgoingCall(_request);
+
+            _callTimeout = new Timer(CallTimeoutCallback, null, 30000, Timeout.Infinite);            
         }
 
         public override async Task OnOutgoingCallAccepted(RelayMessage message)
         {
+            StopTimer();
             var establishOutgoingState = new VoipState_EstablishOutgoing(_request);
             await Context.SwitchState(establishOutgoingState);
         }
 
         public override async Task OnOutgoingCallRejected(RelayMessage message)
         {
+            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
+        }
+
+        private async void CallTimeoutCallback(object state)
+        {
+            await Hangup();
+            StopTimer();
+        }
+
+        private void StopTimer()
+        {
+            if (_callTimeout != null)
+            {
+                _callTimeout.Dispose();
+                _callTimeout = null;
+            }
         }
     }
 }
