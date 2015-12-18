@@ -122,9 +122,9 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         Grid.Column="2">
-                <Button Command="{Binding CallCommand}" Margin="5"
+                <Button Command="{Binding CallCommand}" Margin="5" Tapped="PreventFocus"
                         Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE13A;" />
-                <Button Command="{Binding VideoCallCommand}" Margin="5"
+                <Button Command="{Binding VideoCallCommand}" Margin="5" Tapped="PreventFocus"
                         Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE116;" />
             </StackPanel>
 
@@ -141,11 +141,12 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="Enter a message" Margin="12,5"
+                     Name="SendMessageButtons"
                      behaviors:ReturnKeyCommandBehavior.Command="{Binding SendInstantMessageCommand}" />
             <Button Command="{Binding SendInstantMessageCommand}" Margin="5"                    
                     Grid.Column="1" FontFamily="Segoe UI Symbol"
-                    HorizontalContentAlignment="Center"
-                    Content="&#xE120;" />
+                    HorizontalContentAlignment="Left" IsTabStop="False"
+                    Content="&#xE122;" />
         </Grid>
     </Grid>
 </UserControl>

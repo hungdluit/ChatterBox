@@ -1,4 +1,6 @@
 ﻿using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Input;
 
 namespace ChatterBox.Client.Presentation.Shared.Views
 {
@@ -18,6 +20,11 @@ namespace ChatterBox.Client.Presentation.Shared.Views
                 InstantMessagingHistory.UpdateLayout();
                 InstantMessagingHistory.ScrollIntoView(lastItem);
             }
+        }
+
+        private void PreventFocus(object sender, TappedRoutedEventArgs e)
+        {
+            Focus(FocusState.Programmatic);
         }
     }
 }
