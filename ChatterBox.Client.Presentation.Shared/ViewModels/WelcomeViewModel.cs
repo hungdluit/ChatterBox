@@ -2,6 +2,8 @@
 using System.Linq;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.MVVM;
+using Windows.Networking.Connectivity;
+using Windows.Networking;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {

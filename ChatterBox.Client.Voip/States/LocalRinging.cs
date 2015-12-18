@@ -18,7 +18,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         public VoipState_LocalRinging(RelayMessage message)
         {
             _message = message;
-            _callRequest = (OutgoingCallRequest)JsonConvert.Deserialize(message.Payload, typeof(OutgoingCallRequest));            
+            _callRequest = (OutgoingCallRequest)JsonConvert.Deserialize(message.Payload, typeof(OutgoingCallRequest));
         }
 
         public override VoipStateEnum VoipState
@@ -31,8 +31,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Answer()
         {
-            StopTimer();
-
             Context.SendToPeer(RelayMessageTags.VoipAnswer, "");
 
             var establishIncomingState = new VoipState_EstablishIncoming(_message);
@@ -41,8 +39,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Hangup()
         {
-            StopTimer();
-
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
@@ -60,14 +56,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnRemoteHangup(RelayMessage message)
         {
-            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
 
         public override async Task Reject(IncomingCallReject reason)
         {
-            StopTimer();
             Context.SendToPeer(RelayMessageTags.VoipReject, "Rejected");
 
             var hangingUpState = new VoipState_HangingUp();
@@ -76,8 +70,20 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         private async void CallTimeoutCallback(object state)
         {
-            await Hangup();
+            if (Context != null)
+            {
+                await Hangup();
+            }
+            else
+            {
+                StopTimer();
+            }
+        }
+
+        public override Task OnLeavingState()
+        {
             StopTimer();
+            return base.OnLeavingState();
         }
 
         private void StopTimer()

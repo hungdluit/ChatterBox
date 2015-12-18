@@ -37,14 +37,12 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Hangup()
         {
-            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
 
         public override async Task OnRemoteHangup(RelayMessage message)
         {
-            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
@@ -63,27 +61,37 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             Context.VoipCoordinator.StartOutgoingCall(_request);
 
-            _callTimeout = new Timer(CallTimeoutCallback, null, 30000, Timeout.Infinite);            
+            _callTimeout = new Timer(CallTimeoutCallback, null, 30000, Timeout.Infinite);
         }
 
         public override async Task OnOutgoingCallAccepted(RelayMessage message)
         {
-            StopTimer();
             var establishOutgoingState = new VoipState_EstablishOutgoing(_request);
             await Context.SwitchState(establishOutgoingState);
         }
 
         public override async Task OnOutgoingCallRejected(RelayMessage message)
         {
-            StopTimer();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
 
         private async void CallTimeoutCallback(object state)
         {
-            await Hangup();
+            if (Context != null)
+            {
+                await Hangup();
+            }
+            else
+            {
+                StopTimer();
+            }
+        }
+
+        public override Task OnLeavingState()
+        {
             StopTimer();
+            return base.OnLeavingState();
         }
 
         private void StopTimer()
