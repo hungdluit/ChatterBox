@@ -200,9 +200,15 @@ namespace ChatterBox.Client.Universal.Services
         {
             InvokeHubChannel<IVoipChannel>(reason);
         }
+
         public void DisplayOrientationChanged(DisplayOrientations orientation)
         {
             InvokeHubChannel<IVoipChannel>(orientation);
+        }
+
+        public void ConfigureMicrophone(MicrophoneConfig config)
+        {
+            InvokeHubChannel<IVoipChannel>(config);
         }
 
         #endregion

@@ -95,7 +95,19 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public IVoipCoordinator VoipCoordinator { get; set; }
 
-        public MediaStream LocalStream { get; set; }
+        private MediaStream _localStream;
+        public MediaStream LocalStream
+        {
+            get
+            {
+                return _localStream;
+            }
+            set
+            {
+                _localStream = value;
+                ApplyMicrophoneConfig();
+            }
+        }
         public MediaStream RemoteStream { get; set; }
 
         private Timer _iceCandidateBufferTimer;
@@ -280,6 +292,27 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
         }
 
+        private bool _microphoneMuted;
+        public bool MicrophoneMuted
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _microphoneMuted;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    _microphoneMuted = value;
+                    ApplyMicrophoneConfig();
+                }
+            }
+        }
+
+
         public IVideoRenderHelper LocalVideoRenderer { get; private set; }
         public IVideoRenderHelper RemoteVideoRenderer { get; private set; }
 
@@ -300,6 +333,17 @@ namespace ChatterBox.Client.Common.Communication.Voip
             LocalVideoRenderer.RenderFormatUpdate += LocalVideoRenderer_RenderFormatUpdate;
             RemoteVideoRenderer.RenderFormatUpdate += RemoteVideoRenderer_RenderFormatUpdate;
             GC.Collect();
+        }
+
+        private void ApplyMicrophoneConfig()
+        {
+            if (LocalStream != null)
+            {
+                foreach (var audioTrack in LocalStream.GetAudioTracks())
+                {
+                    audioTrack.Enabled = !_microphoneMuted;
+                }
+            }
         }
     }
 }
