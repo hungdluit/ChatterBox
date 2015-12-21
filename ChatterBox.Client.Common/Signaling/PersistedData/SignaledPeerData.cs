@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Windows.Storage;
-using ChatterBox.Client.Common.Settings;
+﻿using ChatterBox.Client.Common.Settings;
 using ChatterBox.Common.Communication.Messages.Peers;
+using System.Linq;
+using Windows.Storage;
 
 namespace ChatterBox.Client.Common.Signaling.PersistedData
 {
@@ -26,7 +26,7 @@ namespace ChatterBox.Client.Common.Signaling.PersistedData
             {
                 return PeerDataContainer.Containers.Select(s => new PeerData
                 {
-                    Name = s.Value.Values[nameof(PeerData.Name)].ToString(),
+                    Name = s.Value.Values[nameof(PeerData.Name)]?.ToString(),
                     IsOnline = (bool) s.Value.Values[nameof(PeerData.IsOnline)],
                     UserId = s.Key,
                     Avatar = (int) (s.Value.Values[nameof(PeerData.Avatar)])

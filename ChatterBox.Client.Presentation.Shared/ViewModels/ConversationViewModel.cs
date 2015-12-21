@@ -265,8 +265,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 PeerUserId = UserId,
                 VideoEnabled = true
             });
-            IsPeerVideoAvailable = true;
-            IsSelfVideoAvailable = true;
         }
 
         private bool OnCallCommandCanExecute()

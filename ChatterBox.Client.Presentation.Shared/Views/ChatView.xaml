@@ -142,10 +142,10 @@
             <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="Enter a message" Margin="12,5" AcceptsReturn="True"
                      behaviors:ReturnKeyCommandBehavior.Command="{Binding SendInstantMessageCommand}" />
-            <Button Command="{Binding SendInstantMessageCommand}" Margin="5"
+            <Button Command="{Binding SendInstantMessageCommand}" Margin="5"                    
                     Grid.Column="1" FontFamily="Segoe UI Symbol"
-                    HorizontalContentAlignment="Left"
-                    Content="&#xE122;" />
+                    HorizontalContentAlignment="Center"
+                    Content="&#xE120;" />
         </Grid>
     </Grid>
 </UserControl>
