@@ -73,9 +73,15 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            ToastNotificationLaunchArguments launchArg = null;
+            if (e.Arguments != null && e.Arguments != String.Empty)
+            {
+                launchArg = ToastNotificationLaunchArguments.FromXmlString(e.Arguments);
+            }
             if (e.PreviousExecutionState == ApplicationExecutionState.Running)
             {
                 Resume();
+                ProcessLaunchArgument(launchArg);
                 return;
             }
 
@@ -91,6 +97,7 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
             }
 
             if (!Container.Resolve<HubClient>().IsConnected)
@@ -130,7 +137,7 @@ namespace ChatterBox.Client.Universal
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-
+            
             if (rootFrame.Content == null)
             {
                 // When the navigation stack isn't restored navigate to the first page,
@@ -138,6 +145,8 @@ namespace ChatterBox.Client.Universal
                 // parameter
                 rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>());
             }
+
+            ProcessLaunchArgument(launchArg);
 
             // Ensure the current window is active
             Window.Current.Activate();
@@ -238,6 +247,21 @@ namespace ChatterBox.Client.Universal
         {
             var messageDialog = new MessageDialog(message);
             await messageDialog.ShowAsync();
+        }
+
+
+        private void ProcessLaunchArgument(ToastNotificationLaunchArguments launchArg)
+        {
+            if (launchArg != null)
+            {
+                switch (launchArg.type)
+                {
+                    case NotificationType.InstantMessage:
+                        Container.Resolve<MainViewModel>().ContactsViewModel.SelectConversation(
+                            (string)launchArg.arguments[ArgumentType.FromId]);
+                        break;
+                }
+            }
         }
     }
 }

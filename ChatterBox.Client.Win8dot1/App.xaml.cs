@@ -51,9 +51,17 @@ namespace ChatterBox.Client.Win8dot1
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
+            ToastNotificationLaunchArguments launchArg = null;
+            if (args.Arguments != null && args.Arguments != String.Empty)
+            {
+                launchArg = ToastNotificationLaunchArguments.FromXmlString(args.Arguments);
+            }
+
             if (args.PreviousExecutionState == ApplicationExecutionState.Running)
             {
                 Resume();
+                ProcessLaunchArgument(launchArg);
+
                 return;
             }
 
@@ -83,7 +91,8 @@ namespace ChatterBox.Client.Win8dot1
                 .RegisterType<VoipContext>(new ContainerControlledLifetimeManager())
                 .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager())
-                .RegisterType<IWebRTCSettingsService, WebRTCSettingsService>();
+                .RegisterType<IWebRTCSettingsService, WebRTCSettingsService>()
+                .RegisterInstance<MainViewModel>(Container.Resolve<MainViewModel>(), new ContainerControlledLifetimeManager());
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -109,6 +118,8 @@ namespace ChatterBox.Client.Win8dot1
                     throw new Exception("Failed to create initial page");
                 }
             }
+
+            ProcessLaunchArgument(launchArg);
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -153,6 +164,20 @@ namespace ChatterBox.Client.Win8dot1
                     Container.Resolve<ISocketConnection>().Connect();
             }
             Window.Current.Activate();
+        }
+
+        private void ProcessLaunchArgument(ToastNotificationLaunchArguments launchArg)
+        {
+            if (launchArg != null)
+            {
+                switch (launchArg.type)
+                {
+                    case NotificationType.InstantMessage:
+                        Container.Resolve<MainViewModel>().ContactsViewModel.SelectConversation(
+                            (string)launchArg.arguments[ArgumentType.FromId]);
+                        break;
+                }
+            }
         }
     }
 }

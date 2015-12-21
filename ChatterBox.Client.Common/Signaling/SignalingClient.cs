@@ -131,7 +131,7 @@ namespace ChatterBox.Client.Common.Signaling
                 (message.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalMinutes < 10))
             {
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,
-                    AvatarLink.For(message.FromAvatar), message.Payload);
+                    message.FromUserId, AvatarLink.For(message.FromAvatar), message.Payload);
             }
             _foregroundChannel?.OnSignaledRelayMessagesUpdated();
 
@@ -172,7 +172,7 @@ namespace ChatterBox.Client.Common.Signaling
             _foregroundChannel.OnSignaledRegistrationStatusUpdated();
         }
 
-        #endregion
+#endregion
 
         private IAsyncOperation<bool> BufferFileExists()
         {
