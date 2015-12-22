@@ -13,6 +13,7 @@ using webrtc_winrt_api;
 using System.Threading;
 using Windows.UI.Core;
 using System.Collections.Generic;
+using Windows.Networking.Connectivity;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -345,5 +346,54 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 }
             }
         }
+
+        private DateTimeOffset _callStartDateTime;
+
+        public void TrackCallStarted()
+        {
+            _hub.IsAppInsightsEnabled = SignalingSettings.AppInsightsEnabled;
+            if (!_hub.IsAppInsightsEnabled)
+            {
+                return;
+            }
+            _callStartDateTime = DateTimeOffset.Now;
+            var currentConnection = NetworkInformation.GetInternetConnectionProfile();
+            string connType;
+            switch (currentConnection.NetworkAdapter.IanaInterfaceType)
+            {
+                case 6:
+                    connType = "Cable";
+                    break;
+                case 71:
+                    connType = "WiFi";
+                    break;
+                case 243:
+                    connType = "Mobile";
+                    break;
+                default:
+                    connType = "Unknown";
+                    break;
+            }
+            var properties = new Dictionary<string, string> { { "Connection Type", connType } };
+            _hub.TrackStatsManagerEvent("CallStarted", properties);
+            // start call watch to count duration for tracking as request
+            _hub.StartStatsManagerCallWatch();
+        }
+
+        public void TrackCallEnded()
+        {
+            if (!_hub.IsAppInsightsEnabled)
+            {
+                return;
+            }
+            // log call duration as CallEnded event property
+            string duration = DateTimeOffset.Now.Subtract(_callStartDateTime).Duration().ToString(@"hh\:mm\:ss");
+            var properties = new Dictionary<string, string> { { "Call Duration", duration } };
+            _hub.TrackStatsManagerEvent("CallEnded", properties);
+
+            // stop call watch, so the duration will be calculated and tracked as request
+            _hub.StopStatsManagerCallWatch();
+        }
+
     }
 }

@@ -4,8 +4,6 @@ using Windows.Graphics.Display;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Common.Communication.Messages.Relay;
-using Windows.Networking.Connectivity;
-using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using ChatterBox.Client.Voip;
@@ -16,7 +14,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
     internal class VoipChannel : IVoipChannel
     {
         private readonly IHub _hub;
-        DateTimeOffset _callStartDateTime;
 
         // This variable should not be used outside of the getter below.
 
@@ -50,9 +47,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.Answer");
-                _hub.IsAppInsightsEnabled = ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled;
                 Context.WithState(st => st.Answer()).Wait();
-                TrackCallStarted();
             });
         }
 
@@ -77,12 +72,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
 
-                Debug.WriteLine("VoipChannel.Hangup");
-                // don't log CallEnded if it is not started yet
-                if (Context.GetVoipState().State != VoipStateEnum.RemoteRinging)
-                {
-                    TrackCallEnded();
-                }
+                Debug.WriteLine("VoipChannel.Hangup ");
                 Context.WithState(st => st.Hangup()).Wait();
             });
         }
@@ -112,7 +102,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
             {
                 Debug.WriteLine("VoipChannel.OnOutgoingCallAccepted");
                 Context.WithState(st => st.OnOutgoingCallAccepted(message)).Wait();
-                TrackCallStarted();
             });
         }
 
@@ -130,10 +119,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.OnRemoteHangup");
-                if (Context.GetVoipState().State == VoipStateEnum.ActiveCall)
-                {
-                    TrackCallEnded();
-                }
                 Context.WithState(st => st.OnRemoteHangup(message)).Wait();
             });
         }
@@ -176,49 +161,6 @@ namespace ChatterBox.Client.Common.Communication.Voip
         }
 
         #endregion
-
-        private void TrackCallStarted()
-        {
-            if (!_hub.IsAppInsightsEnabled) {
-                return;
-            }
-            _callStartDateTime = DateTimeOffset.Now;
-            var currentConnection = NetworkInformation.GetInternetConnectionProfile();
-            string connType;
-            switch (currentConnection.NetworkAdapter.IanaInterfaceType)
-            {
-                case 6:
-                    connType = "Cable";
-                    break;
-                case 71:
-                    connType = "WiFi";
-                    break;
-                case 243:
-                    connType = "Mobile";
-                    break;
-                default:
-                    connType = "Unknown";
-                    break;
-            }
-            var properties = new Dictionary<string, string> { { "Connection Type", connType } };
-            _hub.TrackStatsManagerEvent("CallStarted", properties);
-            // start call watch to count duration for tracking as request
-            _hub.StartStatsManagerCallWatch();
-        }
-
-        private void TrackCallEnded() {
-            if (!_hub.IsAppInsightsEnabled)
-            {
-                return;
-            }
-            // log call duration as CallEnded event property
-            string duration = DateTimeOffset.Now.Subtract(_callStartDateTime).Duration().ToString(@"hh\:mm\:ss");
-            var properties = new Dictionary<string, string> { { "Call Duration", duration } };
-            _hub.TrackStatsManagerEvent("CallEnded", properties);
-
-            // stop call watch, so the duration will be calculated and tracked as request
-            _hub.StopStatsManagerCallWatch();
-        }
 
         public void RegisterVideoElements(MediaElement self, MediaElement peer)
         {
