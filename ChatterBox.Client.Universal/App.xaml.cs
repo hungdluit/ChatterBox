@@ -10,6 +10,8 @@ using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Universal.Services;
 using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
@@ -17,12 +19,11 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.ApplicationInsights.Extensibility;
 
 namespace ChatterBox.Client.Universal
 {
@@ -74,7 +75,7 @@ namespace ChatterBox.Client.Universal
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             ToastNotificationLaunchArguments launchArg = null;
-            if (e.Arguments != null && e.Arguments != String.Empty)
+            if (!string.IsNullOrEmpty(e.Arguments))
             {
                 launchArg = ToastNotificationLaunchArguments.FromXmlString(e.Arguments);
             }
@@ -99,6 +100,9 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
             }
+
+            Container.Resolve<HubClient>().OnDisconnectedFromHub -= App_OnDisconnectedFromHub;
+            Container.Resolve<HubClient>().OnDisconnectedFromHub += App_OnDisconnectedFromHub;
 
             if (!Container.Resolve<HubClient>().IsConnected)
             {
@@ -137,7 +141,7 @@ namespace ChatterBox.Client.Universal
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-            
+
             if (rootFrame.Content == null)
             {
                 // When the navigation stack isn't restored navigate to the first page,
@@ -150,6 +154,30 @@ namespace ChatterBox.Client.Universal
 
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private async void App_OnDisconnectedFromHub()
+        {
+            var client = Container.Resolve<HubClient>();
+            var dispatcher = Container.Resolve<CoreDispatcher>();
+
+            await client.Connect().ContinueWith(async connected =>
+            {
+                if (connected.Result)
+                {
+                    client.SetForegroundProcessId(
+                        ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
+                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        RegisterForDisplayOrientationChange();
+                    });
+                }
+            });
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Container.Resolve<MainViewModel>().OnNavigatedTo();
+            });
         }
 
         private void Resume()

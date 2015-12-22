@@ -24,6 +24,7 @@ using ChatterBox.Common.Communication.Messages.Standard;
 using ChatterBox.Client.Common.Background;
 using Windows.UI.Xaml.Controls;
 using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Notifications;
 
 namespace ChatterBox.Client.Universal.Services
 {
@@ -250,6 +251,8 @@ namespace ChatterBox.Client.Universal.Services
         private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             IsConnected = false;
+            ToastNotificationService.ShowToastNotification("Disconnected from Hub");
+            OnDisconnectedFromHub?.Invoke();
         }
 
         public void OnSignaledDataUpdated()
@@ -262,5 +265,8 @@ namespace ChatterBox.Client.Universal.Services
         }
 
         public event Action OnUpdate;
+
+
+        public event Action OnDisconnectedFromHub;
     }
 }
