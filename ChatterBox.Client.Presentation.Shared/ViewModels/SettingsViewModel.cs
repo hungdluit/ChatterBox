@@ -17,6 +17,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class SettingsViewModel : BindableBase
     {
+        public event Action OnRegistrationSettingsChanged;
         private string _domain;
         private ApplicationDataContainer _localSettings;
         private string _signalingServerHost;
@@ -63,9 +64,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
             SignalingSettings.SignalingServerHost = SignalingServerHost;
             RegistrationSettings.Domain = Domain;
+            OnRegistrationSettingsChanged?.Invoke();
 
 #if WIN10
-            SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
+      SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
 #endif
 
             if (SelectedCamera != null)
@@ -214,7 +216,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public string Domain
         {
             get { return _domain; }
-            set { SetProperty(ref _domain, value); }
+            set
+            {
+              if (_domain == value)
+              {
+                return;
+              }
+
+              SetProperty(ref _domain, value);
+            }
         }
 
         public DelegateCommand SaveCommand { get; set; }
@@ -222,16 +232,32 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public string SignalingServerHost
         {
             get { return _signalingServerHost; }
-            set { SetProperty(ref _signalingServerHost, value); }
-        }
+            set
+            {
+              if (_signalingServerHost == value)
+              {
+                return;
+              }
+
+              SetProperty(ref _signalingServerHost, value);
+            }
+          }
 
         public int SignalingServerPort
         {
-            get { return _signalingServerPort; }
-            set { SetProperty(ref _signalingServerPort, value); }
+          get { return _signalingServerPort; }
+          set
+          {
+            if (_signalingServerPort == value)
+            {
+              return;
+            }
+
+            SetProperty(ref _signalingServerPort, value);
+          }
         }
 
-        public string ApplicationVersion
+    public string ApplicationVersion
         {
             get
             {

@@ -14,6 +14,13 @@ namespace ChatterBox.Client.Universal.Background
         public ISignalingSocketOperation SocketOperation => new SignalingSocketOperation();
 
         #region ISignalingSocketChannel Members
+        public void DisconnectSignalingServer()
+        {
+            SocketOperation.Disconnect();
+            SignaledPeerData.Reset();
+            SignalingStatus.Reset();
+            SignaledRelayMessages.Reset();
+        }
 
         public ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner)
         {

@@ -126,6 +126,10 @@ namespace ChatterBox.Client.Universal.Services
                 OwnerId = _taskHelper.GetTask(nameof(SignalingTask)).TaskId.ToString()
             });
         }
+        public void DisconnectSignalingServer()
+        {
+            InvokeHubChannel<ISignalingSocketChannel>();
+        }
 
         public ConnectionStatus GetConnectionStatus()
         {

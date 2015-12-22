@@ -14,5 +14,6 @@ namespace ChatterBox.Client.Common.Signaling
         event EventHandler<object> OnConnectingStarted;
         event EventHandler<object> OnConnectingFinished;
         event EventHandler<object> OnRegistering;
-    }
+        event EventHandler<object> OnConnectionTerminated;
+  }
 }

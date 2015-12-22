@@ -25,6 +25,15 @@ namespace ChatterBox.Client.Win8dot1.Services
                 return _signalingSocketChannel.StreamSocket;
             }
         }
+      public void Disconnect()
+      {
+      Dispose();
+      if (Socket != null)
+      {
+        _signalingSocketChannel.StreamSocket.Dispose();
+      }
+
+    }
 
         public void Dispose()
         {

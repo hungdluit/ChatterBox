@@ -18,6 +18,14 @@ namespace ChatterBox.Client.Win8dot1.Channels
         private bool _isConnected;
         private SignalingClient _signalingClient;
         private IUnityContainer _unityContainer;
+        public void DisconnectSignalingServer()
+        {
+            if (_streamSocket != null)
+                _streamSocket.Dispose();
+            _streamSocket = null;
+            _isConnected = false;
+
+        }
 
         public SignalingSocketChannel(IUnityContainer unityContainer)
         {

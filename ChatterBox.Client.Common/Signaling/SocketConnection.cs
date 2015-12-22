@@ -26,6 +26,7 @@ namespace ChatterBox.Client.Common.Signaling
 
         public event EventHandler<object> OnConnectingStarted;
         public event EventHandler<object> OnConnectingFinished;
+        public event EventHandler<object> OnConnectionTerminated;
         public event EventHandler<object> OnRegistering;
         public SocketConnection(ISignalingSocketChannel signalingSocketChannel, IClientChannel clientChannel)
         {
@@ -83,7 +84,21 @@ namespace ChatterBox.Client.Common.Signaling
 
         public void Disconnect()
         {
-            throw new NotImplementedException();
+            if (Monitor.TryEnter(_connectingLock))
+            {
+              if (IsConnected) {
+                //Todo: de-register with the current server?
+              }
+              _signalingSocketChannel.DisconnectSignalingServer();
+
+              IsConnectingFailed = false;
+              IsConnecting = false;
+
+              Monitor.Exit(_connectingLock);
+              OnConnectionTerminated?.Invoke(this, EventArgs.Empty);
+
+
+            }
         }
 
         public bool Connect()

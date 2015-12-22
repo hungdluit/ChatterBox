@@ -21,6 +21,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             _connection = socketConnection;
             _connection.OnConnectingStarted += OnConnectingStarted;
             _connection.OnConnectingFinished += OnConnectingFinished;
+            _connection.OnConnectionTerminated += OnConnectionTerminated;
             _connection.OnRegistering += OnRegistering;
 
             foregroundUpdateService.OnRegistrationStatusUpdated += OnRegistrationStatusUpdated;
@@ -51,6 +52,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             else
             {
                 _connection.Connect();
+            }
+        }
+
+        public void SwitchSignalingServer()
+        {
+            if (_connection.IsConnected)
+            {
+                _connection.Disconnect();
+                //Todo: switch to new signaling server right away without user intervention?
             }
         }
 
@@ -94,6 +104,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             if (_connection.IsConnectingFailed)
                 Status = "Failed to connect to the server. Check your settings and try again.";
 
+            ConnectCommand.RaiseCanExecuteChanged();
+        }
+        private void OnConnectionTerminated(object sender, object e)
+        {
+            Status = "Connection to server is disconnected. Please click reconnect";
             ConnectCommand.RaiseCanExecuteChanged();
         }
 
