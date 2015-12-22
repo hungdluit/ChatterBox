@@ -140,7 +140,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     PlaceholderText="Enter a message" Margin="12,5" AcceptsReturn="True"
+                     PlaceholderText="Enter a message" Margin="12,5"
                      behaviors:ReturnKeyCommandBehavior.Command="{Binding SendInstantMessageCommand}" />
             <Button Command="{Binding SendInstantMessageCommand}" Margin="5"                    
                     Grid.Column="1" FontFamily="Segoe UI Symbol"

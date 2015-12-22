@@ -9,7 +9,7 @@ namespace ChatterBox.Client.Presentation.Shared.Behaviors
     public class ReturnKeyCommandBehavior
     {
         private static ICommand _command;
-        private static bool _isControlPressed;
+        private static bool _isEnterPressed;
 
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.RegisterAttached("Command", typeof (ICommand), typeof (ReturnKeyCommandBehavior),
@@ -22,7 +22,7 @@ namespace ChatterBox.Client.Presentation.Shared.Behaviors
 
         private static void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (!_isControlPressed) return;
+            if (!_isEnterPressed) return;
             if (_command == null) return;
             if (args.VirtualKey != VirtualKey.Enter) return;
 
@@ -40,9 +40,9 @@ namespace ChatterBox.Client.Presentation.Shared.Behaviors
 
         private static void HandleKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control)
+            if (e.Key == VirtualKey.Enter)
             {
-                _isControlPressed = true;
+                _isEnterPressed = true;
                 var cmd = ((UIElement) sender).GetValue(CommandProperty) as ICommand;
                 if (cmd != null && cmd.CanExecute(null))
                 {
@@ -53,9 +53,9 @@ namespace ChatterBox.Client.Presentation.Shared.Behaviors
 
         private static void HandleKeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control)
+            if (e.Key == VirtualKey.Enter)
             {
-                _isControlPressed = false;
+                _isEnterPressed = false;
                 _command = null;
             }
         }
