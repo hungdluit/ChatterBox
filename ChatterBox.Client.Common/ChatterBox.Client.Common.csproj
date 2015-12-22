@@ -86,8 +86,10 @@
     <Compile Include="Communication\Voip\Dto\Dtos.cs" />
     <Compile Include="Communication\Voip\IVideoRenderHelper.cs" />
     <Compile Include="Communication\Voip\IVoipChannel.cs" />
+    <Compile Include="Helpers\XmlDataContractSerializationHelper.cs" />
     <Compile Include="Helpers\XmlSerializationHelper.cs" />
     <Compile Include="Notifications\PushNotificationHelper.cs" />
+    <Compile Include="Notifications\ToastNotificationLaunchArguments.cs" />
     <Compile Include="Notifications\ToastNotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\IceServerSettings.cs" />

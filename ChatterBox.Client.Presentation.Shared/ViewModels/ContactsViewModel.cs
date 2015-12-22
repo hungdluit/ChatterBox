@@ -102,5 +102,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 SelectedConversation = Conversations.FirstOrDefault();
             }
         }
+
+        public bool SelectConversation(string userId)
+        {
+            foreach (var conversation in Conversations)
+            {
+                if (conversation.UserId == userId)
+                {
+                    SelectedConversation = conversation;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

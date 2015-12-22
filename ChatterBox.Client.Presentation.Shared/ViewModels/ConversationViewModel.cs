@@ -254,6 +254,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 OnVoipStateUpdate(voipState);
             }
+
+            //Get stored relay messages
+            OnRelayMessagesUpdated();
         }
 
         private bool OnAnswerCommandCanExecute()
@@ -344,7 +347,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void OnRelayMessagesUpdated()
         {
             var newMessages = SignaledRelayMessages.Messages
-                .Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId).ToList();
+                .Where(s => s.Tag == RelayMessageTags.InstantMessage && s.FromUserId == _userId)
+                .OrderBy(s => s.SentDateTimeUtc).ToList();
+
             foreach (var message in newMessages)
             {
                 InstantMessages.Add(new InstantMessageViewModel
