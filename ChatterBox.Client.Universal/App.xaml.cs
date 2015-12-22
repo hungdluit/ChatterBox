@@ -10,6 +10,8 @@ using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Universal.Services;
 using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
@@ -17,12 +19,11 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.ApplicationInsights.Extensibility;
 
 namespace ChatterBox.Client.Universal
 {
@@ -140,7 +141,7 @@ namespace ChatterBox.Client.Universal
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
-            
+
             if (rootFrame.Content == null)
             {
                 // When the navigation stack isn't restored navigate to the first page,
@@ -155,18 +156,28 @@ namespace ChatterBox.Client.Universal
             Window.Current.Activate();
         }
 
-        private void App_OnDisconnectedFromHub()
+        private async void App_OnDisconnectedFromHub()
         {
-            var rootFrame = Window.Current.Content as Frame;
+            var client = Container.Resolve<HubClient>();
+            var dispatcher = Container.Resolve<CoreDispatcher>();
 
-            if (rootFrame == null)
+            await client.Connect().ContinueWith(async connected =>
             {
-                rootFrame = new Frame();
-                rootFrame.NavigationFailed += OnNavigationFailed;
-                Window.Current.Content = rootFrame;
-            }
-            rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>());
+                if (connected.Result)
+                {
+                    client.SetForegroundProcessId(
+                        ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
+                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        RegisterForDisplayOrientationChange();
+                    });
+                }
+            });
 
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Container.Resolve<MainViewModel>().OnNavigatedTo();
+            });
         }
 
         private void Resume()
