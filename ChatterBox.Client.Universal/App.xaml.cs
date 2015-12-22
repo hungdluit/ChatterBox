@@ -74,7 +74,7 @@ namespace ChatterBox.Client.Universal
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             ToastNotificationLaunchArguments launchArg = null;
-            if (e.Arguments != null && e.Arguments != String.Empty)
+            if (!string.IsNullOrEmpty(e.Arguments))
             {
                 launchArg = ToastNotificationLaunchArguments.FromXmlString(e.Arguments);
             }
@@ -99,6 +99,9 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
             }
+
+            Container.Resolve<HubClient>().OnDisconnectedFromHub -= App_OnDisconnectedFromHub;
+            Container.Resolve<HubClient>().OnDisconnectedFromHub += App_OnDisconnectedFromHub;
 
             if (!Container.Resolve<HubClient>().IsConnected)
             {
@@ -150,6 +153,20 @@ namespace ChatterBox.Client.Universal
 
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private void App_OnDisconnectedFromHub()
+        {
+            var rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+                Window.Current.Content = rootFrame;
+            }
+            rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>());
+
         }
 
         private void Resume()
