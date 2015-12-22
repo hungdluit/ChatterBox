@@ -39,7 +39,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
                                     // This delay is to limit how long we wait for reading.
                                     // StreamSocket has no ability to peek to see if there's any
                                     // data waiting to be read.  So we have to limit it this way.
-                                    for (int i = 0; i < 25 && readOp.Status == Windows.Foundation.AsyncStatus.Started; ++i)
+                                    for (int i = 0; i < 100 && readOp.Status == Windows.Foundation.AsyncStatus.Started; ++i)
                                     {
                                         await Task.Delay(10);
                                     }
