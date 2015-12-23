@@ -15,6 +15,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
@@ -104,20 +105,7 @@ namespace ChatterBox.Client.Universal
             Container.Resolve<HubClient>().OnDisconnectedFromHub -= App_OnDisconnectedFromHub;
             Container.Resolve<HubClient>().OnDisconnectedFromHub += App_OnDisconnectedFromHub;
 
-            if (!Container.Resolve<HubClient>().IsConnected)
-            {
-                var client = Container.Resolve<HubClient>();
-                await client.Connect().ContinueWith(connected =>
-                {
-                    if (connected.Result)
-                    {
-                        client.SetForegroundProcessId(
-                            ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
-
-                        RegisterForDisplayOrientationChange();
-                    }
-                }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            ConnectHubClient();
 
             await RegisterForPush(Container.Resolve<TaskHelper>());
 
@@ -156,40 +144,49 @@ namespace ChatterBox.Client.Universal
             Window.Current.Activate();
         }
 
-        private async void App_OnDisconnectedFromHub()
+        private void ConnectHubClient()
         {
-            var client = Container.Resolve<HubClient>();
-            var dispatcher = Container.Resolve<CoreDispatcher>();
-
-            await client.Connect().ContinueWith(async connected =>
+            if (!Container.Resolve<HubClient>().IsConnected)
             {
-                if (connected.Result)
+                var client = Container.Resolve<HubClient>();
+
+                // Make this call blocking, since we don't want try sendig message until the hub is connected (especially on a resume)
+                var connected = Task.Run(client.Connect).Result;
+                if (connected)
                 {
                     client.SetForegroundProcessId(
                         ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
-                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        RegisterForDisplayOrientationChange();
-                    });
-                }
-            });
 
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Container.Resolve<MainViewModel>().OnNavigatedTo();
-            });
+                    RegisterForDisplayOrientationChange();
+                }
+                else
+                {
+                    ShowDialog("Failed to connect to the Hub!");
+                }
+            }
+        }
+
+        private async void App_OnDisconnectedFromHub()
+        {
+            // Nothing to do here for now. The work should be done in OnSuspending and OnResuming
         }
 
         private void Resume()
         {
+            // Reconnect the Hub client
+            ConnectHubClient();
+
+            // Reconnect the Signaling socket
             if (Container.IsRegistered(typeof(ISocketConnection)))
             {
-                if (!Container.Resolve<ISocketConnection>().IsConnected)
-                    Container.Resolve<ISocketConnection>().Connect();
+                if (Container.Resolve<HubClient>().IsConnected)
+                {
+                    if (!Container.Resolve<ISocketConnection>().IsConnected)
+                        Container.Resolve<ISocketConnection>().Connect();
+                }
             }
-            Window.Current.Activate();
 
-            RegisterForDisplayOrientationChange();
+            Window.Current.Activate();
         }
 
         /// <summary>
@@ -211,7 +208,7 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            //ShowDialog("OnSuspending");
+            Debug.WriteLine("App.OnSuspending");
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
@@ -219,6 +216,7 @@ namespace ChatterBox.Client.Universal
 
         private void OnResuming(object sender, object e)
         {
+            Debug.WriteLine("App.OnResuming");
             Resume();
         }
 
