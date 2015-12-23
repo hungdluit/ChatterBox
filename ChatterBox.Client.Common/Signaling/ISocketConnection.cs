@@ -5,7 +5,7 @@ namespace ChatterBox.Client.Common.Signaling
     public interface ISocketConnection
     {
         IAsyncOperation<bool> Connect();
-        void Disconnect();
+        IAsyncOperation<bool> Disconnect();
         void Register();   
         bool IsConnected { get; }
     }

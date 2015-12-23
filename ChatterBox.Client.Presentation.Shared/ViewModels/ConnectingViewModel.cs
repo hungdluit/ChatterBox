@@ -59,12 +59,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
-        public void SwitchSignalingServer()
+        public async void SwitchSignalingServer()
         {
             if (_connection.IsConnected)
             {
-                _connection.Disconnect();
-        //Todo: switch to new signaling server right away without user intervention?
+                await _connection.Disconnect();
 
                 EstablishConnection();
 
@@ -107,11 +106,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 Status = "Registering with the server...";
             }
 
-            ConnectCommand.RaiseCanExecuteChanged();
-        }
-        private void OnConnectionTerminated(object sender, object e)
-        {
-            Status = "Connection to server is disconnected. Please click reconnect";
             ConnectCommand.RaiseCanExecuteChanged();
         }
 

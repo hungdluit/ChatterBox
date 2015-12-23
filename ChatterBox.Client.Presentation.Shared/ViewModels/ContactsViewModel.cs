@@ -62,6 +62,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void OnPeerDataUpdated()
         {
+            Conversations.Clear();
             var peers = SignaledPeerData.Peers;
             foreach (var peer in peers)
             {

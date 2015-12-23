@@ -34,19 +34,25 @@ namespace ChatterBox.Client.Common.Signaling
             }
         }
 
-        public void Disconnect()
+        public IAsyncOperation<bool> Disconnect()
         {
-            if (Monitor.TryEnter(_connectingLock))
+            return Task.Run(() =>
             {
-              if (!IsConnected) {
-                  return;
-              }
+                bool ret = true;
+                if (Monitor.TryEnter(_connectingLock))
+                {
+                    if (!IsConnected)
+                    {
+                         return ret;
+                     }
 
-              //Todo: de-register with the current server?
-              _signalingSocketChannel.DisconnectSignalingServer();
+                    //Todo: de-register with the current server?
+                    _signalingSocketChannel.DisconnectSignalingServer();
 
-              Monitor.Exit(_connectingLock);
-            }
+                    Monitor.Exit(_connectingLock);
+                 }
+                return ret;
+              }).AsAsyncOperation();
         }
 
         public IAsyncOperation<bool> Connect()
