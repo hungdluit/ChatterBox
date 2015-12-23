@@ -10,6 +10,8 @@ using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Universal.Services;
 using ChatterBox.Common.Communication.Contracts;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
@@ -17,12 +19,11 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.ApplicationInsights.Extensibility;
 
 namespace ChatterBox.Client.Universal
 {
@@ -73,9 +74,15 @@ namespace ChatterBox.Client.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            ToastNotificationLaunchArguments launchArg = null;
+            if (!string.IsNullOrEmpty(e.Arguments))
+            {
+                launchArg = ToastNotificationLaunchArguments.FromXmlString(e.Arguments);
+            }
             if (e.PreviousExecutionState == ApplicationExecutionState.Running)
             {
                 Resume();
+                ProcessLaunchArgument(launchArg);
                 return;
             }
 
@@ -91,7 +98,11 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
             }
+
+            Container.Resolve<HubClient>().OnDisconnectedFromHub -= App_OnDisconnectedFromHub;
+            Container.Resolve<HubClient>().OnDisconnectedFromHub += App_OnDisconnectedFromHub;
 
             if (!Container.Resolve<HubClient>().IsConnected)
             {
@@ -139,8 +150,34 @@ namespace ChatterBox.Client.Universal
                 rootFrame.Navigate(typeof(MainView), Container.Resolve<MainViewModel>());
             }
 
+            ProcessLaunchArgument(launchArg);
+
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private async void App_OnDisconnectedFromHub()
+        {
+            var client = Container.Resolve<HubClient>();
+            var dispatcher = Container.Resolve<CoreDispatcher>();
+
+            await client.Connect().ContinueWith(async connected =>
+            {
+                if (connected.Result)
+                {
+                    client.SetForegroundProcessId(
+                        ChatterBox.Client.WebRTCSwapChainPanel.WebRTCSwapChainPanel.CurrentProcessId);
+                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        RegisterForDisplayOrientationChange();
+                    });
+                }
+            });
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Container.Resolve<MainViewModel>().OnNavigatedTo();
+            });
         }
 
         private void Resume()
@@ -238,6 +275,21 @@ namespace ChatterBox.Client.Universal
         {
             var messageDialog = new MessageDialog(message);
             await messageDialog.ShowAsync();
+        }
+
+
+        private void ProcessLaunchArgument(ToastNotificationLaunchArguments launchArg)
+        {
+            if (launchArg != null)
+            {
+                switch (launchArg.type)
+                {
+                    case NotificationType.InstantMessage:
+                        Container.Resolve<MainViewModel>().ContactsViewModel.SelectConversation(
+                            (string)launchArg.arguments[ArgumentType.FromId]);
+                        break;
+                }
+            }
         }
     }
 }

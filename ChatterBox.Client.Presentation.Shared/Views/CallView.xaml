@@ -56,7 +56,7 @@
             <Button Command="{Binding RejectCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
                     Content="&#xE137;"
                     Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Command="{Binding SwitchMic}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE1D6;"
+            <Button Command="{Binding SwitchMicCommand}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE1D6;"
                     Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
             <Button Command="{Binding SwitchVideo}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE116;"
                     Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />

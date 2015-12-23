@@ -6,7 +6,7 @@ namespace ChatterBox.Client.Common.Notifications
 {
     public sealed class ToastNotificationService
     {
-        public static void ShowInstantMessageNotification(string fromName, string imageUri, string message)
+        public static void ShowInstantMessageNotification(string fromName, string fromUserId, string imageUri, string message)
         {
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
 
@@ -24,7 +24,11 @@ namespace ChatterBox.Client.Common.Notifications
             var toastNode = toastXml.SelectSingleNode("/toast");
             var xmlElement = (XmlElement) toastNode;
             xmlElement?.SetAttribute("duration", "short");
-            xmlElement?.SetAttribute("launch", "push");
+
+            ToastNotificationLaunchArguments args = new ToastNotificationLaunchArguments(NotificationType.InstantMessage);
+            args.arguments.Add(ArgumentType.FromId, fromUserId);
+
+            xmlElement?.SetAttribute("launch", args.ToXmlString());
 
             ShowNotification(toastXml);
         }
@@ -36,7 +40,7 @@ namespace ChatterBox.Client.Common.Notifications
                 ToastNotificationManager.CreateToastNotifier("ChatterBoxClientAppId")
                      .Show(new ToastNotification(toastXml));
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 // Most likely an exception occurs here when the win8 client is used together with 
                 // a win10 one on same machine. A thrown exception will prevent some UI components

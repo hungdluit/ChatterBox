@@ -16,4 +16,9 @@ namespace ChatterBox.Client.Common.Communication.Voip.Dto
     {
         public string Reason { get; set; }
     }
+
+    public sealed class MicrophoneConfig
+    {
+        public bool Muted { get; set; }
+    }
 }

@@ -1,6 +1,8 @@
 ﻿using Windows.UI.Core;
 using ChatterBox.Client.Common.Signaling.PersistedData;
 using ChatterBox.Client.Presentation.Shared.MVVM;
+using Windows.UI.ViewManagement;
+using Windows.ApplicationModel;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -88,6 +90,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void WelcomeCompleted()
         {
+            ApplicationView.GetForCurrentView().Title = WelcomeViewModel.Name;
             ConnectingViewModel.EstablishConnection();
         }
     }

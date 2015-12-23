@@ -162,6 +162,15 @@ namespace ChatterBox.Client.Common.Communication.Voip
             });
         }
 
+        public void ConfigureMicrophone(MicrophoneConfig config)
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.ConfigureMicrophone Muted=" + (config.Muted ? "yes" : "no"));
+                Context.MicrophoneMuted = config.Muted;
+            });
+        }
+
         #endregion
 
         private void TrackCallStarted()
