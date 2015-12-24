@@ -43,10 +43,14 @@ namespace ChatterBox.Client.Universal.Background
                     _foregroundConnection.RequestReceived -= HandleForegroundRequest;
                 }
                 _foregroundConnection = value;
-                _foregroundConnection.RequestReceived += HandleForegroundRequest;
+
+                if (_foregroundConnection != null)
+                {
+                    _foregroundConnection.RequestReceived += HandleForegroundRequest;
+                }
             }
         }
-
+        
         public IBackgroundTask ForegroundTask { get; set; }
 
         public static Hub Instance
