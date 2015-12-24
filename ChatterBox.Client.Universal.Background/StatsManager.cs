@@ -7,6 +7,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using System.Threading;
 using Microsoft.ApplicationInsights.Extensibility;
+using Windows.Networking.Connectivity;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -25,6 +26,7 @@ namespace ChatterBox.Client.Universal.Background
         RTCPeerConnection _peerConnection;
         TelemetryClient _telemetry;
         Timer _metricsTimer;
+        Timer _networkTimer;
         AudioVideoMetricsCollector _metricsCollector;
         public void Initialize(RTCPeerConnection pc)
         {
@@ -410,6 +412,12 @@ namespace ChatterBox.Client.Universal.Background
             _telemetry.Context.Operation.Name = "Call Duration tracking";
 
             _callWatch = Stopwatch.StartNew();
+
+            AutoResetEvent autoEvent = new AutoResetEvent(false);
+            Debug.Assert(_metricsCollector != null);
+            TimerCallback tcb = _metricsCollector.CollectNewtorkMetrics;
+            _networkTimer = new Timer(tcb, autoEvent, 0, 20000);
+
         }
 
         public void StopCallWatch()
@@ -425,6 +433,11 @@ namespace ChatterBox.Client.Universal.Background
                 if (_metricsCollector != null)
                 {
                     _metricsCollector.TrackCurrentDelayMetrics();
+                    _metricsCollector.TrackNetworkQualityMetrics();
+                }
+                if (_networkTimer != null)
+                {
+                    _networkTimer.Dispose();
                 }
             }
         }
@@ -441,6 +454,10 @@ namespace ChatterBox.Client.Universal.Background
         public int _audioDelayCount;
         public double _videoCurrentDelayMs;
         public int _videoDelayCount;
+        ulong _inboundMaxBitsPerSecondSum;
+        int _inboundMaxBitsPerSecondCount;
+        ulong _outboundMaxBitsPerSecondSum;
+        int _outboundMaxBitsPerSecondCount;
 
         private  int _frameHeight;
         public int FrameHeight
@@ -504,6 +521,10 @@ namespace ChatterBox.Client.Universal.Background
             ResetDelays();
             _frameHeight = 0;
             _frameWidth = 0;
+            _inboundMaxBitsPerSecondSum = 0;
+            _inboundMaxBitsPerSecondCount = 0;
+            _outboundMaxBitsPerSecondSum = 0;
+            _outboundMaxBitsPerSecondCount = 0;
         }
 
         private void ResetPackets()
@@ -543,6 +564,15 @@ namespace ChatterBox.Client.Universal.Background
             ResetPackets();
         }
 
+        public void CollectNewtorkMetrics(Object state)
+        {
+            var networkAdapter = NetworkInformation.GetInternetConnectionProfile().NetworkAdapter;
+            _inboundMaxBitsPerSecondSum += networkAdapter.InboundMaxBitsPerSecond;
+            _outboundMaxBitsPerSecondSum += networkAdapter.OutboundMaxBitsPerSecond;
+            _inboundMaxBitsPerSecondCount++;
+            _outboundMaxBitsPerSecondCount++;
+        }
+
         public void TrackCurrentDelayMetrics()
         {
             if (_audioDelayCount > 0)
@@ -576,6 +606,29 @@ namespace ChatterBox.Client.Universal.Background
                 { "Timestamp", System.DateTimeOffset.UtcNow.ToString(@"hh\:mm\:ss") },
                 { codecType + " codec used for call", codecValue}};
             Task.Run(() => _telemetry.TrackEvent(codecType + " codec", properties));
+        }
+
+        public void TrackNetworkQualityMetrics()
+        {
+            IDictionary<string, string> properties = new Dictionary<string, string> {
+                { "Timestamp", System.DateTimeOffset.UtcNow.ToString(@"hh\:mm\:ss") } };
+            IDictionary<string, double> metrics = new Dictionary<string, double>();
+
+            if (_inboundMaxBitsPerSecondCount != 0)
+            {
+                metrics.Add("Maximum Inbound Speed (bit/sec)",
+                    (double)_inboundMaxBitsPerSecondSum / _inboundMaxBitsPerSecondCount);
+            }
+            if (_outboundMaxBitsPerSecondCount != 0)
+            {
+                metrics.Add("Maximum Outbound Speed (bit/sec)",
+                    (double)_outboundMaxBitsPerSecondSum / _outboundMaxBitsPerSecondCount);
+            }
+            Task.Run(() => _telemetry.TrackEvent("Network Avarage Quality During Call", properties, metrics));
+            _inboundMaxBitsPerSecondSum = 0;
+            _inboundMaxBitsPerSecondCount = 0;
+            _outboundMaxBitsPerSecondSum = 0;
+            _outboundMaxBitsPerSecondCount = 0; 
         }
     }
 

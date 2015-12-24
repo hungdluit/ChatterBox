@@ -22,7 +22,10 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             _callRequest = callRequest;
         }
-
+        public override async Task OnEnteringState()
+        {
+            Context.TrackCallStarted();
+        }
         internal override async Task OnAddStream(MediaStream stream)
         {
             Context.RemoteStream = stream;
@@ -43,6 +46,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task Hangup()
         {
+            Context.TrackCallEnded();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
@@ -58,6 +62,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
         public override async Task OnRemoteHangup(RelayMessage message)
         {
+            Context.TrackCallEnded();
             var hangingUpState = new VoipState_HangingUp();
             await Context.SwitchState(hangingUpState);
         }
