@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.AppService;
+﻿
+using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 
 namespace ChatterBox.Client.Universal.Background.Tasks
@@ -40,6 +41,7 @@ namespace ChatterBox.Client.Universal.Background.Tasks
         private void Close()
         {
             Hub.Instance.ForegroundTask = null;
+            Hub.Instance.ForegroundConnection = null;
             _deferral?.Complete();
         }
     }
