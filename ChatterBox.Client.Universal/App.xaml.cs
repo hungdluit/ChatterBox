@@ -76,11 +76,19 @@ namespace ChatterBox.Client.Universal
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             ToastNotificationLaunchArguments launchArg = null;
-            if ((e.Kind == ActivationKind.ToastNotification) && (!string.IsNullOrEmpty(e.Arguments)))
+
+            //TODO: Find out why e.Kind is ActivationKind.Launch even when app is lauched by clicking a toast notification
+            //if ((e.Kind == ActivationKind.ToastNotification) && (!string.IsNullOrEmpty(e.Arguments)))
+            if ((!string.IsNullOrEmpty(e.Arguments)))
             {
                 launchArg = ToastNotificationLaunchArguments.FromXmlString(e.Arguments);
             }
             if (e.PreviousExecutionState == ApplicationExecutionState.Running)
+            {
+                ProcessLaunchArgument(launchArg);
+                return;
+            }
+            if (e.PreviousExecutionState == ApplicationExecutionState.Suspended)
             {
                 Resume();
                 ProcessLaunchArgument(launchArg);

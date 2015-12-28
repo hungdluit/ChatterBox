@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ChatterBox.Client.Common.Helpers;
 using System.Runtime.Serialization;
+using System;
 
 namespace ChatterBox.Client.Common.Notifications
 {
@@ -41,7 +42,16 @@ namespace ChatterBox.Client.Common.Notifications
 
         public static ToastNotificationLaunchArguments FromXmlString(string xmlString)
         {
-            return XmlDataContractSerializationHelper.FromXml<ToastNotificationLaunchArguments>(xmlString);
+            ToastNotificationLaunchArguments result = null;
+            try
+            {
+                result = XmlDataContractSerializationHelper.FromXml<ToastNotificationLaunchArguments>(xmlString);
+            }
+            catch(Exception)
+            {
+                result = null;
+            }
+            return result;
         }
     }
 }
