@@ -217,6 +217,14 @@ namespace ChatterBox.Client.Universal
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             Debug.WriteLine("App.OnSuspending");
+            if (ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled)
+            {
+
+                var telemetry = new TelemetryClient();
+                EventTelemetry eventTel = new EventTelemetry("Application Suspending");
+                eventTel.Timestamp = System.DateTimeOffset.UtcNow;
+                telemetry.TrackEvent(eventTel);
+            }
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
@@ -225,6 +233,13 @@ namespace ChatterBox.Client.Universal
         private void OnResuming(object sender, object e)
         {
             Debug.WriteLine("App.OnResuming");
+            if (ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled)
+            {
+                var telemetry = new TelemetryClient();
+                EventTelemetry eventTel = new EventTelemetry("Application Resuming");
+                eventTel.Timestamp = System.DateTimeOffset.UtcNow;
+                telemetry.TrackEvent(eventTel);
+            }
             Resume();
         }
 
