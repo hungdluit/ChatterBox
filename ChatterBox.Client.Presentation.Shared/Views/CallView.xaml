@@ -27,7 +27,8 @@
               VerticalAlignment="Stretch">
             <ContentPresenter Name="PeerVideoPresenter"
                               HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch" />
+                              VerticalAlignment="Stretch"
+                              Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Image Name="PeerPlaceholder"
                    Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                    Source="{Binding ProfileSource}"
@@ -35,7 +36,8 @@
                    VerticalAlignment="Stretch" />
             <ContentPresenter Name="SelfVideoPresenter"
                               HorizontalAlignment="Right"
-                              VerticalAlignment="Bottom" />
+                              VerticalAlignment="Bottom"
+                              Visibility = "{Binding IsSelfVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Image Name="SelfPlaceholder"
                    Margin="5"
                    Source="{Binding OwnProfileSource}"
@@ -58,7 +60,7 @@
                     Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Button Command="{Binding SwitchMicCommand}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE1D6;"
                     Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
-            <Button Command="{Binding SwitchVideo}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE116;"
+            <Button Command="{Binding SwitchVideoCommand}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE116;"
                     Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
         </StackPanel>
     </Grid>

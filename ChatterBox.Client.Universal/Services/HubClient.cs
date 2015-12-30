@@ -370,6 +370,10 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>();
         }
 
+        public void ConfigureVideo(VideoConfig config)
+        {
+            InvokeHubChannel<IVoipChannel>(config);
+        }
         #endregion
 
         public async Task<bool> Connect()
