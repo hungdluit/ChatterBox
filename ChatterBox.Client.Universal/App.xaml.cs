@@ -174,12 +174,12 @@ namespace ChatterBox.Client.Universal
             }
         }
 
-        private async void App_OnDisconnectedFromHub()
+        private void App_OnDisconnectedFromHub()
         {
             // Nothing to do here for now. The work should be done in OnSuspending and OnResuming
         }
 
-        private void Resume()
+        private async void Resume()
         {
             // Reconnect the Hub client
             ConnectHubClient();
@@ -189,8 +189,20 @@ namespace ChatterBox.Client.Universal
             {
                 if (Container.Resolve<HubClient>().IsConnected)
                 {
-                    if (!Container.Resolve<ISocketConnection>().IsConnected)
-                        Container.Resolve<ISocketConnection>().Connect();
+                    var socketConnection = Container.Resolve<ISocketConnection>();
+                    if (!socketConnection.IsConnected)
+                        await socketConnection.Connect();
+                }
+            }
+
+            /* If the call was hung-up while we were suspended, we need to update the UI */
+            var contactView = Container.Resolve<MainViewModel>().ContactsViewModel;
+            if (contactView.SelectedConversation != null)
+            {
+                if (contactView.SelectedConversation.IsInCallMode)
+                {
+                    // By calling Initialize, we force to get the voip state from the background
+                    contactView.SelectedConversation.Initialize();
                 }
             }
 
