@@ -80,32 +80,44 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock Text="WebRTC Settings" Grid.Row="0" Margin="5" FontSize="18"
                                HorizontalAlignment="Center" FontWeight="Bold" />
                     <TextBlock Name="CameraListBoxHeader" Grid.Row="1" Text="Available cameras"
                                Margin="5" HorizontalAlignment="Left" />
-                    <ListBox Name="CameraListBox" ItemsSource="{Binding Cameras}" Grid.Row="2"
+                    <ComboBox Name="CameraListBox" ItemsSource="{Binding Cameras}" Grid.Row="2"
                              SelectedItem="{Binding SelectedCamera, Mode=TwoWay}" BorderThickness="1"
-                             BorderBrush="Black" Margin="5" MinHeight="120">
-                        <ListBox.ItemTemplate>
+                             BorderBrush="Black" Margin="5" HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <TextBlock Name="MicrophoneListBoxHeader" Text="Available Microphones" Margin="5"
                                HorizontalAlignment="Left" Grid.Row="3" />
-                    <ListBox Name="MicrophoneListBox" MinHeight="120" ItemsSource="{Binding Microphones}"
+                    <ComboBox Name="MicrophoneListBox" ItemsSource="{Binding Microphones}"
                              SelectedItem="{Binding SelectedMicrophone, Mode=TwoWay}" BorderThickness="1"
-                             BorderBrush="Black" Margin="5" HorizontalAlignment="Center" Grid.Row="4">
-                        <ListBox.ItemTemplate>
+                             BorderBrush="Black" Margin="5" HorizontalAlignment="Stretch" Grid.Row="4">
+                        <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <ComboBox Name="AudioCodecCombo" Header="Audio codec" Grid.Row="5" Margin="5"
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox Grid.Row="5" Name="SpeakersCombo" Header="Speakers" Margin="5"
+                              ItemsSource="{Binding AudioPlayoutDevices}" HorizontalAlignment="Stretch"
+                              SelectedItem="{Binding SelectedAudioPlayoutDevice, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox Name="AudioCodecCombo" Header="Audio codec" Grid.Row="6" Margin="5"
                               ItemsSource="{Binding AudioCodecs}"
                               SelectedItem="{Binding SelectedAudioCodec, Mode=TwoWay}"
                               HorizontalAlignment="Stretch">
@@ -119,7 +131,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <ComboBox Name="VideoCodecCombo" Header="Video codec" Grid.Row="6" Margin="5"
+                    <ComboBox Name="VideoCodecCombo" Header="Video codec" Grid.Row="7" Margin="5"
                               ItemsSource="{Binding VideoCodecs}"
                               SelectedItem="{Binding SelectedVideoCodec, Mode=TwoWay}"
                               HorizontalAlignment="Stretch">
@@ -133,20 +145,20 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <ComboBox Name="VideoResolutionCombo" Header="Capture resolution" Grid.Row="7" Margin="5"
+                    <ComboBox Name="VideoResolutionCombo" Header="Capture resolution" Grid.Row="8" Margin="5"
                               HorizontalAlignment="Stretch" ItemsSource="{Binding AllCapRes, Mode=OneWay}"
                               SelectedItem="{Binding SelectedCapResItem, Mode=TwoWay}" />
-                    <ComboBox Name="VideoFrameRateCombo" Header="Capture frame rate" Grid.Row="8"
+                    <ComboBox Name="VideoFrameRateCombo" Header="Capture frame rate" Grid.Row="9"
                               Margin="5" HorizontalAlignment="Stretch"
                               DisplayMemberPath="FrameRateDescription"
                               ItemsSource="{Binding AllCapFPS, Mode=OneWay}"
                               SelectedItem="{Binding SelectedCapFPSItem, Mode=TwoWay}" />
                     <TextBlock Name="IceSeversListBoxHeader" Text="ICE Servers" Margin="5"
-                               HorizontalAlignment="Left" Grid.Row="9" />
-                    <Button Name="AddIceServerButton" Grid.Row="9" HorizontalAlignment="Right"
+                               HorizontalAlignment="Left" Grid.Row="10" />
+                    <Button Name="AddIceServerButton" Grid.Row="11" HorizontalAlignment="Right"
                             FontFamily="Segoe UI Symbol" Content="&#xE109;"
                             Command="{Binding AddIceServerCommand}" Margin="5" />
-                    <ListBox Name="IceServersListBox" Grid.Row="10" ItemsSource="{Binding IceServers}"
+                    <ListBox Name="IceServersListBox" Grid.Row="12" ItemsSource="{Binding IceServers}"
                              MinHeight="120" SelectedItem="{Binding SelectedIceServer, Mode=TwoWay}"
                              Margin="5" BorderBrush="Black" BorderThickness="1">
                         <ListBox.ItemContainerStyle>
@@ -214,7 +226,7 @@
                     <TextBox Text="{Binding Domain, Mode=TwoWay}" HorizontalAlignment="Stretch" Grid.Row="6"
                              behaviors:ReturnKeyCloseKeyboardBehavior.Enabled="True" />
                     <ToggleSwitch Header="AppInsight Logging" Grid.Row="7" IsOn="{Binding AppInsightsEnabled, Mode=TwoWay}"
-                      Width="Auto" MinWidth="200" Visibility="{Binding IsWin10App}"/>
+                      Width="Auto" MinWidth="200" Visibility="{Binding IsWin10App, Converter={StaticResource BoolToVisConverter}}"/>
                     <TextBlock Text="About" Margin="10" HorizontalAlignment="Center" FontSize="18"
                                FontWeight="Bold" Grid.Row="8" />
                     <TextBlock Text="{Binding ApplicationVersion}" Margin="5" Grid.Row="9" HorizontalAlignment="Left" />
