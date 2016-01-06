@@ -61,10 +61,28 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void OnSaveCommandExecute()
         {
-            SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
-            SignalingSettings.SignalingServerHost = SignalingServerHost;
-            RegistrationSettings.Domain = Domain;
-            OnRegistrationSettingsChanged?.Invoke();
+            bool registrationSettingChanged = false;
+            if (SignalingSettings.SignalingServerPort != SignalingServerPort.ToString())
+            {
+                SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
+                registrationSettingChanged = true;
+            }
+
+            if (SignalingSettings.SignalingServerHost != SignalingServerHost)
+            {
+                SignalingSettings.SignalingServerHost = SignalingServerHost;
+                registrationSettingChanged = true;
+            }
+            if (RegistrationSettings.Domain != Domain)
+            {
+                RegistrationSettings.Domain = Domain;
+                registrationSettingChanged = true;
+            }
+
+            if (registrationSettingChanged)
+            {
+                OnRegistrationSettingsChanged?.Invoke();
+            }
 
 #if WIN10
       SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
@@ -216,15 +234,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public string Domain
         {
             get { return _domain; }
-            set
-            {
-              if (_domain == value)
-              {
-                return;
-              }
-
-              SetProperty(ref _domain, value);
-            }
+            set { SetProperty(ref _domain, value);}
         }
 
         public DelegateCommand SaveCommand { get; set; }
@@ -232,29 +242,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public string SignalingServerHost
         {
             get { return _signalingServerHost; }
-            set
-            {
-              if (_signalingServerHost == value)
-              {
-                return;
-              }
-
-              SetProperty(ref _signalingServerHost, value);
-            }
+            set { SetProperty(ref _signalingServerHost, value);}
           }
 
         public int SignalingServerPort
         {
           get { return _signalingServerPort; }
-          set
-          {
-            if (_signalingServerPort == value)
-            {
-              return;
-            }
-
-            SetProperty(ref _signalingServerPort, value);
-          }
+          set { SetProperty(ref _signalingServerPort, value);}
         }
 
     public string ApplicationVersion
