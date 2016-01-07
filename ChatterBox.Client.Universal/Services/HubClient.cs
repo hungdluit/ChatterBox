@@ -360,6 +360,16 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(config);
         }
 
+        public void SuspendVoipVideo()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void ResumeVoipVideo()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
         #endregion
 
         public async Task<bool> Connect()

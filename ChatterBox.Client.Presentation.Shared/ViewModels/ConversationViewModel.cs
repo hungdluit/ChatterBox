@@ -187,7 +187,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsSelfVideoAvailable = value > 0;
                 _localSwapChainHandle = value;
-                // Don't use SetPropert() because it does nothing if the value
+                // Don't use SetProperty() because it does nothing if the value
                 // doesn't change but in this case it must always update the
                 // swap chain panel.
                 OnPropertyChanged("LocalSwapChainPanelHandle");
@@ -204,7 +204,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsPeerVideoAvailable = value > 0;
                 _remoteSwapChainHandle = value;
-                // Don't use SetPropert() because it does nothing if the value
+                // Don't use SetProperty() because it does nothing if the value
                 // doesn't change but in this case it must always update the
                 // swap chain panel.
                 OnPropertyChanged("RemoteSwapChainPanelHandle");

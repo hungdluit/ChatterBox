@@ -167,5 +167,23 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Context.LocalVideoRenderer.SetMediaElement(Dispatcher, self);
             Context.RemoteVideoRenderer.SetMediaElement(Dispatcher, peer);
         }
+
+        public void SuspendVoipVideo()
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.SuspendVoipVideo");
+                Context.WithState(st => st.SuspendVoipVideo()).Wait();
+            });
+        }
+
+        public void ResumeVoipVideo()
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.ResumeVoipVideo");
+                Context.WithState(st => st.ResumeVoipVideo()).Wait();
+            });
+        }
     }
 }
