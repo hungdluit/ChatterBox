@@ -14,6 +14,10 @@ namespace ChatterBox.Client.Voip.States.Interfaces
     {
         void StartOutgoingCall(OutgoingCallRequest request);
 
+        void SetActiveIncomingCall(RelayMessage message, bool videoEnabled);
+
+        void SetActiveCall(OutgoingCallRequest request);
+
         void StartIncomingCall(RelayMessage message);
 
         void StopVoip();

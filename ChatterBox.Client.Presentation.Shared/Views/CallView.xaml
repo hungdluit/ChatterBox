@@ -18,6 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="0" /> <!-- For a Media Element which should be hidden -->
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
               x:Name="VideoGrid"
@@ -63,5 +64,6 @@
             <Button Command="{Binding SwitchVideoCommand}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE116;"
                     Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
         </StackPanel>
+        <MediaElement Name="SoundPlayElement" Grid.Row="2" />
     </Grid>
 </UserControl>

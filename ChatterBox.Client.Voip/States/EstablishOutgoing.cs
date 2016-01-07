@@ -52,6 +52,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             Debug.Assert(Context.PeerConnection == null);
 
+            Context.VoipCoordinator.StartOutgoingCall(_callRequest);
+
             var config = new RTCConfiguration
             {
                 IceServers = WebRtcSettingsUtils.ToRTCIceServer(IceServerSettings.IceServers)
