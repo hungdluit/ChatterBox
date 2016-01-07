@@ -97,6 +97,7 @@
     <Compile Include="Settings\SettingsExtensions.cs" />
     <Compile Include="Settings\SignalingSettings.cs" />
     <Compile Include="Avatars\AvatarLink.cs" />
+    <Compile Include="Settings\WebRTCSettingsIds.cs" />
     <Compile Include="Signaling\Dto\DtoIceCandidate.cs" />
     <Compile Include="Signaling\ISocketConnection.cs" />
     <Compile Include="Signaling\ISignalingSocketOperation.cs" />

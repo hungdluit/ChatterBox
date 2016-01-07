@@ -9,7 +9,7 @@ namespace ChatterBox.Client.Presentation.Shared.MVVM
     public abstract class DispatcherBindableBase : BindableBase
     {
         // The UI dispatcher
-        private readonly CoreDispatcher _uiDispatcher;
+        protected readonly CoreDispatcher _uiDispatcher;
 
         /// <summary>
         ///     Creates a DispatcherBindableBase instance.

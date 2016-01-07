@@ -14,6 +14,7 @@ using System.Threading;
 using Windows.UI.Core;
 using System.Collections.Generic;
 using Windows.Networking.Connectivity;
+using Windows.Storage;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -22,6 +23,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         private CoreDispatcher _dispatcher;
         private Func<IVideoRenderHelper> _renderResolver;
         private IHub _hub;
+        private ApplicationDataContainer _localSettings;
 
         public VoipContext(IHub hub,
                            CoreDispatcher dispatcher,
@@ -31,6 +33,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             _hub = hub;
             _dispatcher = dispatcher;
             _renderResolver = renderResolver;
+            _localSettings = ApplicationData.Current.LocalSettings;
             VoipCoordinator = coordinator;
 
             var idleState = new VoipState_Idle();
@@ -53,14 +56,64 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 WebRTC.Initialize(_dispatcher);
                 Media = Media.CreateMedia();
                 Media.SetDisplayOrientation(_displayOrientation);
-                await Media.EnumerateAudioVideoCaptureDevices();
-                // TODO: Remove once those are driven by the UI.
-                var audioCaptureDevices = Media.GetAudioCaptureDevices();
-                Media.SelectAudioDevice(audioCaptureDevices[0]);
+                await Media.EnumerateAudioVideoCaptureDevices();                
+
+                string videoDeviceId = string.Empty;
+                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoDeviceSettings))
+                {
+                    videoDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.VideoDeviceSettings];
+                }
+                var videoDevices = Media.GetVideoCaptureDevices();
+                var selectedVideoDevice = videoDevices.FirstOrDefault(d => d.Id.Equals(videoDeviceId));
+                Media.SelectVideoDevice(selectedVideoDevice ?? videoDevices.First());
+
+                string audioDeviceId = string.Empty;
+                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioDeviceSettings))
+                {
+                    audioDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioDeviceSettings];
+                }
+                var audioDevices = Media.GetAudioCaptureDevices();
+                var selectedAudioDevice = audioDevices.FirstOrDefault(d => d.Id.Equals(audioDeviceId));
+                Media.SelectAudioDevice(selectedAudioDevice ?? audioDevices.First());
+
+                string audioPlayoutDeviceId = string.Empty;
+                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioPlayoutDeviceSettings))
+                {
+                    audioPlayoutDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioPlayoutDeviceSettings];
+                }
                 var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
-                Media.SelectAudioPlayoutDevice(audioPlayoutDevices[0]);
-            }
+                var selectedAudioPlayoutDevice = audioPlayoutDevices.FirstOrDefault(d => d.Id.Equals(audioPlayoutDeviceId));
+                Media.SelectAudioPlayoutDevice(selectedAudioPlayoutDevice ?? audioPlayoutDevices.First());
+
+                int videoCodecId = int.MinValue;
+                if(_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoCodecSettings))
+                {
+                    videoCodecId = (int)_localSettings.Values[WebRTCSettingsIds.VideoCodecSettings];
+                }
+                var videoCodecs = WebRTC.GetVideoCodecs();
+                var selectedVideoCodec = videoCodecs.FirstOrDefault(c => c.Id.Equals(videoCodecId));
+                VideoCodec = selectedVideoCodec ?? videoCodecs.First();
+
+                int audioCodecId = int.MinValue;
+                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioCodecSettings))
+                {
+                    audioCodecId = (int)_localSettings.Values[WebRTCSettingsIds.AudioCodecSettings];
+                }
+                var audioCodecs = WebRTC.GetAudioCodecs();
+                var selectedAudioCodec = audioCodecs.FirstOrDefault(c => c.Id.Equals(audioCodecId));
+                AudioCodec = selectedAudioCodec ?? audioCodecs.First();
+
+                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureWidth) &&
+                    _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureHeight) &&
+                    _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureFrameRate))
+                {
+                    WebRTC.SetPreferredVideoCaptureFormat((int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureWidth],
+                                                          (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureHeight],
+                                                          (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureFrameRate]);
+                }
+            }   
         }
+        
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
         {
