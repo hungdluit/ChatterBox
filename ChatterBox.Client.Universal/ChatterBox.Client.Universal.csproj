@@ -108,7 +108,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\FrameFormatEventArgs.cs" />
     <Compile Include="Services\HubClient.cs" />
-    <Compile Include="Services\WebRTCSettingsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
