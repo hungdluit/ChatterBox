@@ -29,5 +29,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void RegisterVideoElements(MediaElement self, MediaElement peer);
 
         void ConfigureMicrophone(MicrophoneConfig config);
+        void SuspendVoipVideo();
+        void ResumeVoipVideo();
     }
 }

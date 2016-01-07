@@ -1,4 +1,5 @@
 ﻿using ChatterBox.Client.Common.Background;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Notifications;
@@ -206,6 +207,12 @@ namespace ChatterBox.Client.Universal
                 }
             }
 
+            var client = Container.Resolve<HubClient>();
+            if (client.IsConnected)
+            {
+                client.ResumeVoipVideo();
+            }
+
             Window.Current.Activate();
         }
 
@@ -229,6 +236,9 @@ namespace ChatterBox.Client.Universal
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             Debug.WriteLine("App.OnSuspending");
+            var deferral = e.SuspendingOperation.GetDeferral();
+            //TODO: Save application state and stop any background activity
+
             if (ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled)
             {
 
@@ -237,8 +247,27 @@ namespace ChatterBox.Client.Universal
                 eventTel.Timestamp = System.DateTimeOffset.UtcNow;
                 telemetry.TrackEvent(eventTel);
             }
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+            var client = Container.Resolve<HubClient>();
+            // Disconnect the rendering on the UI.
+            // We do it here instead of waiting for the background
+            // to notify us because we're about to be suspended.
+            client.OnUpdateFrameFormat(new FrameFormat
+            {
+                IsLocal = true,
+                Width = 0,
+                Height = 0,
+                SwapChainHandle = 0
+            });
+            client.OnUpdateFrameFormat(new FrameFormat
+            {
+                IsLocal = false,
+                Width = 0,
+                Height = 0,
+                SwapChainHandle = 0
+            });
+            // Suspend video capture and rendering in the background.
+            client.SuspendVoipVideo();
+
             deferral.Complete();
         }
 

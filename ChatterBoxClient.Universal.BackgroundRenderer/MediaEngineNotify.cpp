@@ -19,7 +19,9 @@ IFACEMETHODIMP MediaEngineNotify::EventNotify(DWORD evt, DWORD_PTR param1, DWORD
   }
   else
   {
-    _callback->OnMediaEngineEvent((unsigned int)evt, param1, param2);
+    if (_callback != nullptr) {
+      _callback->OnMediaEngineEvent((unsigned int)evt, param1, param2);
+    }
   }
   return S_OK;
 }
