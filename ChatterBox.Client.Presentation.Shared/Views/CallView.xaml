@@ -7,12 +7,15 @@
     xmlns:converters="using:ChatterBox.Client.Presentation.Shared.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="500">
     <UserControl.Resources>
-        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForTrue="Green" ColorForFalse="Red" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Inverted="True" />
-        <converters:ProportionalConverter x:Key="ProportionalConverter" DownscalingFactor="20" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/ButtonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Inverted="True" />
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -44,22 +47,25 @@
                    VerticalAlignment="Bottom" />
         </Grid>
         <StackPanel Grid.Row="1" Margin="12,5" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Command="{Binding AnswerCommand}" Margin="5" Foreground="Green" FontFamily="Segoe UI Symbol"
-                    Content="&#xE13A;"
+            <Button Command="{Binding AnswerCommand}" Style="{StaticResource Button.Conversation.Call.AudioCall}"
                     Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Command="{Binding HangupCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
-                    Content="&#xE137;"
-                    Visibility="{Binding IsRemoteRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Command="{Binding HangupCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
-                    Content="&#xE137;"
+            
+            <Button Command="{Binding HangupCommand}" Style="{StaticResource Button.Conversation.Call.End}"
+                    Visibility="{Binding IsRemoteRinging, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Button Command="{Binding HangupCommand}" Style="{StaticResource Button.Conversation.Call.End}"
                     Visibility="{Binding IsCallConnected, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Command="{Binding RejectCommand}" Margin="5" Foreground="Red" FontFamily="Segoe UI Symbol"
-                    Content="&#xE137;"
+            <Button Command="{Binding RejectCommand}" Style="{StaticResource Button.Conversation.Call.End}"
                     Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Command="{Binding SwitchMicCommand}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE1D6;"
-                    Foreground="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
-            <Button Command="{Binding SwitchVideo}" Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE116;"
-                    Foreground="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BoolToBrushConverter}}" />
+            
+            <Button Command="{Binding SwitchMicCommand}" Style="{StaticResource Button.Conversation.Call.Audio.Mute}"
+                    Visibility="{Binding IsMicEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Command="{Binding SwitchMicCommand}" Style="{StaticResource Button.Conversation.Call.Audio.Unmute}"
+                    Visibility="{Binding IsMicEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
+
+            <Button Command="{Binding SwitchVideo}" Style="{StaticResource Button.Conversation.Call.Video.Disable}"
+                    Visibility="{Binding IsVideoEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <!--<Button Command="{Binding SwitchVideo}" Style="{StaticResource Button.Conversation.Call.Video.Enable}"
+                    Visibility="{Binding IsVideoEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />-->
         </StackPanel>
     </Grid>
 </UserControl>

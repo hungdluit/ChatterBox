@@ -12,94 +12,99 @@
     d:DesignHeight="300"
     d:DesignWidth="400" x:Name="ChatViewRoot">
     <UserControl.Resources>
-        <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss" />
-        <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
-        <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
-            <converters:LayoutTypeToStyleConverter.OverlayStyle>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Visible" />
-                </Style>
-            </converters:LayoutTypeToStyleConverter.OverlayStyle>
-            <converters:LayoutTypeToStyleConverter.ParallelStyle>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                </Style>
-            </converters:LayoutTypeToStyleConverter.ParallelStyle>
-        </converters:LayoutTypeToStyleConverter>
-        <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
-            <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Background" Value="Blue" />
-                    <Setter Property="Margin" Value="0,0,40,0" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <Grid Margin="3">
-                                    <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
-                                    <Border Margin="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.RowSpan="2" VerticalAlignment="Top" Height="48" Width="48"
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/ButtonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss" />
+            <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
+            <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
+                <converters:LayoutTypeToStyleConverter.OverlayStyle>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible" />
+                    </Style>
+                </converters:LayoutTypeToStyleConverter.OverlayStyle>
+                <converters:LayoutTypeToStyleConverter.ParallelStyle>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                </converters:LayoutTypeToStyleConverter.ParallelStyle>
+            </converters:LayoutTypeToStyleConverter>
+            <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
+                <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Blue" />
+                        <Setter Property="Margin" Value="0,0,40,0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Grid Margin="3">
+                                        <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
+                                        <Border Margin="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Image Grid.RowSpan="2" VerticalAlignment="Top" Height="48" Width="48"
                                                    Margin="5"
                                                    Source="{Binding Path=DataContext.ProfileSource, ElementName=ChatViewRoot}" />
-                                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Message}"
+                                                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Message}"
                                                        TextWrapping="WrapWholeWords" />
-                                            <TextBlock Grid.Column="1" Grid.Row="1"
+                                                <TextBlock Grid.Column="1" Grid.Row="1"
                                                        Text="{Binding DateTime, Converter={StaticResource FormatDateTimeConverter}}"
                                                        FontSize="11" Foreground="DarkGray" Margin="0,10,0,0"
                                                        HorizontalAlignment="Right" />
-                                        </Grid>
-                                    </Border>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
-            <styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Background" Value="Gray" />
-                    <Setter Property="Margin" Value="40,0,0,0" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <Grid Margin="3">
-                                    <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
-                                    <Border Margin="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.RowSpan="2" VerticalAlignment="Top" Height="48" Width="48"
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+                <styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Gray" />
+                        <Setter Property="Margin" Value="40,0,0,0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Grid Margin="3">
+                                        <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
+                                        <Border Margin="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Image Grid.RowSpan="2" VerticalAlignment="Top" Height="48" Width="48"
                                                    Margin="5"
                                                    Source="{Binding Path=DataContext.OwnProfileSource, ElementName=ChatViewRoot}" />
-                                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Message}"
+                                                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Message}"
                                                        TextWrapping="WrapWholeWords" />
-                                            <TextBlock Grid.Column="1" Grid.Row="1"
+                                                <TextBlock Grid.Column="1" Grid.Row="1"
                                                        Text="{Binding DateTime, Converter={StaticResource FormatDateTimeConverter}}"
                                                        FontSize="11" Foreground="DarkGray" Margin="0,10,0,0"
                                                        HorizontalAlignment="Right" />
-                                        </Grid>
-                                    </Border>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
-        </styleSelectors:InstantMessageStyleSelector>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
+            </styleSelectors:InstantMessageStyleSelector>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -122,10 +127,8 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         Grid.Column="2">
-                <Button Command="{Binding CallCommand}" Margin="5" Tapped="PreventFocus"
-                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE13A;" />
-                <Button Command="{Binding VideoCallCommand}" Margin="5" Tapped="PreventFocus"
-                        Foreground="Green" FontFamily="Segoe UI Symbol" Content="&#xE116;" />
+                <Button Command="{Binding CallCommand}" Style="{StaticResource Button.Conversation.Call.AudioCall}" Tapped="PreventFocus"/>
+                <Button Command="{Binding VideoCallCommand}" Style="{StaticResource Button.Conversation.Call.VideoCall}" Tapped="PreventFocus" />
             </StackPanel>
 
         </Grid>

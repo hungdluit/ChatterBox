@@ -12,8 +12,6 @@ namespace ChatterBox.Client.Common.Background
 {
     public sealed class PushNotificationTask : IBackgroundTask
     {
-        private const int elapsedCallTime = 60;
-
         #region IBackgroundTask Members
 
         public void Run(IBackgroundTaskInstance taskInstance)
@@ -22,36 +20,32 @@ namespace ChatterBox.Client.Common.Background
             {
                 try
                 {
-                    var rawNotification = (RawNotification) taskInstance.TriggerDetails;
+                    var rawNotification = (RawNotification)taskInstance.TriggerDetails;
                     var rawContent = rawNotification.Content;
 
                     var serializedParameter =
                         rawContent.Substring(rawContent.IndexOf(" ", StringComparison.CurrentCultureIgnoreCase) + 1);
-                    var type = typeof (RelayMessage);
-                    var message = (RelayMessage) JsonConvert.Deserialize(serializedParameter, type);
+                    var type = typeof(RelayMessage);
+                    var message = (RelayMessage)JsonConvert.Deserialize(serializedParameter, type);
 
-                    if (message != null)
+                    if (message == null) return;
+
+                    var isTimeout = (DateTimeOffset.UtcNow - message.SentDateTimeUtc).TotalSeconds > 60;
+
+                    if (message.Tag == RelayMessageTags.VoipCall)
                     {
-                        var showNotification = false;
-                        if (message.Tag == RelayMessageTags.SdpAnswer)
-                        {
-                            var timespan = DateTimeOffset.UtcNow - message.SentDateTimeUtc;
-                            showNotification = timespan.TotalSeconds < elapsedCallTime;
-                        }
-                        else if (message.Tag == RelayMessageTags.InstantMessage)
-                        {
-                            showNotification = !SignaledRelayMessages.IsMessageReceived(message.Id);
-                        }
+                        if (isTimeout) return;
+                        ToastNotificationService.ShowInstantMessageNotification(message.FromName, message.FromUserId, AvatarLink.For(message.FromAvatar),
+                            $"Missed call at {message.SentDateTimeUtc.ToLocalTime()}.");
 
-                        if (showNotification)
-                        {
-                            ToastNotificationService.ShowInstantMessageNotification(message.FromName,
-                                message.FromUserId, AvatarLink.For(message.FromAvatar), message.Payload);
-
-                            SignaledRelayMessages.AddPushNotificationMessageID(message.Id);
-                            
-                            SignaledRelayMessages.Add(message);
-                        }
+                    }
+                    else if (message.Tag == RelayMessageTags.InstantMessage)
+                    {
+                        if (isTimeout || SignaledRelayMessages.IsMessageReceived(message.Id)) return;
+                        ToastNotificationService.ShowInstantMessageNotification(message.FromName, message.FromUserId,
+                            AvatarLink.For(message.FromAvatar), message.Payload);
+                        SignaledRelayMessages.AddPushNotificationMessageID(message.Id);
+                        SignaledRelayMessages.Add(message);
                     }
                 }
                 catch (Exception)
