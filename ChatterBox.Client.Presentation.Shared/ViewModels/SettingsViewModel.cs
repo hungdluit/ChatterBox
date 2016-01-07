@@ -24,6 +24,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private IWebRTCSettingsService _webrtcSettingsService;
         private CoreDispatcher _dispatcher;
         private bool _appInsightsEnabled;
+        private bool _webrtcTraceEnabled;
+        private string _webRTCTraceServerIP="localhost";
+        private string _webRTCTraceServerPort="55000";
         private readonly string[] incompatibleAudioCodecs =
             new string[] { "CN32000", "CN16000", "CN8000", "red8000", "telephone-event8000" };
         private string SelectedFrameRateId = nameof(SelectedFrameRateId) + "Frame";
@@ -231,6 +234,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _signalingServerPort, value); }
         }
 
+        public string WebRTCTraceServerIp
+        {
+            get { return _webRTCTraceServerIP; }
+            set { SetProperty(ref _webRTCTraceServerIP, value); }
+        }
+
+        public string WebRTCTraceServerPort
+        {
+            get { return _webRTCTraceServerPort; }
+            set { SetProperty(ref _webRTCTraceServerPort, value); }
+        }
+
         public string ApplicationVersion
         {
             get
@@ -252,6 +267,30 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set
             {
                 SetProperty(ref _appInsightsEnabled, value);
+            }
+        }
+        public bool WebRTCTraceEnabled
+        {
+            get
+            {
+                return _webrtcTraceEnabled;
+            }
+            set
+            {
+                if (!SetProperty(ref _webrtcTraceEnabled, value))
+                {
+                    return;
+                }
+
+                if (_webrtcTraceEnabled)
+                {
+                    _webrtcSettingsService.StartTrace();
+                }
+                else
+                {
+                    _webrtcSettingsService.StopTrace();
+                    _webrtcSettingsService.SaveTrace(_webRTCTraceServerIP, Int32.Parse(_webRTCTraceServerPort));
+                }
             }
         }
 

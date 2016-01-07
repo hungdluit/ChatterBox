@@ -201,6 +201,10 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock Text="ChatterBox Settings" Margin="5" HorizontalAlignment="Center" FontSize="18"
                                FontWeight="Bold" Grid.Row="0" />
@@ -215,9 +219,17 @@
                              behaviors:ReturnKeyCloseKeyboardBehavior.Enabled="True" />
                     <ToggleSwitch Header="AppInsight Logging" Grid.Row="7" IsOn="{Binding AppInsightsEnabled, Mode=TwoWay}"
                       Width="Auto" MinWidth="200" Visibility="{Binding IsWin10App}"/>
+                    <ToggleSwitch Header="WebRTC Trace" Grid.Row="8" IsOn="{Binding WebRTCTraceEnabled, Mode=TwoWay}"
+                      Width="Auto" MinWidth="200"/>
+                    <TextBlock Text="WebRTC Trace server Ip" Margin="5" Grid.Row="9" HorizontalAlignment="Left" />
+                    <TextBox Text="{Binding WebRTCTraceServerIp, Mode=TwoWay}" HorizontalAlignment="Stretch" Grid.Row="10" 
+                             behaviors:ReturnKeyCloseKeyboardBehavior.Enabled="True" IsEnabled="{Binding WebRTCTraceEnabled}"/>
+                    <TextBlock Text="WebRTC Trace server Port" Margin="5" Grid.Row="11" HorizontalAlignment="Left" />
+                    <TextBox Text="{Binding WebRTCTraceServerPort, Mode=TwoWay}" HorizontalAlignment="Stretch" Grid.Row="12" 
+                             behaviors:ReturnKeyCloseKeyboardBehavior.Enabled="True" IsEnabled="{Binding WebRTCTraceEnabled}"/>
                     <TextBlock Text="About" Margin="10" HorizontalAlignment="Center" FontSize="18"
-                               FontWeight="Bold" Grid.Row="8" />
-                    <TextBlock Text="{Binding ApplicationVersion}" Margin="5" Grid.Row="9" HorizontalAlignment="Left" />
+                               FontWeight="Bold" Grid.Row="13" />
+                    <TextBlock Text="{Binding ApplicationVersion}" Margin="5" Grid.Row="14" HorizontalAlignment="Left" />
                 </Grid>
             </ItemsControl>
         </ScrollViewer>
