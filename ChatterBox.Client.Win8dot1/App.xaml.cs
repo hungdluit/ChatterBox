@@ -17,10 +17,13 @@ using ChatterBox.Common.Communication.Contracts;
 using Microsoft.Practices.Unity;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -74,8 +77,6 @@ namespace ChatterBox.Client.Win8dot1
                 RegistrationSettings.Reset();
             }
 
-            await RegisterForPush();
-
             Container
                 .RegisterType<ISignalingSocketChannel, SignalingSocketChannel>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISignalingSocketOperation, SignalingSocketOperation>(new ContainerControlledLifetimeManager())
@@ -119,9 +120,32 @@ namespace ChatterBox.Client.Win8dot1
                 }
             }
 
+            var currentStatus = BackgroundExecutionManager.GetAccessStatus();
+            if (currentStatus == BackgroundAccessStatus.Unspecified ||
+                currentStatus == BackgroundAccessStatus.Denied)
+            {
+                ShowMessageForMissingLockScreen();
+            }
+            else
+            {
+                await RegisterForPush();
+            }
+
             ProcessLaunchArgument(launchArg);
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private async void ShowMessageForMissingLockScreen()
+        {
+            var msgDialog = new MessageDialog("Please add ChatterBox application to Lock Screen (PC Settings -> PC and devices -> Lock screen -> Lock screen apps)",
+                                                            "Need lock screen presence");
+            msgDialog.Commands.Add(new UICommand("OK", (cmd) => Current.Exit()) { Id = 0 });
+            msgDialog.DefaultCommandIndex = 0;
+            msgDialog.CancelCommandIndex = 0;
+            Debug.WriteLine("Message dialog for missing lock screen showed");
+            await msgDialog.ShowAsync();
+
         }
 
         private static async System.Threading.Tasks.Task RegisterForPush(bool registerAgain = true)
@@ -129,7 +153,6 @@ namespace ChatterBox.Client.Win8dot1
             PushNotificationHelper.RegisterPushNotificationChannel();
 
             var helper = new TaskHelper();
-
             var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, new PushNotificationTrigger(), registerAgain);
             if (pushNotificationTask == null)
             {
