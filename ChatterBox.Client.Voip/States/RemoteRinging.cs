@@ -57,9 +57,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
 
             var payload = JsonConvert.Serialize(_request);
 
-            Context.SendToPeer(RelayMessageTags.VoipCall, payload);
-
-            Context.VoipCoordinator.StartOutgoingCall(_request);
+            Context.SendToPeer(RelayMessageTags.VoipCall, payload);            
 
             _callTimeout = new Timer(CallTimeoutCallback, null, 30000, Timeout.Infinite);
         }
