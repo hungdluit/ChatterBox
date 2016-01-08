@@ -13,6 +13,7 @@
     d:DesignWidth="400" x:Name="ChatViewRoot">
     <UserControl.Resources>
         <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss" />
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForFalse="Blue" ColorForTrue="Orange" />
         <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
         <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
             <converters:LayoutTypeToStyleConverter.OverlayStyle>
@@ -29,13 +30,15 @@
         <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
             <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
                 <Style TargetType="ListBoxItem">
+                    
                     <Setter Property="Background" Value="Blue" />
                     <Setter Property="Margin" Value="0,0,40,0" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBoxItem">
-                                <Grid Margin="3">
-                                    <Border CornerRadius="5" Background="{TemplateBinding Background}" Opacity=".2" />
+                                <Grid Margin="3" >
+                                    <Border Background="{Binding IsHighlighted, Converter={StaticResource BoolToBrushConverter}}"
+                                            Opacity=".2" CornerRadius="5" />
                                     <Border Margin="5">
                                         <Grid>
                                             <Grid.ColumnDefinitions>

@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\ReturnKeyCloseKeyboardBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\ReturnKeyCommandBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FormatDateTimeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\LayoutTypeToStyleConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />

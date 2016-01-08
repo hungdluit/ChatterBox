@@ -38,6 +38,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private Windows.Foundation.Size _remoteNativeVideoSize;
         private bool _isMicEnabled;
         private bool _isVideoEnabled;
+        private bool _isSelected;
+        private bool _isHighlighted;
 
         private MediaElement _selfVideoElement;
         private MediaElement _peerVideoElement;
@@ -61,6 +63,21 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
             SwitchMicCommand = new DelegateCommand(SwitchMicCommandExecute, SwitchMicCommandCanExecute);
             SwitchVideoCommand = new DelegateCommand(SwitchVideoCommandExecute, SwitchVideoCommandCanExecute);
+        }
+
+        internal void OnNavigatedTo()
+        {
+            _isSelected = true;
+            IsHighlighted = false;
+        }
+
+        internal void OnNavigatedFrom()
+        {
+            _isSelected = false;
+            foreach (var msg in InstantMessages)
+            {
+                msg.IsHighlighted = false;
+            }
         }
 
         public DelegateCommand AnswerCommand { get; }
@@ -123,6 +140,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isOnline, value); }
         }
 
+        public bool IsHighlighted
+        {
+            get { return _isHighlighted; }
+            set
+            {
+                Debug.WriteLine($"{Name} highlighting: {value}");
+                SetProperty(ref _isHighlighted, value);
+            }
+        }
+
         public bool IsOtherConversationInCallMode
         {
             get { return _isOtherConversationInCallMode; }
@@ -150,7 +177,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isPeerVideoAvailable, value); }
         }
 
-        private bool _isSelfVideoAvailable;
+        private bool _isSelfVideoAvailable;        
+
         public bool IsSelfVideoAvailable
         {
             get { return _isSelfVideoAvailable; }
@@ -387,9 +415,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     Message = message.Payload,
                     DateTime = message.SentDateTimeUtc.LocalDateTime,
                     Sender = Name,
+                    IsHighlighted = !_isSelected,
                     IsSender = false
                 });
                 SignaledRelayMessages.Delete(message.Id);
+            }
+
+            if (!_isSelected && newMessages.Count > 0)
+            {
+                IsHighlighted = true;
             }
         }
 
