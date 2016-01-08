@@ -146,7 +146,7 @@
             <Button Command="{Binding SendInstantMessageCommand}" Margin="5"                    
                     Grid.Column="1" FontFamily="Segoe UI Symbol"
                     HorizontalContentAlignment="Left" IsTabStop="False"
-                    Content="&#xE122;" />
+                    Content="&#xE120;" />
         </Grid>
     </Grid>
 </UserControl>
