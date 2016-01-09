@@ -187,7 +187,30 @@ namespace ChatterBox.Client.Universal.Services
             Debug.WriteLine("WebRTC initialized");
         }
 
-        #endregion
+        public void StartTrace()
+        {
+          InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void StopTrace()
+        {
+           InvokeHubChannel<IVoipChannel>();
+        }
+        public void SaveTrace(TraceServerConfig traceServer)
+        {
+          InvokeHubChannel<IVoipChannel>(traceServer);
+        }
+        public void SaveTrace(string ip, int port)
+        {
+          TraceServerConfig traceServer = new TraceServerConfig
+          {
+            Ip = ip,
+            Port = port
+          };
+          SaveTrace(traceServer);
+        }
+
+    #endregion
 
         #region IClientChannel Members
 

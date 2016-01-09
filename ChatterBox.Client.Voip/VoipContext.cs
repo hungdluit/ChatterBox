@@ -3,6 +3,7 @@ using ChatterBox.Client.Common.Communication.Voip.States;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Client.Voip;
+using ChatterBox.Client.Voip.Utils;
 using ChatterBox.Client.Voip.States.Interfaces;
 using System;
 using System.Linq;
@@ -15,6 +16,7 @@ using Windows.UI.Core;
 using System.Collections.Generic;
 using Windows.Networking.Connectivity;
 using Windows.Storage;
+using Windows.System.Threading;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -113,7 +115,46 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 }
             }   
         }
-        
+        public void StartTrace()
+        {
+            WebRTC.StartTracing();
+            AppPerformanceCheck();
+        }
+
+        public void StopTrace()
+        {
+            WebRTC.StopTracing();
+            if (_appPerfTimer != null)
+            {
+              _appPerfTimer.Cancel();
+            }
+        }
+        public void SaveTrace(string ip, int port)
+        {
+            WebRTC.SaveTrace(ip, port);
+        }
+
+        private ThreadPoolTimer _appPerfTimer = null;
+
+        private void AppPerformanceCheck()
+        {
+
+            if (_appPerfTimer != null)
+            {
+              _appPerfTimer.Cancel();
+            }
+
+            _appPerfTimer = ThreadPoolTimer.CreatePeriodicTimer(t=> ReportAppPerf(), TimeSpan.FromSeconds(1));
+
+        }
+
+
+        private void ReportAppPerf()
+        {
+            WebRTC.UpdateCPUUsage(CPUData.GetCPUUsage());
+            WebRTC.UpdateMemUsage(MEMData.GetMEMUsage());
+
+        }
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
         {

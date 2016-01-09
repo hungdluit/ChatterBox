@@ -167,5 +167,19 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Context.LocalVideoRenderer.SetMediaElement(Dispatcher, self);
             Context.RemoteVideoRenderer.SetMediaElement(Dispatcher, peer);
         }
-    }
+        public void StartTrace()
+        {
+          Context.StartTrace();
+        }
+
+        public void StopTrace()
+        {
+          Context.StopTrace();
+        }
+
+        public void SaveTrace(TraceServerConfig traceServer)
+        {
+          Context.SaveTrace(traceServer.Ip, traceServer.Port);
+        }
+  }
 }

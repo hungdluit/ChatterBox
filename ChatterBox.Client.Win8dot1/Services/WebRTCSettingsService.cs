@@ -135,5 +135,20 @@ namespace ChatterBox.Client.Win8dot1.Services
         {
             return _voipContext.InitializeWebRTC();
         }
+        
+        public void StartTrace()
+        {
+            _voipContext.StartTrace();
+        }
+
+        public void StopTrace()
+        {
+            _voipContext.StopTrace();
+        }
+        public void SaveTrace(string ip, int port)
+        {
+            _voipContext.SaveTrace(ip, port);
+
+        }
     }
 }

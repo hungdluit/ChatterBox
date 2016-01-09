@@ -29,5 +29,8 @@ namespace ChatterBox.Client.Presentation.Shared.Services
         void SetPreferredVideoCaptureFormat(int Width, int Height, int FrameRate);
 
         Task InitializeWebRTC();
-    }
+        void StartTrace();
+        void StopTrace();
+        void SaveTrace(string ip, int port);
+  }
 }
