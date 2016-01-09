@@ -186,8 +186,26 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public Media Media { get; private set; }
 
-        public bool IsVideoEnabled { get; set; }
-
+        private bool _isVideoEnabled;
+        public bool IsVideoEnabled
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _isVideoEnabled;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    _isVideoEnabled = value;
+                    ApplyVideoConfig();
+                }
+            }
+        }
+       
         public IVoipCoordinator VoipCoordinator { get; set; }
 
         private MediaStream _localStream;
@@ -201,6 +219,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             {
                 _localStream = value;
                 ApplyMicrophoneConfig();
+                ApplyVideoConfig();
             }
         }
         public MediaStream RemoteStream { get; set; }
@@ -437,6 +456,17 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 foreach (var audioTrack in LocalStream.GetAudioTracks())
                 {
                     audioTrack.Enabled = !_microphoneMuted;
+                }
+            }
+        }
+
+        private void ApplyVideoConfig()
+        {
+            if (LocalStream != null)
+            {
+                foreach (var videoTrack in LocalStream.GetVideoTracks())
+                {
+                    videoTrack.Enabled = _isVideoEnabled;
                 }
             }
         }

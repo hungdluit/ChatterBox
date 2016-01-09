@@ -18,6 +18,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
     public class SettingsViewModel : BindableBase
     {
+        public event Action OnRegistrationSettingsChanged;
         private string _domain;
         private ApplicationDataContainer _localSettings;
         private string _signalingServerHost;
@@ -64,12 +65,31 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void OnSaveCommandExecute()
         {
-            SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
-            SignalingSettings.SignalingServerHost = SignalingServerHost;
-            RegistrationSettings.Domain = Domain;
+            bool registrationSettingChanged = false;
+            if (SignalingSettings.SignalingServerPort != SignalingServerPort.ToString())
+            {
+                SignalingSettings.SignalingServerPort = SignalingServerPort.ToString();
+                registrationSettingChanged = true;
+            }
+
+            if (SignalingSettings.SignalingServerHost != SignalingServerHost)
+            {
+                SignalingSettings.SignalingServerHost = SignalingServerHost;
+                registrationSettingChanged = true;
+            }
+            if (RegistrationSettings.Domain != Domain)
+            {
+                RegistrationSettings.Domain = Domain;
+                registrationSettingChanged = true;
+            }
+
+            if (registrationSettingChanged)
+            {
+                OnRegistrationSettingsChanged?.Invoke();
+            }
 
 #if WIN10
-            SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
+      SignalingSettings.AppInsightsEnabled = AppInsightsEnabled;
 #endif
 
             if (SelectedCamera != null)
@@ -261,7 +281,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public string Domain
         {
             get { return _domain; }
-            set { SetProperty(ref _domain, value); }
+            set { SetProperty(ref _domain, value);}
         }
 
         public DelegateCommand SaveCommand { get; set; }
@@ -269,8 +289,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public string SignalingServerHost
         {
             get { return _signalingServerHost; }
-            set { SetProperty(ref _signalingServerHost, value); }
-        }
+            set { SetProperty(ref _signalingServerHost, value);}
+          }
 
         public int SignalingServerPort
         {

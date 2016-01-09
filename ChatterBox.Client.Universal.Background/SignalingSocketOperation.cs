@@ -36,6 +36,16 @@ namespace ChatterBox.Client.Universal.Background
                 return _socket;
             }
         }
+        public void Disconnect()
+        {
+            Dispose();
+            if (Socket != null)
+            {
+                _socket.Dispose();
+                _socket = null;
+            }
+
+        }
 
         #region IDisposable Members
 

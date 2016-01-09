@@ -32,5 +32,9 @@ namespace ChatterBox.Client.Common.Communication.Voip
         void StartTrace();
         void StopTrace();
         void SaveTrace(TraceServerConfig traceServer);
-  }
+
+        void SuspendVoipVideo();
+        void ResumeVoipVideo();
+        void ConfigureVideo(VideoConfig config);
+    }
 }

@@ -37,6 +37,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private Windows.Foundation.Size _localNativeVideoSize;
         private Windows.Foundation.Size _remoteNativeVideoSize;
         private bool _isMicEnabled;
+        private bool _isVideoEnabled;
 
         private MediaElement _selfVideoElement;
         private MediaElement _peerVideoElement;
@@ -59,6 +60,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             RejectCommand = new DelegateCommand(OnRejectCommandExecute, OnRejectCommandCanExecute);
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
             SwitchMicCommand = new DelegateCommand(SwitchMicCommandExecute, SwitchMicCommandCanExecute);
+            SwitchVideoCommand = new DelegateCommand(SwitchVideoCommandExecute, SwitchVideoCommandCanExecute);
         }
 
         public DelegateCommand AnswerCommand { get; }
@@ -67,6 +69,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public DelegateCommand CloseConversationCommand { get; }
         public DelegateCommand HangupCommand { get; }
         public DelegateCommand SwitchMicCommand { get; }
+        public DelegateCommand SwitchVideoCommand { get; }
 
         public string InstantMessage
         {
@@ -187,7 +190,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsSelfVideoAvailable = value > 0;
                 _localSwapChainHandle = value;
-                // Don't use SetPropert() because it does nothing if the value
+                // Don't use SetProperty() because it does nothing if the value
                 // doesn't change but in this case it must always update the
                 // swap chain panel.
                 OnPropertyChanged("LocalSwapChainPanelHandle");
@@ -204,7 +207,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsPeerVideoAvailable = value > 0;
                 _remoteSwapChainHandle = value;
-                // Don't use SetPropert() because it does nothing if the value
+                // Don't use SetProperty() because it does nothing if the value
                 // doesn't change but in this case it must always update the
                 // swap chain panel.
                 OnPropertyChanged("RemoteSwapChainPanelHandle");
@@ -244,6 +247,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set
             {
                 SetProperty(ref _isMicEnabled, value);
+            }
+        }
+
+        public bool IsVideoEnabled
+        {
+            get
+            {
+                return _isVideoEnabled;
+            }
+            set
+            {
+                SetProperty(ref _isVideoEnabled, value);
             }
         }
 
@@ -344,6 +359,21 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             });
         }
 
+        private bool SwitchVideoCommandCanExecute()
+        {
+            return IsCallConnected || IsLocalRinging || IsRemoteRinging;
+        }
+
+        private void SwitchVideoCommandExecute()
+        {
+            IsVideoEnabled = !IsVideoEnabled;
+            _voipChannel.ConfigureVideo(new VideoConfig
+            {
+                On = IsVideoEnabled
+            });
+            IsSelfVideoAvailable = IsVideoEnabled;
+        }
+
         private void OnRelayMessagesUpdated()
         {
             var newMessages = SignaledRelayMessages.Messages
@@ -410,6 +440,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = false;
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
+                        IsVideoEnabled = voipState.IsVideoEnabled;
                     }
                     else
                     {
@@ -424,6 +455,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = true;
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
+                        IsVideoEnabled = voipState.IsVideoEnabled;
                     }
                     else
                     {
@@ -450,7 +482,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
-                        IsSelfVideoAvailable =
+                        IsSelfVideoAvailable = IsVideoEnabled;
                         IsPeerVideoAvailable = voipState.IsVideoEnabled;
                     }
                     else
@@ -478,7 +510,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
-                        IsSelfVideoAvailable =
+                        IsSelfVideoAvailable = IsVideoEnabled;
                         IsPeerVideoAvailable = voipState.IsVideoEnabled;
                     }
                     else
@@ -528,6 +560,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             HangupCommand.RaiseCanExecuteChanged();
             RejectCommand.RaiseCanExecuteChanged();
             SwitchMicCommand.RaiseCanExecuteChanged();
+            SwitchVideoCommand.RaiseCanExecuteChanged();
         }
 
         public event Action<ConversationViewModel> OnIsInCallMode;

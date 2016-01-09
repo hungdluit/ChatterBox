@@ -22,6 +22,7 @@ namespace ChatterBox.Client.Common.Communication.Voip.Dto
         public bool Muted { get; set; }
     }
 
+
     public sealed class TraceServerConfig
     {
         [DataMember]
@@ -30,4 +31,8 @@ namespace ChatterBox.Client.Common.Communication.Voip.Dto
         [DataMember]
         public int Port { get; set; }
   }
+   public sealed class VideoConfig
+   {
+        public bool On { get; set; }
+   }
 }

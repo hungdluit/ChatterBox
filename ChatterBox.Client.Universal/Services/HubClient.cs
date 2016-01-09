@@ -294,6 +294,10 @@ namespace ChatterBox.Client.Universal.Services
                 OwnerId = _taskHelper.GetTask(nameof(SignalingTask)).TaskId.ToString()
             });
         }
+        public void DisconnectSignalingServer()
+        {
+            InvokeHubChannel<ISignalingSocketChannel>();
+        }
 
         public ConnectionStatus GetConnectionStatus()
         {
@@ -379,6 +383,20 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(config);
         }
 
+        public void SuspendVoipVideo()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void ResumeVoipVideo()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void ConfigureVideo(VideoConfig config)
+        {
+            InvokeHubChannel<IVoipChannel>(config);
+        }
         #endregion
 
         public async Task<bool> Connect()

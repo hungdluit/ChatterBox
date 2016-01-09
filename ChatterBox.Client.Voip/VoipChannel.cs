@@ -156,7 +156,20 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.ConfigureMicrophone Muted=" + (config.Muted ? "yes" : "no"));
-                Context.MicrophoneMuted = config.Muted;
+                Context.WithState(st => {
+                    return Task.Run(() => { Context.MicrophoneMuted = config.Muted; });
+                }).Wait();
+            });
+        }
+
+        public void ConfigureVideo(VideoConfig config)
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.ConfigureVideo On=" + (config.On ? "yes" : "no"));
+                Context.WithState(st => {
+                    return Task.Run(() => { Context.IsVideoEnabled = config.On; });
+                }).Wait();
             });
         }
 
@@ -167,6 +180,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Context.LocalVideoRenderer.SetMediaElement(Dispatcher, self);
             Context.RemoteVideoRenderer.SetMediaElement(Dispatcher, peer);
         }
+
         public void StartTrace()
         {
           Context.StartTrace();
@@ -181,5 +195,23 @@ namespace ChatterBox.Client.Common.Communication.Voip
         {
           Context.SaveTrace(traceServer.Ip, traceServer.Port);
         }
-  }
+
+        public void SuspendVoipVideo()
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.SuspendVoipVideo");
+                Context.WithState(st => st.SuspendVoipVideo()).Wait();
+            });
+        }
+
+        public void ResumeVoipVideo()
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.ResumeVoipVideo");
+                Context.WithState(st => st.ResumeVoipVideo()).Wait();
+            });
+        }
+    }
 }

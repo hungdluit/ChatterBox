@@ -32,7 +32,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             ContactsViewModel.OnShowSettings += () => IsSettingsVisible = true;
             ConnectingViewModel.OnShowSettings += () => IsSettingsVisible = true;
             SettingsViewModel.OnClose += SettingsViewModelOnClose;
-        }
+            SettingsViewModel.OnRegistrationSettingsChanged += RegistrationSettingChanged;
+        }        
 
         public ConnectingViewModel ConnectingViewModel { get; }
         public ContactsViewModel ContactsViewModel { get; }
@@ -79,6 +80,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void SettingsViewModelOnClose()
         {
             IsSettingsVisible = false;
+        }
+
+        private void RegistrationSettingChanged()
+        {
+            IsActive = false;
+            ConnectingViewModel.SwitchSignalingServer();
         }
 
         private void WelcomeCompleted()
