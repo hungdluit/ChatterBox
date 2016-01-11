@@ -51,6 +51,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             await LoadSettings();
         }
 
+        public void OnNavigatedFrom()
+        {
+            _webrtcSettingsService.ReleaseDevices();
+        }
+
         public DelegateCommand CloseCommand { get; set; }
 
         public event Action OnClose;

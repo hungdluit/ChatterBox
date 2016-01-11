@@ -187,6 +187,11 @@ namespace ChatterBox.Client.Universal.Services
             Debug.WriteLine("WebRTC initialized");
         }
 
+        public void ReleaseDevices()
+        {
+            Media.OnAppSuspending();
+        }
+
         #endregion
 
         #region IClientChannel Members

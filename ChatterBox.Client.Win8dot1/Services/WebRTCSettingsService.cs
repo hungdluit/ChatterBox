@@ -135,5 +135,10 @@ namespace ChatterBox.Client.Win8dot1.Services
         {
             return _voipContext.InitializeWebRTC();
         }
+
+        public void ReleaseDevices()
+        {
+            Media.OnAppSuspending();
+        }
     }
 }
