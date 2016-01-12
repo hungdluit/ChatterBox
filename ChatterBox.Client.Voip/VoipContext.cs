@@ -66,7 +66,11 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
             var videoDevices = Media.GetVideoCaptureDevices();
             var selectedVideoDevice = videoDevices.FirstOrDefault(d => d.Id.Equals(videoDeviceId));
-            Media.SelectVideoDevice(selectedVideoDevice ?? videoDevices.First());
+            selectedVideoDevice = selectedVideoDevice ?? videoDevices.FirstOrDefault();
+            if (selectedVideoDevice != null)
+            {
+                Media.SelectVideoDevice(selectedVideoDevice);
+            }
 
             string audioDeviceId = string.Empty;
             if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioDeviceSettings))
@@ -75,7 +79,11 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
             var audioDevices = Media.GetAudioCaptureDevices();
             var selectedAudioDevice = audioDevices.FirstOrDefault(d => d.Id.Equals(audioDeviceId));
-            Media.SelectAudioDevice(selectedAudioDevice ?? audioDevices.First());
+            selectedAudioDevice = selectedAudioDevice ?? audioDevices.FirstOrDefault();
+            if (selectedAudioDevice != null)
+            {
+                Media.SelectAudioDevice(selectedAudioDevice);
+            }
 
             string audioPlayoutDeviceId = string.Empty;
             if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioPlayoutDeviceSettings))
@@ -84,7 +92,11 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
             var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
             var selectedAudioPlayoutDevice = audioPlayoutDevices.FirstOrDefault(d => d.Id.Equals(audioPlayoutDeviceId));
-            Media.SelectAudioPlayoutDevice(selectedAudioPlayoutDevice ?? audioPlayoutDevices.First());
+            selectedAudioPlayoutDevice = selectedAudioPlayoutDevice ?? audioPlayoutDevices.FirstOrDefault();
+            if (selectedAudioPlayoutDevice != null)
+            {
+                Media.SelectAudioPlayoutDevice(selectedAudioPlayoutDevice);
+            }
 
             int videoCodecId = int.MinValue;
             if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoCodecSettings))
@@ -93,7 +105,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
             var videoCodecs = WebRTC.GetVideoCodecs();
             var selectedVideoCodec = videoCodecs.FirstOrDefault(c => c.Id.Equals(videoCodecId));
-            VideoCodec = selectedVideoCodec ?? videoCodecs.First();
+            VideoCodec = selectedVideoCodec ?? videoCodecs.FirstOrDefault();
 
             int audioCodecId = int.MinValue;
             if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioCodecSettings))
@@ -102,7 +114,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             }
             var audioCodecs = WebRTC.GetAudioCodecs();
             var selectedAudioCodec = audioCodecs.FirstOrDefault(c => c.Id.Equals(audioCodecId));
-            AudioCodec = selectedAudioCodec ?? audioCodecs.First();
+            AudioCodec = selectedAudioCodec ?? audioCodecs.FirstOrDefault();
 
             if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureWidth) &&
                 _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureHeight) &&
@@ -112,9 +124,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
                                                       (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureHeight],
                                                       (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureFrameRate]);
             }
-
         }
-
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
         {
