@@ -235,5 +235,6 @@
             </ItemsControl>
         </ScrollViewer>
         <Button Grid.Row="2" Content="Save" Command="{Binding SaveCommand}" HorizontalAlignment="Right" Margin="15" />
-    </Grid>
+        <Button Grid.Row="2" Content="Quit App" Command="{Binding QuitAppCommand}" HorizontalAlignment="Left" Margin="15" />
+  </Grid>
 </UserControl>
