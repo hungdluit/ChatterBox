@@ -27,7 +27,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private CoreDispatcher _dispatcher;
         private bool _appInsightsEnabled;
         private bool _webrtcTraceEnabled;
-        private string _webRTCTraceServerIP="localhost";
+        private string _webRTCTraceServerIP="127.0.0.1";
         private string _webRTCTraceServerPort="55000";
         private readonly string[] incompatibleAudioCodecs =
             new string[] { "CN32000", "CN16000", "CN8000", "red8000", "telephone-event8000" };
