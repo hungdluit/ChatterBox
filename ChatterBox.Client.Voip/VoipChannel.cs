@@ -116,6 +116,16 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public void OnRemoteHangup(RelayMessage message)
         {
+            if (Context.PeerConnection != null)
+            {
+                if (!message.FromUserId.Equals(Context.PeerId))
+                {
+                    // Don't hang up if a call is in progress and a third
+                    // user is calling then is hanging up 
+                    // (intentionally or by call timeout).
+                    return;
+                }
+            }
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.OnRemoteHangup");
