@@ -31,15 +31,6 @@ namespace ChatterBox.Client.Presentation.Shared.Views
                 WebRTCSwapChainPanel.WebRTCSwapChainPanel.SwapChainPanelHandleProperty,
                 peerHandleBinding);
 
-            var peerSizeBinding = new Binding
-            {
-                Source = DataContext,
-                Path = new PropertyPath("RemoteNativeVideoSize")
-            };
-            peerSwapChainPanel.SetBinding(
-                WebRTCSwapChainPanel.WebRTCSwapChainPanel.SizeProperty,
-                peerSizeBinding);
-
             PeerVideoPresenter.Content = peerSwapChainPanel;
 
             var selfSwapChainPanel = new WebRTCSwapChainPanel.WebRTCSwapChainPanel();
