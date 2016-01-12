@@ -11,10 +11,10 @@ namespace ChatterBox.Client.Presentation.Shared.Views
         public CallView()
         {
             InitializeComponent();
-            this.Loaded += CallView_Loaded;
+            SetVideoPresenters();
         }
 
-        private void CallView_Loaded(object sender, RoutedEventArgs e)
+        private void SetVideoPresenters()
         {
             var boolToVisConverter = new BooleanToVisibilityConverter();
 
