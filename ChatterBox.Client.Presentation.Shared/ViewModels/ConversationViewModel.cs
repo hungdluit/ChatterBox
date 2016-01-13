@@ -15,6 +15,8 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
 using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
+using System.Threading.Tasks;
+using Windows.UI.Core;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -38,9 +40,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private Windows.Foundation.Size _remoteNativeVideoSize;
         private bool _isMicEnabled;
         private bool _isVideoEnabled;
+        private bool _isSelected;
+        private bool _isHighlighted;
 
         private MediaElement _selfVideoElement;
         private MediaElement _peerVideoElement;
+        private MediaElement _audioElement;
 
         public ConversationViewModel(IClientChannel clientChannel,
                                      IForegroundUpdateService foregroundUpdateService,
@@ -61,6 +66,21 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
             SwitchMicCommand = new DelegateCommand(SwitchMicCommandExecute, SwitchMicCommandCanExecute);
             SwitchVideoCommand = new DelegateCommand(SwitchVideoCommandExecute, SwitchVideoCommandCanExecute);
+        }
+
+        internal void OnNavigatedTo()
+        {
+            _isSelected = true;
+            IsHighlighted = false;
+        }
+
+        internal void OnNavigatedFrom()
+        {
+            _isSelected = false;
+            foreach (var msg in InstantMessages)
+            {
+                msg.IsHighlighted = false;
+            }
         }
 
         public DelegateCommand AnswerCommand { get; }
@@ -123,6 +143,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isOnline, value); }
         }
 
+        public bool IsHighlighted
+        {
+            get { return _isHighlighted; }
+            set
+            {
+                Debug.WriteLine($"{Name} highlighting: {value}");
+                SetProperty(ref _isHighlighted, value);
+            }
+        }
+
         public bool IsOtherConversationInCallMode
         {
             get { return _isOtherConversationInCallMode; }
@@ -150,7 +180,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isPeerVideoAvailable, value); }
         }
 
-        private bool _isSelfVideoAvailable;
+        private bool _isSelfVideoAvailable;        
+
         public bool IsSelfVideoAvailable
         {
             get { return _isSelfVideoAvailable; }
@@ -387,9 +418,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     Message = message.Payload,
                     DateTime = message.SentDateTimeUtc.LocalDateTime,
                     Sender = Name,
+                    IsHighlighted = !_isSelected,
                     IsSender = false
                 });
                 SignaledRelayMessages.Delete(message.Id);
+            }
+
+            if (!_isSelected && newMessages.Count > 0)
+            {
+                IsHighlighted = true;
             }
         }
 
@@ -431,6 +468,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     IsOtherConversationInCallMode = false;
                     LocalSwapChainPanelHandle = 0;
                     RemoteSwapChainPanelHandle = 0;
+                    StopSound();
                     break;
                 case VoipStateEnum.LocalRinging:
                     if (voipState.PeerId == UserId)
@@ -441,6 +479,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
                         IsVideoEnabled = voipState.IsVideoEnabled;
+                        PlaySound(isIncomingCall: true);
                     }
                     else
                     {
@@ -456,6 +495,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
                         IsVideoEnabled = voipState.IsVideoEnabled;
+                        PlaySound(isIncomingCall: false);
                     }
                     else
                     {
@@ -469,6 +509,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
+                        StopSound();
                     }
                     else
                     {
@@ -484,6 +525,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsCallConnected = true;
                         IsSelfVideoAvailable = IsVideoEnabled;
                         IsPeerVideoAvailable = voipState.IsVideoEnabled;
+                        StopSound();
                     }
                     else
                     {
@@ -569,6 +611,38 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _selfVideoElement = self;
             _peerVideoElement = peer;
+        }
+
+        public void RegisterAudioElement(MediaElement soundPlayElement)
+        {
+            _audioElement = soundPlayElement;
+            _audioElement.MediaEnded += (sender, args) => _audioElement.Play();
+            _audioElement.MediaFailed += (sender, e) => Debug.WriteLine($"Error in playing call ringonte: {e.ErrorMessage}");
+        }
+
+        public async Task PlaySound(bool isIncomingCall)
+        {
+            if (_audioElement == null) return;
+
+            string source = isIncomingCall ? "ms-appx:///Assets/Ringtones/IncomingCall.mp3" :
+                                             "ms-appx:///Assets/Ringtones/OutgoingCall.mp3";
+            _audioElement.Source = new Uri(source);            
+
+            await _audioElement.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                _audioElement.Stop();
+                _audioElement.Play();
+            });
+        }
+
+        public async Task StopSound()
+        {
+            if (_audioElement == null) return;
+
+            await _audioElement.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {                
+                _audioElement.Stop();
+            });
         }
     }
 }

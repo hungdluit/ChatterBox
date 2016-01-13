@@ -54,6 +54,11 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             await LoadSettings();
         }
 
+        public void OnNavigatedFrom()
+        {
+            _webrtcSettingsService.ReleaseDevices();
+        }
+
         public DelegateCommand CloseCommand { get; set; }
 
         public event Action OnClose;
@@ -168,7 +173,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             else
             {
-                SelectedCamera = Cameras.First();
+                SelectedCamera = Cameras.FirstOrDefault();
             }
             _webrtcSettingsService.VideoDevice = SelectedCamera;
 
@@ -184,7 +189,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             else
             {
-                SelectedMicrophone = Microphones.First();
+                SelectedMicrophone = Microphones.FirstOrDefault();
             }
             _webrtcSettingsService.AudioDevice = SelectedMicrophone;
 
@@ -208,7 +213,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             else
             {
-                SelectedAudioCodec = AudioCodecs.First();
+                SelectedAudioCodec = AudioCodecs.FirstOrDefault();
             }
             _webrtcSettingsService.AudioCodec = SelectedAudioCodec;
 
@@ -234,7 +239,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             else
             {
-                SelectedVideoCodec = VideoCodecs.First();
+                SelectedVideoCodec = VideoCodecs.FirstOrDefault();
             }
             _webrtcSettingsService.VideoCodec = SelectedVideoCodec;
 
@@ -251,7 +256,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
             else
             {
-                SelectedAudioPlayoutDevice = AudioPlayoutDevices.First();
+                SelectedAudioPlayoutDevice = AudioPlayoutDevices.FirstOrDefault();
             }
             _webrtcSettingsService.AudioPlayoutDevice = SelectedAudioPlayoutDevice;
 
@@ -552,7 +557,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                 return;
             }
 
-            var uniqueRes = captureCapabilities.GroupBy(test => test.ResolutionDescription).Select(grp => grp.First()).ToList();
+            var uniqueRes = captureCapabilities.GroupBy(test => test.ResolutionDescription)
+                .Select(grp => grp.FirstOrDefault()).ToList();
             CaptureCapability defaultResolution = null;
             foreach (var resolution in uniqueRes)
             {

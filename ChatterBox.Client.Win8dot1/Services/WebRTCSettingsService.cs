@@ -25,7 +25,8 @@ namespace ChatterBox.Client.Win8dot1.Services
             set
             {
                 _audioDevice = value;
-                _voipContext.Media.SelectAudioDevice(value);
+                if (value != null)
+                    _voipContext.Media.SelectAudioDevice(value);
             }
         }
 
@@ -47,7 +48,8 @@ namespace ChatterBox.Client.Win8dot1.Services
             set
             {
                 _videoDevice = value;
-                _voipContext.Media.SelectVideoDevice(value);
+                if (value != null)
+                    _voipContext.Media.SelectVideoDevice(value);
             }
         }
 
@@ -121,8 +123,9 @@ namespace ChatterBox.Client.Win8dot1.Services
 
             set
             {
-                _voipContext.Media.SelectAudioPlayoutDevice(value);
                 _audioPlayoutDevice = value;
+                if (value != null)
+                    _voipContext.Media.SelectAudioPlayoutDevice(value);
             }
         }
 
@@ -149,6 +152,11 @@ namespace ChatterBox.Client.Win8dot1.Services
         {
             _voipContext.SaveTrace(ip, port);
 
+        }
+
+        public void ReleaseDevices()
+        {
+            Media.OnAppSuspending();
         }
     }
 }

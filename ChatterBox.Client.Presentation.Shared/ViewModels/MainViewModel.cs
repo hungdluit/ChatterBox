@@ -48,9 +48,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             get { return _isSettingsVisible; }
             set
-            {
+            {                
                 SetProperty(ref _isSettingsVisible, value);
                 if (value) SettingsViewModel.OnNavigatedTo();
+                else SettingsViewModel.OnNavigatedFrom();
             }
         }
 

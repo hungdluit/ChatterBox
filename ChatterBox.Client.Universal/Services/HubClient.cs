@@ -210,7 +210,12 @@ namespace ChatterBox.Client.Universal.Services
           SaveTrace(traceServer);
         }
 
-    #endregion
+        public void ReleaseDevices()
+        {
+            Media.OnAppSuspending();
+        }
+
+        #endregion
 
         #region IClientChannel Members
 

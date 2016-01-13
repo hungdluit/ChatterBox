@@ -46,6 +46,7 @@
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForTrue="LightGreen"
                                          ColorForFalse="LightGray" />
+        <converters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
     </UserControl.Resources>
 
     <ItemsControl Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -83,6 +84,7 @@
                                    Width="45"
                                    Height="45" />
                             <TextBlock Text="{Binding Name}"
+                                       FontWeight="{Binding IsHighlighted, Mode=OneWay, Converter={StaticResource BoolToFontWeightConverter}}"
                                        VerticalAlignment="Center"
                                        Margin="5" />
                         </StackPanel>

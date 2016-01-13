@@ -45,7 +45,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public ConversationViewModel SelectedConversation
         {
             get { return _selectedConversation; }
-            set { SetProperty(ref _selectedConversation, value); }
+            set
+            {
+                _selectedConversation?.OnNavigatedFrom();
+                SetProperty(ref _selectedConversation, value);
+                _selectedConversation?.OnNavigatedTo();
+            }
         }
 
         public DelegateCommand ShowSettings { get; set; }
@@ -62,7 +67,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private void OnPeerDataUpdated()
         {
-            Conversations.Clear();
             var peers = SignaledPeerData.Peers;
             foreach (var peer in peers)
             {

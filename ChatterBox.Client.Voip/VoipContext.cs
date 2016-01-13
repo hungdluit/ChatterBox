@@ -58,63 +58,76 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 WebRTC.Initialize(_dispatcher);
                 Media = Media.CreateMedia();
                 Media.SetDisplayOrientation(_displayOrientation);
-                await Media.EnumerateAudioVideoCaptureDevices();                
+                await Media.EnumerateAudioVideoCaptureDevices();
+            }
 
-                string videoDeviceId = string.Empty;
-                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoDeviceSettings))
-                {
-                    videoDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.VideoDeviceSettings];
-                }
-                var videoDevices = Media.GetVideoCaptureDevices();
-                var selectedVideoDevice = videoDevices.FirstOrDefault(d => d.Id.Equals(videoDeviceId));
-                Media.SelectVideoDevice(selectedVideoDevice ?? videoDevices.First());
+            string videoDeviceId = string.Empty;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoDeviceSettings))
+            {
+                videoDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.VideoDeviceSettings];
+            }
+            var videoDevices = Media.GetVideoCaptureDevices();
+            var selectedVideoDevice = videoDevices.FirstOrDefault(d => d.Id.Equals(videoDeviceId));
+            selectedVideoDevice = selectedVideoDevice ?? videoDevices.FirstOrDefault();
+            if (selectedVideoDevice != null)
+            {
+                Media.SelectVideoDevice(selectedVideoDevice);
+            }
 
-                string audioDeviceId = string.Empty;
-                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioDeviceSettings))
-                {
-                    audioDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioDeviceSettings];
-                }
-                var audioDevices = Media.GetAudioCaptureDevices();
-                var selectedAudioDevice = audioDevices.FirstOrDefault(d => d.Id.Equals(audioDeviceId));
-                Media.SelectAudioDevice(selectedAudioDevice ?? audioDevices.First());
+            string audioDeviceId = string.Empty;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioDeviceSettings))
+            {
+                audioDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioDeviceSettings];
+            }
+            var audioDevices = Media.GetAudioCaptureDevices();
+            var selectedAudioDevice = audioDevices.FirstOrDefault(d => d.Id.Equals(audioDeviceId));
+            selectedAudioDevice = selectedAudioDevice ?? audioDevices.FirstOrDefault();
+            if (selectedAudioDevice != null)
+            {
+                Media.SelectAudioDevice(selectedAudioDevice);
+            }
 
-                string audioPlayoutDeviceId = string.Empty;
-                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioPlayoutDeviceSettings))
-                {
-                    audioPlayoutDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioPlayoutDeviceSettings];
-                }
-                var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
-                var selectedAudioPlayoutDevice = audioPlayoutDevices.FirstOrDefault(d => d.Id.Equals(audioPlayoutDeviceId));
-                Media.SelectAudioPlayoutDevice(selectedAudioPlayoutDevice ?? audioPlayoutDevices.First());
+            string audioPlayoutDeviceId = string.Empty;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioPlayoutDeviceSettings))
+            {
+                audioPlayoutDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioPlayoutDeviceSettings];
+            }
+            var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
+            var selectedAudioPlayoutDevice = audioPlayoutDevices.FirstOrDefault(d => d.Id.Equals(audioPlayoutDeviceId));
+            selectedAudioPlayoutDevice = selectedAudioPlayoutDevice ?? audioPlayoutDevices.FirstOrDefault();
+            if (selectedAudioPlayoutDevice != null)
+            {
+                Media.SelectAudioPlayoutDevice(selectedAudioPlayoutDevice);
+            }
 
-                int videoCodecId = int.MinValue;
-                if(_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoCodecSettings))
-                {
-                    videoCodecId = (int)_localSettings.Values[WebRTCSettingsIds.VideoCodecSettings];
-                }
-                var videoCodecs = WebRTC.GetVideoCodecs();
-                var selectedVideoCodec = videoCodecs.FirstOrDefault(c => c.Id.Equals(videoCodecId));
-                VideoCodec = selectedVideoCodec ?? videoCodecs.First();
+            int videoCodecId = int.MinValue;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoCodecSettings))
+            {
+                videoCodecId = (int)_localSettings.Values[WebRTCSettingsIds.VideoCodecSettings];
+            }
+            var videoCodecs = WebRTC.GetVideoCodecs();
+            var selectedVideoCodec = videoCodecs.FirstOrDefault(c => c.Id.Equals(videoCodecId));
+            VideoCodec = selectedVideoCodec ?? videoCodecs.FirstOrDefault();
 
-                int audioCodecId = int.MinValue;
-                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioCodecSettings))
-                {
-                    audioCodecId = (int)_localSettings.Values[WebRTCSettingsIds.AudioCodecSettings];
-                }
-                var audioCodecs = WebRTC.GetAudioCodecs();
-                var selectedAudioCodec = audioCodecs.FirstOrDefault(c => c.Id.Equals(audioCodecId));
-                AudioCodec = selectedAudioCodec ?? audioCodecs.First();
+            int audioCodecId = int.MinValue;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioCodecSettings))
+            {
+                audioCodecId = (int)_localSettings.Values[WebRTCSettingsIds.AudioCodecSettings];
+            }
+            var audioCodecs = WebRTC.GetAudioCodecs();
+            var selectedAudioCodec = audioCodecs.FirstOrDefault(c => c.Id.Equals(audioCodecId));
+            AudioCodec = selectedAudioCodec ?? audioCodecs.FirstOrDefault();
 
-                if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureWidth) &&
-                    _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureHeight) &&
-                    _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureFrameRate))
-                {
-                    WebRTC.SetPreferredVideoCaptureFormat((int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureWidth],
-                                                          (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureHeight],
-                                                          (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureFrameRate]);
-                }
-            }   
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureWidth) &&
+                _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureHeight) &&
+                _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureFrameRate))
+            {
+                WebRTC.SetPreferredVideoCaptureFormat((int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureWidth],
+                                                      (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureHeight],
+                                                      (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureFrameRate]);
+            }
         }
+
         public void StartTrace()
         {
             WebRTC.StartTracing();
@@ -155,6 +168,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             WebRTC.UpdateMemUsage(MEMData.GetMEMUsage());
 
         }
+
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
         {
@@ -205,7 +219,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 }
             }
         }
-       
+
         public IVoipCoordinator VoipCoordinator { get; set; }
 
         private MediaStream _localStream;

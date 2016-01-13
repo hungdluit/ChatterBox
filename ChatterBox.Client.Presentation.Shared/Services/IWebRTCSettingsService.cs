@@ -32,5 +32,7 @@ namespace ChatterBox.Client.Presentation.Shared.Services
         void StartTrace();
         void StopTrace();
         void SaveTrace(string ip, int port);
-  }
+
+        void ReleaseDevices();
+    }
 }
