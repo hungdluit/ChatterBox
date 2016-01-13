@@ -16,8 +16,6 @@ namespace ChatterBox.Client.Presentation.Shared.Views
 
         private void CallView_Loaded(object sender, RoutedEventArgs e)
         {
-            var conversationViewModel = DataContext as ConversationViewModel;
-            conversationViewModel.RegisterAudioElement(SoundPlayElement);
             var boolToVisConverter = new BooleanToVisibilityConverter();
 
 #if WIN10
@@ -72,6 +70,7 @@ namespace ChatterBox.Client.Presentation.Shared.Views
             };
             SelfVideoPresenter.Content = selfMediaElement;
 
+            var conversationViewModel = DataContext as ConversationViewModel;
             conversationViewModel.RegisterVideoElements(selfMediaElement, peerMediaElement);
 #endif
         }

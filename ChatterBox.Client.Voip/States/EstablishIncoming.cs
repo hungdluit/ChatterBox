@@ -45,8 +45,6 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         {
             Debug.Assert(Context.PeerConnection == null);
 
-            Context.VoipCoordinator.SetActiveIncomingCall(_message, _callRequest.VideoEnabled);
-
             var config = new RTCConfiguration
             {
                 IceServers = WebRtcSettingsUtils.ToRTCIceServer(IceServerSettings.IceServers)

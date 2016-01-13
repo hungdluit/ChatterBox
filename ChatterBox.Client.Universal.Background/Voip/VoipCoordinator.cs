@@ -1,5 +1,4 @@
-﻿using ChatterBox.Client.Common.Avatars;
-using ChatterBox.Client.Common.Communication.Voip.Dto;
+﻿using ChatterBox.Client.Common.Communication.Voip.Dto;
 using ChatterBox.Client.Universal.Background.Tasks;
 using ChatterBox.Client.Voip.States.Interfaces;
 using ChatterBox.Common.Communication.Messages.Relay;
@@ -8,6 +7,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation.Metadata;
+using ChatterBox.Client.Common.Avatars;
 
 namespace ChatterBox.Client.Universal.Background.Voip
 {
@@ -25,7 +25,11 @@ namespace ChatterBox.Client.Universal.Background.Voip
                 capabilities);
             if (VoipCall != null)
             {
-                SubscribeToVoipCallEvents();
+                VoipCall.EndRequested += Call_EndRequested;
+                VoipCall.HoldRequested += Call_HoldRequested;
+                VoipCall.RejectRequested += Call_RejectRequested;
+                VoipCall.ResumeRequested += Call_ResumeRequested;
+                VoipCall.AnswerRequested += Call_AnswerRequested;
 
                 VoipCall.NotifyCallActive();
             }
@@ -33,15 +37,31 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         public void StartIncomingCall(RelayMessage message)
         {
+
             Debug.WriteLine("GetForegroundState");
             var foregroundIsVisible = false;
             var state = Hub.Instance.ForegroundClient.GetForegroundState();
             if (state != null) foregroundIsVisible = state.IsForegroundVisible;
 
-            if (!foregroundIsVisible)
-            {
-                var voipCallCoordinatorCc = VoipCallCoordinator.GetDefault();
+            var voipCallCoordinatorCc = VoipCallCoordinator.GetDefault();
 
+            if (foregroundIsVisible)
+            {
+                // TODO: As in the outgoing case, set capabilities to video if requested.
+                VoipCall = voipCallCoordinatorCc.RequestNewOutgoingCall(message.FromUserId, message.FromName, "ChatterBox Universal",
+                    VoipPhoneCallMedia.Audio);
+                if (VoipCall != null)
+                {
+                    VoipCall.EndRequested += Call_EndRequested;
+                    VoipCall.HoldRequested += Call_HoldRequested;
+                    VoipCall.RejectRequested += Call_RejectRequested;
+                    VoipCall.ResumeRequested += Call_ResumeRequested;
+
+                    VoipCall.NotifyCallActive();
+                }
+            }
+            else
+            {
                 VoipCall = voipCallCoordinatorCc.RequestNewIncomingCall(message.FromUserId, message.FromName, message.FromName,
                     new Uri(AvatarLink.For(message.FromAvatar), UriKind.RelativeOrAbsolute),
                     "ChatterBox Universal",
@@ -51,45 +71,17 @@ namespace ChatterBox.Client.Universal.Background.Voip
                     VoipPhoneCallMedia.Audio,
                     new TimeSpan(0, 1, 20));
 
-                SubscribeToVoipCallEvents();
+                if (VoipCall != null)
+                {
+                    VoipCall.AnswerRequested += Call_AnswerRequested;
+                    VoipCall.EndRequested += Call_EndRequested;
+                    VoipCall.HoldRequested += Call_HoldRequested;
+                    VoipCall.RejectRequested += Call_RejectRequested;
+                    VoipCall.ResumeRequested += Call_ResumeRequested;
+                }
             }
-        }
 
-        public void SetActiveIncomingCall(RelayMessage message, bool videoEnabled)
-        {
-            SetActiveCall(message.FromUserId, message.FromName, videoEnabled);
-        }
 
-        public void SetActiveCall(OutgoingCallRequest request)
-        {
-            SetActiveCall(request.PeerUserId, request.PeerUserId, request.VideoEnabled);
-        }
-
-        private void SetActiveCall(string userId, string userName, bool addVideoCaps)
-        {
-            var foregroundIsVisible = false;
-            var state = Hub.Instance.ForegroundClient.GetForegroundState();
-            if (state != null) foregroundIsVisible = state.IsForegroundVisible;
-
-            if (VoipCall != null)
-            {
-                var fakeRequest = new OutgoingCallRequest()
-                { PeerUserId = userId, VideoEnabled = addVideoCaps };
-
-                StartOutgoingCall(fakeRequest);
-            }
-        }
-
-        private void SubscribeToVoipCallEvents()
-        {
-            if (VoipCall != null)
-            {
-                VoipCall.AnswerRequested += Call_AnswerRequested;
-                VoipCall.EndRequested += Call_EndRequested;
-                VoipCall.HoldRequested += Call_HoldRequested;
-                VoipCall.RejectRequested += Call_RejectRequested;
-                VoipCall.ResumeRequested += Call_ResumeRequested;
-            }
         }
 
         public void StopVoip()
@@ -156,8 +148,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
 
         private void Call_RejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)
         {
-            Hub.Instance.VoipChannel.Reject(new IncomingCallReject()
-            {
+            Hub.Instance.VoipChannel.Reject(new IncomingCallReject() {
                 Reason = "Rejected"
             });
         }

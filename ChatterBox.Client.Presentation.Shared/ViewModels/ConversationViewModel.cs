@@ -15,8 +15,6 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
 using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
-using System.Threading.Tasks;
-using Windows.UI.Core;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -45,7 +43,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
         private MediaElement _selfVideoElement;
         private MediaElement _peerVideoElement;
-        private MediaElement _audioElement;
 
         public ConversationViewModel(IClientChannel clientChannel,
                                      IForegroundUpdateService foregroundUpdateService,
@@ -468,7 +465,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     IsOtherConversationInCallMode = false;
                     LocalSwapChainPanelHandle = 0;
                     RemoteSwapChainPanelHandle = 0;
-                    StopSound();
                     break;
                 case VoipStateEnum.LocalRinging:
                     if (voipState.PeerId == UserId)
@@ -479,7 +475,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
                         IsVideoEnabled = voipState.IsVideoEnabled;
-                        PlaySound(isIncomingCall: true);
                     }
                     else
                     {
@@ -495,7 +490,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
                         IsVideoEnabled = voipState.IsVideoEnabled;
-                        PlaySound(isIncomingCall: false);
                     }
                     else
                     {
@@ -509,7 +503,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
-                        StopSound();
                     }
                     else
                     {
@@ -525,7 +518,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsCallConnected = true;
                         IsSelfVideoAvailable = IsVideoEnabled;
                         IsPeerVideoAvailable = voipState.IsVideoEnabled;
-                        StopSound();
                     }
                     else
                     {
@@ -611,38 +603,6 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _selfVideoElement = self;
             _peerVideoElement = peer;
-        }
-
-        public void RegisterAudioElement(MediaElement soundPlayElement)
-        {
-            _audioElement = soundPlayElement;
-            _audioElement.MediaEnded += (sender, args) => _audioElement.Play();
-            _audioElement.MediaFailed += (sender, e) => Debug.WriteLine($"Error in playing call ringonte: {e.ErrorMessage}");
-        }
-
-        public async Task PlaySound(bool isIncomingCall)
-        {
-            if (_audioElement == null) return;
-
-            string source = isIncomingCall ? "ms-appx:///Assets/Ringtones/IncomingCall.mp3" :
-                                             "ms-appx:///Assets/Ringtones/OutgoingCall.mp3";
-            _audioElement.Source = new Uri(source);            
-
-            await _audioElement.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                _audioElement.Stop();
-                _audioElement.Play();
-            });
-        }
-
-        public async Task StopSound()
-        {
-            if (_audioElement == null) return;
-
-            await _audioElement.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {                
-                _audioElement.Stop();
-            });
         }
     }
 }
