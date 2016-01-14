@@ -12,6 +12,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400" x:Name="ChatViewRoot">
     <UserControl.Resources>
+        <converters:NegatedBoolConverter x:Key="NegatedBoolConverter" />
         <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss" />
         <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForFalse="Blue" ColorForTrue="Orange" />
         <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
@@ -145,7 +146,7 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="Enter a message" Margin="12,5"
-                     Name="SendMessageButtons" 
+                     Name="SendMessageButtons" IsEnabled="{Binding IsInCallMode, Converter={StaticResource NegatedBoolConverter}}"
                      behaviors:ReturnKeyCommandBehavior.Command="{Binding SendInstantMessageCommand}" />
             <Button Command="{Binding SendInstantMessageCommand}" Margin="5"                    
                     Grid.Column="1" FontFamily="Segoe UI Symbol"
