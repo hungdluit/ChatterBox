@@ -19,6 +19,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
     public class SettingsViewModel : BindableBase
     {
         public event Action OnRegistrationSettingsChanged;
+        public event Action OnQuitApp;
         private string _domain;
         private ApplicationDataContainer _localSettings;
         private string _signalingServerHost;
@@ -43,6 +44,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
 
             CloseCommand = new DelegateCommand(OnCloseCommandExecute);
             SaveCommand = new DelegateCommand(OnSaveCommandExecute);
+            QuitAppCommand = new DelegateCommand(OnQuitAppCommandExecute);
             DeleteIceServerCommand = new DelegateCommand<IceServerViewModel>(OnDeleteIceServerCommandExecute);
             AddIceServerCommand = new DelegateCommand(OnAddIceServerCommandExecute);            
         }
@@ -66,6 +68,10 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private void OnCloseCommandExecute()
         {
             OnClose?.Invoke();
+        }
+        private void OnQuitAppCommandExecute()
+        {
+            OnQuitApp?.Invoke();
         }
 
         private void OnSaveCommandExecute()
@@ -290,6 +296,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         }
 
         public DelegateCommand SaveCommand { get; set; }
+
+        public DelegateCommand QuitAppCommand { get; set; }
 
         public string SignalingServerHost
         {

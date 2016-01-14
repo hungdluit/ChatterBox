@@ -93,7 +93,10 @@ namespace ChatterBox.Client.Win8dot1
                 .RegisterType<IVoipChannel, VoipChannel>(new ContainerControlledLifetimeManager())
                 .RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager())
                 .RegisterType<IWebRTCSettingsService, WebRTCSettingsService>()
+                .RegisterType<SettingsViewModel>(new ContainerControlledLifetimeManager())
                 .RegisterInstance<MainViewModel>(Container.Resolve<MainViewModel>(), new ContainerControlledLifetimeManager());
+
+            Container.Resolve<SettingsViewModel>().OnQuitApp += QuitApp;
 
             var rootFrame = Window.Current.Content as Frame;
 
@@ -148,6 +151,22 @@ namespace ChatterBox.Client.Win8dot1
 
         }
 
+        private void QuitApp()
+        {
+          UnRegisterAllBackgroundTask();
+          Current.Exit();
+
+        }
+
+        void UnRegisterAllBackgroundTask()
+        {
+          var helper = new TaskHelper();
+
+          var regOp = helper.GetTask(nameof(PushNotificationTask));
+          if (regOp != null)
+            regOp.Unregister(true);
+        }
+
         private static async System.Threading.Tasks.Task RegisterForPush(bool registerAgain = true)
         {
             PushNotificationHelper.RegisterPushNotificationChannel();
@@ -170,6 +189,7 @@ namespace ChatterBox.Client.Win8dot1
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+            webrtc_winrt_api.Media.OnAppSuspending();
             deferral.Complete();
         }
 
@@ -202,5 +222,5 @@ namespace ChatterBox.Client.Win8dot1
                 }
             }
         }
-    }
+  }
 }

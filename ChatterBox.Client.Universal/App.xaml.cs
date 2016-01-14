@@ -108,10 +108,12 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance<IWebRTCSettingsService>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<SettingsViewModel>(new ContainerControlledLifetimeManager());
             }
 
             Container.Resolve<HubClient>().OnDisconnectedFromHub -= App_OnDisconnectedFromHub;
             Container.Resolve<HubClient>().OnDisconnectedFromHub += App_OnDisconnectedFromHub;
+            Container.Resolve<SettingsViewModel>().OnQuitApp += QuitApp;
 
             ConnectHubClient();
 
@@ -311,11 +313,13 @@ namespace ChatterBox.Client.Universal
             {
                 PushNotificationHelper.RegisterPushNotificationChannel();
 
-                var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, new PushNotificationTrigger(), registerAgain).AsTask();
+                var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, 
+                  new PushNotificationTrigger(), registerAgain).AsTask();
                 if (pushNotificationTask == null)
                 {
                     Debug.WriteLine("Push notification background task is not started");
                 }
+
             }
             catch (Exception e)
             {
@@ -323,11 +327,31 @@ namespace ChatterBox.Client.Universal
             }
         }
 
+        private void QuitApp()
+        {
+          UnRegisterAllBackgroundTask();
+          Current.Exit();
+
+        }
+
+        void UnRegisterAllBackgroundTask()
+        {
+          var helper = new TaskHelper();
+          var signalingReg = helper.GetTask(nameof(SignalingTask));
+          if (signalingReg != null)
+              signalingReg.Unregister(true);
+
+          var regOp = helper.GetTask(nameof(PushNotificationTask));
+          if (regOp != null)
+              regOp.Unregister(true);
+        }
+
         private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
         {
             var signalingTask = helper.GetTask(nameof(SignalingTask)) ??
                     await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName,
                             new SocketActivityTrigger(), registerAgain).AsTask();
+
             return signalingTask;
 
         }
@@ -352,5 +376,5 @@ namespace ChatterBox.Client.Universal
                 }
             }
         }
-    }
+  }
 }
