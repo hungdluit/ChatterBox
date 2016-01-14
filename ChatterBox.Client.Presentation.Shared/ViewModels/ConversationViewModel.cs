@@ -19,10 +19,11 @@ using Windows.UI.ViewManagement;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
-    public class ConversationViewModel : BindableBase
+    public class ConversationViewModel : BindableBase, IDisposable
     {
         private readonly IClientChannel _clientChannel;
         private readonly IVoipChannel _voipChannel;
+        private readonly IForegroundUpdateService _foregroundUpdateService;
         private string _instantMessage;
         private bool _isCallConnected;
         private bool _isInCallMode;
@@ -51,6 +52,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _clientChannel = clientChannel;
             _voipChannel = voipChannel;
+            _foregroundUpdateService = foregroundUpdateService;
             foregroundUpdateService.OnRelayMessagesUpdated += OnRelayMessagesUpdated;
             foregroundUpdateService.OnVoipStateUpdate += OnVoipStateUpdate;
             foregroundUpdateService.OnFrameFormatUpdate += OnFrameFormatUpdate;
@@ -612,6 +614,17 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _selfVideoElement = self;
             _peerVideoElement = peer;
+        }
+
+        // Avoid memory leak by unsubscribing from foregroundUpdateService object
+        // because its lifetime may be much longer.
+        public void Dispose()
+        {
+            if (_foregroundUpdateService == null) return;
+
+            _foregroundUpdateService.OnRelayMessagesUpdated -= OnRelayMessagesUpdated;
+            _foregroundUpdateService.OnVoipStateUpdate -= OnVoipStateUpdate;
+            _foregroundUpdateService.OnFrameFormatUpdate -= OnFrameFormatUpdate;
         }
     }
 }
