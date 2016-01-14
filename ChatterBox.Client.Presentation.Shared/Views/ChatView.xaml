@@ -104,7 +104,7 @@
             </styleSelectors:InstantMessageStyleSelector.OwnMessageStyle>
         </styleSelectors:InstantMessageStyleSelector>
     </UserControl.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -132,6 +132,7 @@
             </StackPanel>
 
         </Grid>
+        
         <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
                  Margin="12,5" BorderThickness="0"
                  Background="Transparent"
@@ -144,7 +145,7 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding InstantMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="Enter a message" Margin="12,5"
-                     Name="SendMessageButtons"
+                     Name="SendMessageButtons" 
                      behaviors:ReturnKeyCommandBehavior.Command="{Binding SendInstantMessageCommand}" />
             <Button Command="{Binding SendInstantMessageCommand}" Margin="5"                    
                     Grid.Column="1" FontFamily="Segoe UI Symbol"
