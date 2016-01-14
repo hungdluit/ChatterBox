@@ -114,24 +114,21 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid x:Name="Header"
-              Margin="12,5">
+        <Grid x:Name="Header">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding CloseConversationCommand}"
-                        Style="{Binding  Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource CloseConversationButtonStyleConverter}}"
-                        Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE112;" />
-                <TextBlock Text="{Binding Name}" Margin="12,5" VerticalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Grid.Column="2">
-                <Button Command="{Binding CallCommand}" Style="{StaticResource Button.Conversation.Call.AudioCall}" Tapped="PreventFocus"/>
-                <Button Command="{Binding VideoCallCommand}" Style="{StaticResource Button.Conversation.Call.VideoCall}" Tapped="PreventFocus" />
-            </StackPanel>
+            <Button Command="{Binding CloseConversationCommand}" Grid.Column="0"
+                    Style="{Binding  Source={StaticResource ServicesBindingHelper}, Path=LayoutService.LayoutType, Converter={StaticResource CloseConversationButtonStyleConverter}}"
+                    Margin="5" FontFamily="Segoe UI Symbol" Content="&#xE112;" />
+            <TextBlock Text="{Binding Name}" Margin="12,5" VerticalAlignment="Center" Grid.Column="1" TextTrimming="CharacterEllipsis" />
+            <Button Command="{Binding CallCommand}" Style="{StaticResource Button.Conversation.Call.AudioCall}" Tapped="PreventFocus"
+                    Grid.Column="2"/>
+            <Button Command="{Binding VideoCallCommand}" Style="{StaticResource Button.Conversation.Call.VideoCall}" Tapped="PreventFocus" 
+                    Grid.Column="3"/>
 
         </Grid>
 
