@@ -1,13 +1,13 @@
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Windows.ApplicationModel.AppService;
-using Windows.Foundation.Collections;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Common.Communication.Helpers;
 using ChatterBox.Common.Communication.Serialization;
+using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 
 namespace ChatterBox.Client.Universal.Background
 {
@@ -43,6 +43,11 @@ namespace ChatterBox.Client.Universal.Background
         public ForegroundState GetForegroundState()
         {
             return SendToForeground<ForegroundState>();
+        }
+
+        public string GetShownUserId()
+        {
+            return SendToForeground<string>();
         }
 
         #endregion

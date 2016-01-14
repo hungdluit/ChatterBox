@@ -21,10 +21,20 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _contactFactory = contactFactory;
             foregroundUpdateService.OnPeerDataUpdated += OnPeerDataUpdated;
+            foregroundUpdateService.GetShownUser += ForegroundUpdateService_GetShownUser;
             OnPeerDataUpdated();
 
             LayoutService.Instance.LayoutChanged += LayoutChanged;
             ShowSettings = new DelegateCommand(() => OnShowSettings?.Invoke());
+        }
+
+        private string ForegroundUpdateService_GetShownUser()
+        {
+            if (SelectedConversation != null)
+            {
+                return SelectedConversation.UserId;
+            }
+            return string.Empty;
         }
 
         public ObservableCollection<ConversationViewModel> Conversations { get; } =

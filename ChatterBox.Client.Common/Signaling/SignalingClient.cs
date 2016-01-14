@@ -126,8 +126,11 @@ namespace ChatterBox.Client.Common.Signaling
         {
             ClientConfirmation(Confirmation.For(message));
             SignaledRelayMessages.Add(message);
-            if (message.Tag == RelayMessageTags.InstantMessage && !SignaledRelayMessages.IsPushNotificationReceived(message.Id) &&
-                (message.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalMinutes < 10))
+            var shownUserId = _foregroundChannel.GetShownUserId();
+            if (message.Tag == RelayMessageTags.InstantMessage && 
+                !SignaledRelayMessages.IsPushNotificationReceived(message.Id) &&
+                !shownUserId.Equals(message.FromUserId) &&
+                (DateTimeOffset.UtcNow.Subtract(message.SentDateTimeUtc).TotalMinutes < 10))
             {
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,
                     message.FromUserId, AvatarLink.EmbeddedLinkFor(message.FromAvatar), message.Payload);
