@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Media;
@@ -15,6 +15,7 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
 using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.ViewManagement;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
@@ -567,8 +568,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 LocalSwapChainPanelHandle = obj.SwapChainHandle;
                 var s = new Windows.Foundation.Size();
-                s.Width = (float)obj.Width;
-                s.Height = (float)obj.Height;
+                if (ApplicationView.GetForCurrentView().Orientation == ApplicationViewOrientation.Landscape)
+                {
+                    s.Width = (float)obj.Width;
+                    s.Height = (float)obj.Height;
+                }
+                else
+                {
+                    s.Width = (float)obj.Height;
+                    s.Height = (float)obj.Width;
+                }
                 LocalNativeVideoSize = s;
             }
             else
