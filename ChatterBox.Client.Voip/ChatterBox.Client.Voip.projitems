@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)States\Interfaces\IVoipCoordinator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\LocalRinging.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)States\RemoteRinging.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\AppPerf.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\SdpUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\WebRtcSettingsUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VoipChannel.cs" />

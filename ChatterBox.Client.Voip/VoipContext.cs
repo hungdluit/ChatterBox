@@ -3,6 +3,7 @@ using ChatterBox.Client.Common.Communication.Voip.States;
 using ChatterBox.Client.Common.Settings;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Client.Voip;
+using ChatterBox.Client.Voip.Utils;
 using ChatterBox.Client.Voip.States.Interfaces;
 using System;
 using System.Linq;
@@ -14,6 +15,8 @@ using System.Threading;
 using Windows.UI.Core;
 using System.Collections.Generic;
 using Windows.Networking.Connectivity;
+using Windows.Storage;
+using Windows.System.Threading;
 
 namespace ChatterBox.Client.Common.Communication.Voip
 {
@@ -22,6 +25,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
         private CoreDispatcher _dispatcher;
         private Func<IVideoRenderHelper> _renderResolver;
         private IHub _hub;
+        private ApplicationDataContainer _localSettings;
 
         public VoipContext(IHub hub,
                            CoreDispatcher dispatcher,
@@ -31,6 +35,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             _hub = hub;
             _dispatcher = dispatcher;
             _renderResolver = renderResolver;
+            _localSettings = ApplicationData.Current.LocalSettings;
             VoipCoordinator = coordinator;
 
             var idleState = new VoipState_Idle();
@@ -54,13 +59,116 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 Media = Media.CreateMedia();
                 Media.SetDisplayOrientation(_displayOrientation);
                 await Media.EnumerateAudioVideoCaptureDevices();
-                // TODO: Remove once those are driven by the UI.
-                var audioCaptureDevices = Media.GetAudioCaptureDevices();
-                Media.SelectAudioDevice(audioCaptureDevices[0]);
-                var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
-                Media.SelectAudioPlayoutDevice(audioPlayoutDevices[0]);
+            }
+
+            string videoDeviceId = string.Empty;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoDeviceSettings))
+            {
+                videoDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.VideoDeviceSettings];
+            }
+            var videoDevices = Media.GetVideoCaptureDevices();
+            var selectedVideoDevice = videoDevices.FirstOrDefault(d => d.Id.Equals(videoDeviceId));
+            selectedVideoDevice = selectedVideoDevice ?? videoDevices.FirstOrDefault();
+            if (selectedVideoDevice != null)
+            {
+                Media.SelectVideoDevice(selectedVideoDevice);
+            }
+
+            string audioDeviceId = string.Empty;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioDeviceSettings))
+            {
+                audioDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioDeviceSettings];
+            }
+            var audioDevices = Media.GetAudioCaptureDevices();
+            var selectedAudioDevice = audioDevices.FirstOrDefault(d => d.Id.Equals(audioDeviceId));
+            selectedAudioDevice = selectedAudioDevice ?? audioDevices.FirstOrDefault();
+            if (selectedAudioDevice != null)
+            {
+                Media.SelectAudioDevice(selectedAudioDevice);
+            }
+
+            string audioPlayoutDeviceId = string.Empty;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioPlayoutDeviceSettings))
+            {
+                audioPlayoutDeviceId = (string)_localSettings.Values[WebRTCSettingsIds.AudioPlayoutDeviceSettings];
+            }
+            var audioPlayoutDevices = Media.GetAudioPlayoutDevices();
+            var selectedAudioPlayoutDevice = audioPlayoutDevices.FirstOrDefault(d => d.Id.Equals(audioPlayoutDeviceId));
+            selectedAudioPlayoutDevice = selectedAudioPlayoutDevice ?? audioPlayoutDevices.FirstOrDefault();
+            if (selectedAudioPlayoutDevice != null)
+            {
+                Media.SelectAudioPlayoutDevice(selectedAudioPlayoutDevice);
+            }
+
+            int videoCodecId = int.MinValue;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.VideoCodecSettings))
+            {
+                videoCodecId = (int)_localSettings.Values[WebRTCSettingsIds.VideoCodecSettings];
+            }
+            var videoCodecs = WebRTC.GetVideoCodecs();
+            var selectedVideoCodec = videoCodecs.FirstOrDefault(c => c.Id.Equals(videoCodecId));
+            VideoCodec = selectedVideoCodec ?? videoCodecs.FirstOrDefault();
+
+            int audioCodecId = int.MinValue;
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.AudioCodecSettings))
+            {
+                audioCodecId = (int)_localSettings.Values[WebRTCSettingsIds.AudioCodecSettings];
+            }
+            var audioCodecs = WebRTC.GetAudioCodecs();
+            var selectedAudioCodec = audioCodecs.FirstOrDefault(c => c.Id.Equals(audioCodecId));
+            AudioCodec = selectedAudioCodec ?? audioCodecs.FirstOrDefault();
+
+            if (_localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureWidth) &&
+                _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureHeight) &&
+                _localSettings.Values.ContainsKey(WebRTCSettingsIds.PreferredVideoCaptureFrameRate))
+            {
+                WebRTC.SetPreferredVideoCaptureFormat((int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureWidth],
+                                                      (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureHeight],
+                                                      (int)_localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureFrameRate]);
             }
         }
+
+        public void StartTrace()
+        {
+            WebRTC.StartTracing();
+            AppPerformanceCheck();
+        }
+
+        public void StopTrace()
+        {
+            WebRTC.StopTracing();
+            if (_appPerfTimer != null)
+            {
+              _appPerfTimer.Cancel();
+            }
+        }
+        public void SaveTrace(string ip, int port)
+        {
+            WebRTC.SaveTrace(ip, port);
+        }
+
+        private ThreadPoolTimer _appPerfTimer = null;
+
+        private void AppPerformanceCheck()
+        {
+
+            if (_appPerfTimer != null)
+            {
+              _appPerfTimer.Cancel();
+            }
+
+            _appPerfTimer = ThreadPoolTimer.CreatePeriodicTimer(t=> ReportAppPerf(), TimeSpan.FromSeconds(1));
+
+        }
+
+
+        private void ReportAppPerf()
+        {
+            WebRTC.UpdateCPUUsage(CPUData.GetCPUUsage());
+            WebRTC.UpdateMemUsage(MEMData.GetMEMUsage());
+
+        }
+
 
         private void LocalVideoRenderer_RenderFormatUpdate(long swapChainHandle, uint width, uint height)
         {
@@ -92,7 +200,25 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public Media Media { get; private set; }
 
-        public bool IsVideoEnabled { get; set; }
+        private bool _isVideoEnabled;
+        public bool IsVideoEnabled
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _isVideoEnabled;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    _isVideoEnabled = value;
+                    ApplyVideoConfig();
+                }
+            }
+        }
 
         public IVoipCoordinator VoipCoordinator { get; set; }
 
@@ -107,6 +233,7 @@ namespace ChatterBox.Client.Common.Communication.Voip
             {
                 _localStream = value;
                 ApplyMicrophoneConfig();
+                ApplyVideoConfig();
             }
         }
         public MediaStream RemoteStream { get; set; }
@@ -343,6 +470,17 @@ namespace ChatterBox.Client.Common.Communication.Voip
                 foreach (var audioTrack in LocalStream.GetAudioTracks())
                 {
                     audioTrack.Enabled = !_microphoneMuted;
+                }
+            }
+        }
+
+        private void ApplyVideoConfig()
+        {
+            if (LocalStream != null)
+            {
+                foreach (var videoTrack in LocalStream.GetVideoTracks())
+                {
+                    videoTrack.Enabled = _isVideoEnabled;
                 }
             }
         }

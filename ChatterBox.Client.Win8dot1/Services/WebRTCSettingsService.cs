@@ -1,6 +1,7 @@
 ﻿using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Presentation.Shared.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using webrtc_winrt_api;
 
 namespace ChatterBox.Client.Win8dot1.Services
@@ -12,12 +13,6 @@ namespace ChatterBox.Client.Win8dot1.Services
         public WebRTCSettingsService(VoipContext voipContext)
         {
             _voipContext = voipContext;
-            InitializeWebRTC();
-        }
-
-        private async void InitializeWebRTC()
-        {
-            await _voipContext.InitializeWebRTC();
         }
 
         private MediaDevice _audioDevice;
@@ -30,7 +25,8 @@ namespace ChatterBox.Client.Win8dot1.Services
             set
             {
                 _audioDevice = value;
-                _voipContext.Media.SelectAudioDevice(value);
+                if (value != null)
+                    _voipContext.Media.SelectAudioDevice(value);
             }
         }
 
@@ -52,7 +48,8 @@ namespace ChatterBox.Client.Win8dot1.Services
             set
             {
                 _videoDevice = value;
-                _voipContext.Media.SelectVideoDevice(value);
+                if (value != null)
+                    _voipContext.Media.SelectVideoDevice(value);
             }
         }
 
@@ -92,9 +89,74 @@ namespace ChatterBox.Client.Win8dot1.Services
             }
         }
 
+        public IEnumerable<MediaDevice> AudioPlayoutDevices
+        {
+            get
+            {
+                return _voipContext.Media.GetAudioPlayoutDevices();
+            }
+        }
+
+        public IEnumerable<CodecInfo> AudioCodecs
+        {
+            get
+            {
+                return WebRTC.GetAudioCodecs();
+            }
+        }
+
+        public IEnumerable<CodecInfo> VideoCodecs
+        {
+            get
+            {
+                return WebRTC.GetVideoCodecs();
+            }
+        }
+
+        private MediaDevice _audioPlayoutDevice;
+        public MediaDevice AudioPlayoutDevice
+        {
+            get
+            {
+                return _audioPlayoutDevice;
+            }
+
+            set
+            {
+                _audioPlayoutDevice = value;
+                if (value != null)
+                    _voipContext.Media.SelectAudioPlayoutDevice(value);
+            }
+        }
+
         public void SetPreferredVideoCaptureFormat(int Width, int Height, int FrameRate)
         {
             WebRTC.SetPreferredVideoCaptureFormat(Width, Height, FrameRate);
+        }
+
+        Task IWebRTCSettingsService.InitializeWebRTC()
+        {
+            return _voipContext.InitializeWebRTC();
+        }
+        
+        public void StartTrace()
+        {
+            _voipContext.StartTrace();
+        }
+
+        public void StopTrace()
+        {
+            _voipContext.StopTrace();
+        }
+        public void SaveTrace(string ip, int port)
+        {
+            _voipContext.SaveTrace(ip, port);
+
+        }
+
+        public void ReleaseDevices()
+        {
+            Media.OnAppSuspending();
         }
     }
 }

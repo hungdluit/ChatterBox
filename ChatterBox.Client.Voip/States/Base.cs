@@ -106,5 +106,45 @@ namespace ChatterBox.Client.Common.Communication.Voip.States
         internal virtual async Task OnAddStream(MediaStream stream)
         {
         }
+
+        internal async Task SuspendVoipVideo()
+        {
+            Context.ResetRenderers();
+            // Don't send RenderFormatUpdate here.  The UI is suspending
+            // and may not get the message.
+            if (Context.LocalStream != null)
+            {
+                foreach (var track in Context.LocalStream.GetVideoTracks())
+                {
+                    track.Suspended = true;
+                }
+            }
+        }
+
+        internal async Task ResumeVoipVideo()
+        {
+            Context.ResetRenderers();
+            // Setup remote before local as it's more important.
+            if (Context.RemoteStream != null)
+            {
+                var tracks = Context.RemoteStream.GetVideoTracks();
+                var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "PEER");
+                Context.RemoteVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
+            }
+            // TODO: Delay here prevents a crash in the MF media engine when setting up the second
+            //       renderer.  Investigate why this is happening.  Occurred 100% of the time.
+            await Task.Delay(3000);
+            if (Context.LocalStream != null)
+            {
+                var tracks = Context.LocalStream.GetVideoTracks();
+                foreach (var track in tracks)
+                {
+                    track.Suspended = false;
+                }
+
+                var source = Context.Media.CreateMediaStreamSource(tracks[0], 30, "LOCAL");
+                Context.LocalVideoRenderer.SetupRenderer(Context.ForegroundProcessId, source);
+            }
+        }
     }
 }

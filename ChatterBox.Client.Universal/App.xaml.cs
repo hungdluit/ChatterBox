@@ -1,4 +1,5 @@
 ﻿using ChatterBox.Client.Common.Background;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Notifications;
@@ -20,7 +21,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -105,13 +105,15 @@ namespace ChatterBox.Client.Universal
                 Container.RegisterInstance<ISignalingSocketChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterInstance<IClientChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterInstance<IVoipChannel>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
+                Container.RegisterInstance<IWebRTCSettingsService>(Container.Resolve<HubClient>(), new ContainerControlledLifetimeManager());
                 Container.RegisterType<ISocketConnection, SocketConnection>(new ContainerControlledLifetimeManager());
-                Container.RegisterType<IWebRTCSettingsService, WebRTCSettingsService>(new ContainerControlledLifetimeManager());
                 Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
+                Container.RegisterType<SettingsViewModel>(new ContainerControlledLifetimeManager());
             }
 
             Container.Resolve<HubClient>().OnDisconnectedFromHub -= App_OnDisconnectedFromHub;
             Container.Resolve<HubClient>().OnDisconnectedFromHub += App_OnDisconnectedFromHub;
+            Container.Resolve<SettingsViewModel>().OnQuitApp += QuitApp;
 
             ConnectHubClient();
 
@@ -206,6 +208,12 @@ namespace ChatterBox.Client.Universal
                 }
             }
 
+            var client = Container.Resolve<HubClient>();
+            if (client.IsConnected)
+            {
+                client.ResumeVoipVideo();
+            }
+
             Window.Current.Activate();
         }
 
@@ -229,6 +237,9 @@ namespace ChatterBox.Client.Universal
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             Debug.WriteLine("App.OnSuspending");
+            var deferral = e.SuspendingOperation.GetDeferral();
+            //TODO: Save application state and stop any background activity
+
             if (ChatterBox.Client.Common.Settings.SignalingSettings.AppInsightsEnabled)
             {
 
@@ -237,8 +248,27 @@ namespace ChatterBox.Client.Universal
                 eventTel.Timestamp = System.DateTimeOffset.UtcNow;
                 telemetry.TrackEvent(eventTel);
             }
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+            var client = Container.Resolve<HubClient>();
+            // Disconnect the rendering on the UI.
+            // We do it here instead of waiting for the background
+            // to notify us because we're about to be suspended.
+            client.OnUpdateFrameFormat(new FrameFormat
+            {
+                IsLocal = true,
+                Width = 0,
+                Height = 0,
+                SwapChainHandle = 0
+            });
+            client.OnUpdateFrameFormat(new FrameFormat
+            {
+                IsLocal = false,
+                Width = 0,
+                Height = 0,
+                SwapChainHandle = 0
+            });
+            // Suspend video capture and rendering in the background.
+            client.SuspendVoipVideo();
+
             deferral.Complete();
         }
 
@@ -283,11 +313,13 @@ namespace ChatterBox.Client.Universal
             {
                 PushNotificationHelper.RegisterPushNotificationChannel();
 
-                var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, new PushNotificationTrigger(), registerAgain).AsTask();
+                var pushNotificationTask = await helper.RegisterTask(nameof(PushNotificationTask), typeof(PushNotificationTask).FullName, 
+                  new PushNotificationTrigger(), registerAgain).AsTask();
                 if (pushNotificationTask == null)
                 {
                     Debug.WriteLine("Push notification background task is not started");
                 }
+
             }
             catch (Exception e)
             {
@@ -295,11 +327,31 @@ namespace ChatterBox.Client.Universal
             }
         }
 
+        private void QuitApp()
+        {
+          UnRegisterAllBackgroundTask();
+          Current.Exit();
+
+        }
+
+        void UnRegisterAllBackgroundTask()
+        {
+          var helper = new TaskHelper();
+          var signalingReg = helper.GetTask(nameof(SignalingTask));
+          if (signalingReg != null)
+              signalingReg.Unregister(true);
+
+          var regOp = helper.GetTask(nameof(PushNotificationTask));
+          if (regOp != null)
+              regOp.Unregister(true);
+        }
+
         private static async System.Threading.Tasks.Task<IBackgroundTaskRegistration> RegisterSignalingTask(TaskHelper helper, bool registerAgain = true)
         {
             var signalingTask = helper.GetTask(nameof(SignalingTask)) ??
                     await helper.RegisterTask(nameof(SignalingTask), typeof(SignalingTask).FullName,
                             new SocketActivityTrigger(), registerAgain).AsTask();
+
             return signalingTask;
 
         }
@@ -324,5 +376,5 @@ namespace ChatterBox.Client.Universal
                 }
             }
         }
-    }
+  }
 }

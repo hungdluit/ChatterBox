@@ -116,6 +116,16 @@ namespace ChatterBox.Client.Common.Communication.Voip
 
         public void OnRemoteHangup(RelayMessage message)
         {
+            if (Context.PeerConnection != null)
+            {
+                if (!message.FromUserId.Equals(Context.PeerId))
+                {
+                    // Don't hang up if a call is in progress and a third
+                    // user is calling then is hanging up 
+                    // (intentionally or by call timeout).
+                    return;
+                }
+            }
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.OnRemoteHangup");
@@ -156,7 +166,20 @@ namespace ChatterBox.Client.Common.Communication.Voip
             Task.Run(() =>
             {
                 Debug.WriteLine("VoipChannel.ConfigureMicrophone Muted=" + (config.Muted ? "yes" : "no"));
-                Context.MicrophoneMuted = config.Muted;
+                Context.WithState(st => {
+                    return Task.Run(() => { Context.MicrophoneMuted = config.Muted; });
+                }).Wait();
+            });
+        }
+
+        public void ConfigureVideo(VideoConfig config)
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.ConfigureVideo On=" + (config.On ? "yes" : "no"));
+                Context.WithState(st => {
+                    return Task.Run(() => { Context.IsVideoEnabled = config.On; });
+                }).Wait();
             });
         }
 
@@ -166,6 +189,39 @@ namespace ChatterBox.Client.Common.Communication.Voip
         {
             Context.LocalVideoRenderer.SetMediaElement(Dispatcher, self);
             Context.RemoteVideoRenderer.SetMediaElement(Dispatcher, peer);
+        }
+
+        public void StartTrace()
+        {
+          Context.StartTrace();
+        }
+
+        public void StopTrace()
+        {
+          Context.StopTrace();
+        }
+
+        public void SaveTrace(TraceServerConfig traceServer)
+        {
+          Context.SaveTrace(traceServer.Ip, traceServer.Port);
+        }
+
+        public void SuspendVoipVideo()
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.SuspendVoipVideo");
+                Context.WithState(st => st.SuspendVoipVideo()).Wait();
+            });
+        }
+
+        public void ResumeVoipVideo()
+        {
+            Task.Run(() =>
+            {
+                Debug.WriteLine("VoipChannel.ResumeVoipVideo");
+                Context.WithState(st => st.ResumeVoipVideo()).Wait();
+            });
         }
     }
 }

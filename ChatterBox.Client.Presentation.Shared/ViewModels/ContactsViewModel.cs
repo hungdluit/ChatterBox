@@ -45,7 +45,12 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public ConversationViewModel SelectedConversation
         {
             get { return _selectedConversation; }
-            set { SetProperty(ref _selectedConversation, value); }
+            set
+            {
+                _selectedConversation?.OnNavigatedFrom();
+                SetProperty(ref _selectedConversation, value);
+                _selectedConversation?.OnNavigatedTo();
+            }
         }
 
         public DelegateCommand ShowSettings { get; set; }

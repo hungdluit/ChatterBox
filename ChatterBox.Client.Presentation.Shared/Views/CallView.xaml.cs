@@ -8,13 +8,24 @@ namespace ChatterBox.Client.Presentation.Shared.Views
 {
     public sealed partial class CallView
     {
+        private MediaElement _selfMediaElement;
+        private MediaElement _peerMediaElement;
+
         public CallView()
         {
             InitializeComponent();
-            this.Loaded += CallView_Loaded;
+            SetVideoPresenters();
+            DataContextChanged += CallView_DataContextChanged;
         }
 
-        private void CallView_Loaded(object sender, RoutedEventArgs e)
+        private void CallView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            var conversationViewModel = DataContext as ConversationViewModel;
+            conversationViewModel.RegisterAudioElement(SoundPlayElement);
+            conversationViewModel.RegisterVideoElements(_selfMediaElement, _peerMediaElement);
+        }
+
+        private void SetVideoPresenters()
         {
             var boolToVisConverter = new BooleanToVisibilityConverter();
 
@@ -30,15 +41,6 @@ namespace ChatterBox.Client.Presentation.Shared.Views
             peerSwapChainPanel.SetBinding(
                 WebRTCSwapChainPanel.WebRTCSwapChainPanel.SwapChainPanelHandleProperty,
                 peerHandleBinding);
-
-            var peerSizeBinding = new Binding
-            {
-                Source = DataContext,
-                Path = new PropertyPath("RemoteNativeVideoSize")
-            };
-            peerSwapChainPanel.SetBinding(
-                WebRTCSwapChainPanel.WebRTCSwapChainPanel.SizeProperty,
-                peerSizeBinding);
 
             PeerVideoPresenter.Content = peerSwapChainPanel;
 
@@ -67,20 +69,17 @@ namespace ChatterBox.Client.Presentation.Shared.Views
 #endif
 
 #if WIN81
-            var peerMediaElement = new MediaElement
+            _peerMediaElement = new MediaElement
             {
                 RealTimePlayback = true
             };
-            PeerVideoPresenter.Content = peerMediaElement;
+            PeerVideoPresenter.Content = _peerMediaElement;
 
-            var selfMediaElement = new MediaElement
+            _selfMediaElement = new MediaElement
             {
                 RealTimePlayback = true
             };
-            SelfVideoPresenter.Content = selfMediaElement;
-
-            var conversationViewModel = DataContext as ConversationViewModel;
-            conversationViewModel.RegisterVideoElements(selfMediaElement, peerMediaElement);
+            SelfVideoPresenter.Content = _selfMediaElement;            
 #endif
         }
 
@@ -90,6 +89,5 @@ namespace ChatterBox.Client.Presentation.Shared.Views
             SelfPlaceholder.Width = SelfVideoPresenter.Width = e.NewSize.Width * 0.25D;
             SelfPlaceholder.Height = SelfVideoPresenter.Height = e.NewSize.Height * 0.25D;
         }
-
     }
 }

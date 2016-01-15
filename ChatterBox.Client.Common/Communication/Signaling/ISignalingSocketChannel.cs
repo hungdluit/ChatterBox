@@ -5,6 +5,7 @@ namespace ChatterBox.Client.Common.Communication.Signaling
     public interface ISignalingSocketChannel
     {
         ConnectionStatus ConnectToSignalingServer(ConnectionOwner connectionOwner);
+        void DisconnectSignalingServer();
         ConnectionStatus GetConnectionStatus();
     }
 }

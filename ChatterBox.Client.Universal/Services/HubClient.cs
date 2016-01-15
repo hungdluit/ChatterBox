@@ -1,17 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.AppService;
-using Windows.UI.Core;
-using Windows.Graphics.Display;
+﻿using ChatterBox.Client.Common.Background;
 using ChatterBox.Client.Common.Communication.Foreground;
 using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Common.Communication.Signaling;
 using ChatterBox.Client.Common.Communication.Signaling.Dto;
 using ChatterBox.Client.Common.Communication.Voip;
 using ChatterBox.Client.Common.Communication.Voip.Dto;
+using ChatterBox.Client.Common.Settings;
 using ChatterBox.Client.Presentation.Shared.MVVM;
 using ChatterBox.Client.Presentation.Shared.Services;
 using ChatterBox.Client.Universal.Background.DeferralWrappers;
@@ -21,11 +16,19 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Registration;
 using ChatterBox.Common.Communication.Messages.Relay;
 using ChatterBox.Common.Communication.Messages.Standard;
-using ChatterBox.Client.Common.Background;
-using Windows.UI.Xaml.Controls;
-using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
-using ChatterBox.Client.Common.Notifications;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using webrtc_winrt_api;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.AppService;
+using Windows.Graphics.Display;
+using Windows.Storage;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
 
 namespace ChatterBox.Client.Universal.Services
 {
@@ -34,17 +37,185 @@ namespace ChatterBox.Client.Universal.Services
         ISignalingSocketChannel,
         IClientChannel,
         IVoipChannel,
-        IForegroundChannel
+        IForegroundChannel,
+        IWebRTCSettingsService
     {
         private readonly TaskHelper _taskHelper;
         private AppServiceConnection _appConnection;
+        private ApplicationDataContainer _localSettings;
 
         public HubClient(CoreDispatcher uiDispatcher, TaskHelper taskHelper) : base(uiDispatcher)
         {
             _taskHelper = taskHelper;
+            _localSettings = ApplicationData.Current.LocalSettings;
         }
 
         public bool IsConnected { get; private set; }
+
+        #region IWebRTCSettingsService
+
+        private Media _media;
+
+        public IEnumerable<MediaDevice> VideoCaptureDevices
+        {
+            get
+            {
+                return _media.GetVideoCaptureDevices();
+            }
+        }
+
+        public IEnumerable<MediaDevice> AudioCaptureDevices
+        {
+            get
+            {
+                return _media.GetAudioCaptureDevices();
+            }
+        }
+
+        private MediaDevice _videoDevice;
+        public MediaDevice VideoDevice
+        {
+            get
+            {
+                return _videoDevice;
+            }
+
+            set
+            {
+                _videoDevice = value;
+                _localSettings.Values[WebRTCSettingsIds.VideoDeviceSettings] = value?.Id;
+            }
+        }
+
+        private MediaDevice _audioDevice;
+        public MediaDevice AudioDevice
+        {
+            get
+            {
+                return _audioDevice;
+            }
+
+            set
+            {
+                _audioDevice = value;
+                _localSettings.Values[WebRTCSettingsIds.AudioDeviceSettings] = value?.Id;
+            }
+        }
+
+        private CodecInfo _videoCodec;
+        public CodecInfo VideoCodec
+        {
+            get
+            {
+                return _videoCodec;
+            }
+
+            set
+            {
+                _videoCodec = value;
+                _localSettings.Values[WebRTCSettingsIds.VideoCodecSettings] = value?.Id;
+            }
+        }
+
+        private CodecInfo _audioCodec;
+        public CodecInfo AudioCodec
+        {
+            get
+            {
+                return _audioCodec;
+            }
+
+            set
+            {
+                _audioCodec = value;
+                _localSettings.Values[WebRTCSettingsIds.AudioCodecSettings] = value?.Id;
+            }
+        }
+
+        public IEnumerable<MediaDevice> AudioPlayoutDevices
+        {
+            get
+            {
+                return _media.GetAudioPlayoutDevices();
+            }
+        }
+
+        public IEnumerable<CodecInfo> AudioCodecs
+        {
+            get
+            {
+                return WebRTC.GetAudioCodecs();
+            }
+        }
+
+        public IEnumerable<CodecInfo> VideoCodecs
+        {
+            get
+            {
+                return WebRTC.GetVideoCodecs();
+            }
+        }
+
+        private MediaDevice _audioPlayoutDevice;
+        public MediaDevice AudioPlayoutDevice
+        {
+            get
+            {
+                return _audioPlayoutDevice;
+            }
+
+            set
+            {
+                _audioPlayoutDevice = value;
+                _localSettings.Values[WebRTCSettingsIds.AudioPlayoutDeviceSettings] = value?.Id;
+            }
+        }
+
+        public void SetPreferredVideoCaptureFormat(int width, int height, int frameRate)
+        {
+            _localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureWidth] = width;
+            _localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureHeight] = height;
+            _localSettings.Values[WebRTCSettingsIds.PreferredVideoCaptureFrameRate] = frameRate;
+        }
+
+        public async Task InitializeWebRTC()
+        {
+            WebRTC.Initialize(_uiDispatcher);
+            _media = await Media.CreateMediaAsync();
+            await _media.EnumerateAudioVideoCaptureDevices();
+
+            Debug.WriteLine("WebRTC initialized");
+        }
+
+        public void StartTrace()
+        {
+          InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void StopTrace()
+        {
+           InvokeHubChannel<IVoipChannel>();
+        }
+        public void SaveTrace(TraceServerConfig traceServer)
+        {
+          InvokeHubChannel<IVoipChannel>(traceServer);
+        }
+        public void SaveTrace(string ip, int port)
+        {
+          TraceServerConfig traceServer = new TraceServerConfig
+          {
+            Ip = ip,
+            Port = port
+          };
+          SaveTrace(traceServer);
+        }
+
+        public void ReleaseDevices()
+        {
+            Media.OnAppSuspending();
+        }
+
+        #endregion
 
         #region IClientChannel Members
 
@@ -127,6 +298,10 @@ namespace ChatterBox.Client.Universal.Services
             {
                 OwnerId = _taskHelper.GetTask(nameof(SignalingTask)).TaskId.ToString()
             });
+        }
+        public void DisconnectSignalingServer()
+        {
+            InvokeHubChannel<ISignalingSocketChannel>();
         }
 
         public ConnectionStatus GetConnectionStatus()
@@ -213,6 +388,20 @@ namespace ChatterBox.Client.Universal.Services
             InvokeHubChannel<IVoipChannel>(config);
         }
 
+        public void SuspendVoipVideo()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void ResumeVoipVideo()
+        {
+            InvokeHubChannel<IVoipChannel>();
+        }
+
+        public void ConfigureVideo(VideoConfig config)
+        {
+            InvokeHubChannel<IVoipChannel>(config);
+        }
         #endregion
 
         public async Task<bool> Connect()

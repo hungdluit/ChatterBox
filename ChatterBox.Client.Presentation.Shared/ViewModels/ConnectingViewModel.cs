@@ -59,6 +59,17 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             }
         }
 
+        public async void SwitchSignalingServer()
+        {
+            if (_connection.IsConnected)
+            {
+                await _connection.Disconnect();
+
+                EstablishConnection();
+
+            }
+        }
+
         private bool OnConnectCommandCanExecute()
         {
             var ret = !_connection.IsConnected && !_isConnecting;

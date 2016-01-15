@@ -6,5 +6,6 @@ namespace ChatterBox.Client.Common.Signaling
     public interface ISignalingSocketOperation : IDisposable
     {
         StreamSocket Socket { get; }
+        void Disconnect();
     }
 }

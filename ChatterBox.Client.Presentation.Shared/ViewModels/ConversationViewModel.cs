@@ -15,13 +15,17 @@ using ChatterBox.Common.Communication.Contracts;
 using ChatterBox.Common.Communication.Messages.Relay;
 using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.ViewManagement;
+using System.Threading.Tasks;
+using Windows.UI.Core;
 
 namespace ChatterBox.Client.Presentation.Shared.ViewModels
 {
-    public class ConversationViewModel : BindableBase
+    public class ConversationViewModel : BindableBase, IDisposable
     {
         private readonly IClientChannel _clientChannel;
         private readonly IVoipChannel _voipChannel;
+        private readonly IForegroundUpdateService _foregroundUpdateService;
         private string _instantMessage;
         private bool _isCallConnected;
         private bool _isInCallMode;
@@ -37,9 +41,13 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         private Windows.Foundation.Size _localNativeVideoSize;
         private Windows.Foundation.Size _remoteNativeVideoSize;
         private bool _isMicEnabled;
+        private bool _isVideoEnabled;
+        private bool _isSelected;
+        private bool _isHighlighted;
 
         private MediaElement _selfVideoElement;
         private MediaElement _peerVideoElement;
+        private MediaElement _audioElement;
 
         public ConversationViewModel(IClientChannel clientChannel,
                                      IForegroundUpdateService foregroundUpdateService,
@@ -47,6 +55,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _clientChannel = clientChannel;
             _voipChannel = voipChannel;
+            _foregroundUpdateService = foregroundUpdateService;
             foregroundUpdateService.OnRelayMessagesUpdated += OnRelayMessagesUpdated;
             foregroundUpdateService.OnVoipStateUpdate += OnVoipStateUpdate;
             foregroundUpdateService.OnFrameFormatUpdate += OnFrameFormatUpdate;
@@ -59,6 +68,22 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             RejectCommand = new DelegateCommand(OnRejectCommandExecute, OnRejectCommandCanExecute);
             CloseConversationCommand = new DelegateCommand(OnCloseConversationCommandExecute);
             SwitchMicCommand = new DelegateCommand(SwitchMicCommandExecute, SwitchMicCommandCanExecute);
+            SwitchVideoCommand = new DelegateCommand(SwitchVideoCommandExecute, SwitchVideoCommandCanExecute);
+        }
+
+        internal void OnNavigatedTo()
+        {
+            _isSelected = true;
+            IsHighlighted = false;
+        }
+
+        internal void OnNavigatedFrom()
+        {
+            _isSelected = false;
+            foreach (var msg in InstantMessages)
+            {
+                msg.IsHighlighted = false;
+            }
         }
 
         public DelegateCommand AnswerCommand { get; }
@@ -67,6 +92,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         public DelegateCommand CloseConversationCommand { get; }
         public DelegateCommand HangupCommand { get; }
         public DelegateCommand SwitchMicCommand { get; }
+        public DelegateCommand SwitchVideoCommand { get; }
 
         public string InstantMessage
         {
@@ -120,6 +146,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isOnline, value); }
         }
 
+        public bool IsHighlighted
+        {
+            get { return _isHighlighted; }
+            set
+            {
+                Debug.WriteLine($"{Name} highlighting: {value}");
+                SetProperty(ref _isHighlighted, value);
+            }
+        }
+
         public bool IsOtherConversationInCallMode
         {
             get { return _isOtherConversationInCallMode; }
@@ -147,7 +183,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _isPeerVideoAvailable, value); }
         }
 
-        private bool _isSelfVideoAvailable;
+        private bool _isSelfVideoAvailable;        
+
         public bool IsSelfVideoAvailable
         {
             get { return _isSelfVideoAvailable; }
@@ -187,7 +224,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsSelfVideoAvailable = value > 0;
                 _localSwapChainHandle = value;
-                // Don't use SetPropert() because it does nothing if the value
+                // Don't use SetProperty() because it does nothing if the value
                 // doesn't change but in this case it must always update the
                 // swap chain panel.
                 OnPropertyChanged("LocalSwapChainPanelHandle");
@@ -204,7 +241,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 IsPeerVideoAvailable = value > 0;
                 _remoteSwapChainHandle = value;
-                // Don't use SetPropert() because it does nothing if the value
+                // Don't use SetProperty() because it does nothing if the value
                 // doesn't change but in this case it must always update the
                 // swap chain panel.
                 OnPropertyChanged("RemoteSwapChainPanelHandle");
@@ -244,6 +281,18 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set
             {
                 SetProperty(ref _isMicEnabled, value);
+            }
+        }
+
+        public bool IsVideoEnabled
+        {
+            get
+            {
+                return _isVideoEnabled;
+            }
+            set
+            {
+                SetProperty(ref _isVideoEnabled, value);
             }
         }
 
@@ -344,6 +393,21 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             });
         }
 
+        private bool SwitchVideoCommandCanExecute()
+        {
+            return IsCallConnected || IsLocalRinging || IsRemoteRinging;
+        }
+
+        private void SwitchVideoCommandExecute()
+        {
+            IsVideoEnabled = !IsVideoEnabled;
+            _voipChannel.ConfigureVideo(new VideoConfig
+            {
+                On = IsVideoEnabled
+            });
+            IsSelfVideoAvailable = IsVideoEnabled;
+        }
+
         private void OnRelayMessagesUpdated()
         {
             var newMessages = SignaledRelayMessages.Messages
@@ -357,9 +421,15 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     Message = message.Payload,
                     DateTime = message.SentDateTimeUtc.LocalDateTime,
                     Sender = Name,
+                    IsHighlighted = !_isSelected,
                     IsSender = false
                 });
                 SignaledRelayMessages.Delete(message.Id);
+            }
+
+            if (!_isSelected && newMessages.Count > 0)
+            {
+                IsHighlighted = true;
             }
         }
 
@@ -401,6 +471,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     IsOtherConversationInCallMode = false;
                     LocalSwapChainPanelHandle = 0;
                     RemoteSwapChainPanelHandle = 0;
+                    StopSound();
                     break;
                 case VoipStateEnum.LocalRinging:
                     if (voipState.PeerId == UserId)
@@ -410,6 +481,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = false;
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
+                        IsVideoEnabled = voipState.IsVideoEnabled;
+                        PlaySound(isIncomingCall: true);
                     }
                     else
                     {
@@ -424,6 +497,8 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsRemoteRinging = true;
                         IsCallConnected = false;
                         IsMicEnabled = true; //Start new calls with mic enabled
+                        IsVideoEnabled = voipState.IsVideoEnabled;
+                        PlaySound(isIncomingCall: false);
                     }
                     else
                     {
@@ -437,6 +512,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
+                        StopSound();
                     }
                     else
                     {
@@ -450,8 +526,9 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
-                        IsSelfVideoAvailable =
+                        IsSelfVideoAvailable = IsVideoEnabled;
                         IsPeerVideoAvailable = voipState.IsVideoEnabled;
+                        StopSound();
                     }
                     else
                     {
@@ -478,7 +555,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                         IsLocalRinging = false;
                         IsRemoteRinging = false;
                         IsCallConnected = true;
-                        IsSelfVideoAvailable =
+                        IsSelfVideoAvailable = IsVideoEnabled;
                         IsPeerVideoAvailable = voipState.IsVideoEnabled;
                     }
                     else
@@ -501,8 +578,16 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             {
                 LocalSwapChainPanelHandle = obj.SwapChainHandle;
                 var s = new Windows.Foundation.Size();
-                s.Width = (float)obj.Width;
-                s.Height = (float)obj.Height;
+                if (ApplicationView.GetForCurrentView().Orientation == ApplicationViewOrientation.Landscape)
+                {
+                    s.Width = (float)obj.Width;
+                    s.Height = (float)obj.Height;
+                }
+                else
+                {
+                    s.Width = (float)obj.Height;
+                    s.Height = (float)obj.Width;
+                }
                 LocalNativeVideoSize = s;
             }
             else
@@ -528,6 +613,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             HangupCommand.RaiseCanExecuteChanged();
             RejectCommand.RaiseCanExecuteChanged();
             SwitchMicCommand.RaiseCanExecuteChanged();
+            SwitchVideoCommand.RaiseCanExecuteChanged();
         }
 
         public event Action<ConversationViewModel> OnIsInCallMode;
@@ -536,6 +622,50 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
         {
             _selfVideoElement = self;
             _peerVideoElement = peer;
+        }
+
+        public void RegisterAudioElement(MediaElement soundPlayElement)
+        {
+            _audioElement = soundPlayElement;
+            _audioElement.MediaEnded += (sender, args) => _audioElement.Play();
+            _audioElement.MediaFailed += (sender, e) => Debug.WriteLine($"Error in playing call ringonte: {e.ErrorMessage}");
+        }
+
+        public async Task PlaySound(bool isIncomingCall)
+        {
+            if (_audioElement == null) return;
+
+            string source = isIncomingCall ? "ms-appx:///Assets/Ringtones/IncomingCall.mp3" :
+                                             "ms-appx:///Assets/Ringtones/OutgoingCall.mp3";
+            _audioElement.Source = new Uri(source);            
+
+            await _audioElement.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                _audioElement.Stop();
+                _audioElement.Play();
+            });
+        }
+
+        public async Task StopSound()
+        {
+            if (_audioElement == null) return;
+
+            await _audioElement.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {                
+                _audioElement.Stop();
+                _audioElement.Source = null;
+            });
+        }
+
+        // Avoid memory leak by unsubscribing from foregroundUpdateService object
+        // because its lifetime may be much longer.
+        public void Dispose()
+        {
+            if (_foregroundUpdateService == null) return;
+
+            _foregroundUpdateService.OnRelayMessagesUpdated -= OnRelayMessagesUpdated;
+            _foregroundUpdateService.OnVoipStateUpdate -= OnVoipStateUpdate;
+            _foregroundUpdateService.OnFrameFormatUpdate -= OnFrameFormatUpdate;
         }
     }
 }

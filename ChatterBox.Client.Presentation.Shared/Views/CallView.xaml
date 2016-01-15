@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="0" /> <!-- For a Media Element which should be hidden -->
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
               x:Name="VideoGrid"
@@ -30,7 +31,8 @@
               VerticalAlignment="Stretch">
             <ContentPresenter Name="PeerVideoPresenter"
                               HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch" />
+                              VerticalAlignment="Stretch"
+                              Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Image Name="PeerPlaceholder"
                    Visibility="{Binding IsPeerVideoAvailable, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                    Source="{Binding ProfileSource}"
@@ -38,7 +40,8 @@
                    VerticalAlignment="Stretch" />
             <ContentPresenter Name="SelfVideoPresenter"
                               HorizontalAlignment="Right"
-                              VerticalAlignment="Bottom" />
+                              VerticalAlignment="Bottom"
+                              Visibility = "{Binding IsSelfVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Image Name="SelfPlaceholder"
                    Margin="5"
                    Source="{Binding OwnProfileSource}"
@@ -58,14 +61,15 @@
                     Visibility="{Binding IsLocalRinging, Converter={StaticResource BooleanToVisibilityConverter}}" />
             
             <Button Command="{Binding SwitchMicCommand}" Style="{StaticResource Button.Conversation.Call.Audio.Mute}"
-                    Visibility="{Binding IsMicEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Button Command="{Binding SwitchMicCommand}" Style="{StaticResource Button.Conversation.Call.Audio.Unmute}"
-                    Visibility="{Binding IsMicEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
+                    Visibility="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
 
             <Button Command="{Binding SwitchVideo}" Style="{StaticResource Button.Conversation.Call.Video.Disable}"
-                    Visibility="{Binding IsVideoEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <!--<Button Command="{Binding SwitchVideo}" Style="{StaticResource Button.Conversation.Call.Video.Enable}"
                     Visibility="{Binding IsVideoEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />-->
         </StackPanel>
+        <MediaElement Name="SoundPlayElement" Grid.Row="2" />
     </Grid>
 </UserControl>
