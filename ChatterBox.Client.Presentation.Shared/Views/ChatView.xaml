@@ -12,42 +12,46 @@
     d:DesignHeight="300"
     d:DesignWidth="400" x:Name="ChatViewRoot">
     <UserControl.Resources>
-        <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss" />
-	<converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForFalse="Blue" ColorForTrue="Orange" />
-        <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
-        <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
-            <converters:LayoutTypeToStyleConverter.OverlayStyle>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Visible" />
-                </Style>
-            </converters:LayoutTypeToStyleConverter.OverlayStyle>
-            <converters:LayoutTypeToStyleConverter.ParallelStyle>
-                <Style TargetType="Button">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                </Style>
-            </converters:LayoutTypeToStyleConverter.ParallelStyle>
-        </converters:LayoutTypeToStyleConverter>
-        <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
-            <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Background" Value="Blue" />
-                    <Setter Property="Margin" Value="0,0,40,0" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <Grid Margin="3">
-                                    <Border CornerRadius="5" Background="{Binding IsHighlighted, Converter={StaticResource BoolToBrushConverter}}" Opacity=".2" />
-                                    <Border Margin="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.RowSpan="2" VerticalAlignment="Top" Height="48" Width="48"
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/ButtonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:FormatDateTimeConverter x:Key="FormatDateTimeConverter" Format="H:mm:ss" />
+            <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" ColorForFalse="Blue" ColorForTrue="Orange" />
+            <services:ServicesBindingHelper x:Key="ServicesBindingHelper" />
+            <converters:LayoutTypeToStyleConverter x:Key="CloseConversationButtonStyleConverter">
+                <converters:LayoutTypeToStyleConverter.OverlayStyle>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible" />
+                    </Style>
+                </converters:LayoutTypeToStyleConverter.OverlayStyle>
+                <converters:LayoutTypeToStyleConverter.ParallelStyle>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                </converters:LayoutTypeToStyleConverter.ParallelStyle>
+            </converters:LayoutTypeToStyleConverter>
+            <styleSelectors:InstantMessageStyleSelector x:Key="InstantMessageStyleSelector">
+                <styleSelectors:InstantMessageStyleSelector.PeerMessageStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Blue" />
+                        <Setter Property="Margin" Value="0,0,40,0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Grid Margin="3">
+                                        <Border CornerRadius="5" Background="{Binding IsHighlighted, Converter={StaticResource BoolToBrushConverter}}" Opacity=".2" />
+                                        <Border Margin="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Image Grid.RowSpan="2" VerticalAlignment="Top" Height="48" Width="48"
                                                    Margin="5"
                                                    Source="{Binding Path=DataContext.ProfileSource, ElementName=ChatViewRoot}" />
                                                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Message}"
@@ -129,7 +133,7 @@
             </StackPanel>
 
         </Grid>
-        
+
         <ListBox x:Name="InstantMessagingHistory" Grid.Row="1" ItemsSource="{Binding InstantMessages}"
                  Margin="12,5" BorderThickness="0"
                  Background="Transparent"
