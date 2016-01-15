@@ -86,8 +86,7 @@ namespace ChatterBox.Client.Common.Signaling
         {
             ClientConfirmation(Confirmation.For(peer));
             GetPeerList(new Message());
-
-            if (peer.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalSeconds < 10)
+            if (DateTimeOffset.UtcNow.Subtract(peer.SentDateTimeUtc).TotalSeconds < 10)
             {
                 ToastNotificationService.ShowPresenceNotification(
                     peer.PeerData.Name,
