@@ -278,6 +278,13 @@ namespace ChatterBox.Client.Universal.Services
             return new ForegroundState { IsForegroundVisible = true };
         }
 
+        public string GetShownUserId()
+        {
+            if (GetShownUser != null)
+                return GetShownUser();
+            return string.Empty;
+        }
+
         #endregion
 
         #region IForegroundUpdateService Members
@@ -287,6 +294,7 @@ namespace ChatterBox.Client.Universal.Services
         public event Action OnRelayMessagesUpdated;
         public event Action<VoipState> OnVoipStateUpdate;
         public event Action<FrameFormat> OnFrameFormatUpdate;
+        public event Func<string> GetShownUser;
 
         #endregion
 

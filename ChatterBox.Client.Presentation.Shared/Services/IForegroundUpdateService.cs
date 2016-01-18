@@ -10,5 +10,6 @@ namespace ChatterBox.Client.Presentation.Shared.Services
         event Action OnRelayMessagesUpdated;
         event Action<VoipState> OnVoipStateUpdate;
         event Action<FrameFormat> OnFrameFormatUpdate;
+        event Func<string> GetShownUser;
     }
 }

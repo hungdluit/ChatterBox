@@ -1,13 +1,9 @@
 ﻿using ChatterBox.Client.Common.Communication.Foreground;
+using ChatterBox.Client.Common.Communication.Foreground.Dto;
+using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 using ChatterBox.Client.Presentation.Shared.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ChatterBox.Client.Common.Communication.Foreground.Dto;
 using Windows.UI.Core;
-using ChatterBox.Client.Common.Communication.Foreground.Dto.ChatterBox.Client.Common.Communication.Foreground.Dto;
 
 namespace ChatterBox.Client.Win8dot1.Services
 {
@@ -18,6 +14,7 @@ namespace ChatterBox.Client.Win8dot1.Services
         public event Action OnRelayMessagesUpdated;
         public event Action<VoipState> OnVoipStateUpdate;
         public event Action<FrameFormat> OnFrameFormatUpdate;
+        public event Func<string> GetShownUser;
 
         private CoreDispatcher _uiDispatcher;
 
@@ -59,6 +56,13 @@ namespace ChatterBox.Client.Win8dot1.Services
         public ForegroundState GetForegroundState()
         {
             return new ForegroundState { IsForegroundVisible = true };
+        }
+
+        public string GetShownUserId()
+        {
+            if (GetShownUser != null)
+                return GetShownUser();
+            return string.Empty;
         }
     }
 }

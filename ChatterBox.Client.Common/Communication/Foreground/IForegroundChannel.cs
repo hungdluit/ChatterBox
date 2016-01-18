@@ -11,6 +11,6 @@ namespace ChatterBox.Client.Common.Communication.Foreground
         void OnVoipState(VoipState state);
         void OnUpdateFrameFormat(FrameFormat frameFormat);
         ForegroundState GetForegroundState();
-
+        string GetShownUserId();
     }
 }
