@@ -35,7 +35,7 @@ namespace ChatterBox.Client.Common.Background
                     if (message.Tag == RelayMessageTags.VoipCall)
                     {
                         if (isTimeout) return;
-                        ToastNotificationService.ShowInstantMessageNotification(message.FromName, message.FromUserId, AvatarLink.For(message.FromAvatar),
+                        ToastNotificationService.ShowInstantMessageNotification(message.FromName, message.FromUserId, AvatarLink.EmbeddedLinkFor(message.FromAvatar),
                             $"Missed call at {message.SentDateTimeUtc.ToLocalTime()}.");
 
                     }
@@ -43,7 +43,7 @@ namespace ChatterBox.Client.Common.Background
                     {
                         if (isTimeout || SignaledRelayMessages.IsMessageReceived(message.Id)) return;
                         ToastNotificationService.ShowInstantMessageNotification(message.FromName, message.FromUserId,
-                            AvatarLink.For(message.FromAvatar), message.Payload);
+                            AvatarLink.EmbeddedLinkFor(message.FromAvatar), message.Payload);
                         SignaledRelayMessages.AddPushNotificationMessageID(message.Id);
                         SignaledRelayMessages.Add(message);
                     }

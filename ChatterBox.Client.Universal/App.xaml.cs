@@ -25,6 +25,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ChatterBox.Client.Common.Avatars;
 
 namespace ChatterBox.Client.Universal
 {
@@ -94,6 +95,8 @@ namespace ChatterBox.Client.Universal
                 ProcessLaunchArgument(launchArg);
                 return;
             }
+
+            await AvatarLink.ExpandAvatarsToLocal();
 
             //Register IoC types
             if (!Container.IsRegistered<HubClient>())

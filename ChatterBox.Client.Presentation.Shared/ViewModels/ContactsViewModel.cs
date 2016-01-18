@@ -76,7 +76,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
                     contact = _contactFactory();
                     contact.Name = peer.Name;
                     contact.UserId = peer.UserId;
-                    contact.ProfileSource = new BitmapImage(new Uri(AvatarLink.For(peer.Avatar)));
+                    contact.ProfileSource = new BitmapImage(new Uri(AvatarLink.EmbeddedLinkFor(peer.Avatar)));
                     contact.OnCloseConversation += Contact_OnCloseConversation;
                     contact.OnIsInCallMode += Contact_OnIsInCallMode;
                     var sortList = Conversations.ToList();

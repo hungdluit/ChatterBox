@@ -59,17 +59,17 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <Content Include="Avatars\0.jpg" />
-    <Content Include="Avatars\1.jpg" />
-    <Content Include="Avatars\10.jpg" />
-    <Content Include="Avatars\2.jpg" />
-    <Content Include="Avatars\3.jpg" />
-    <Content Include="Avatars\4.jpg" />
-    <Content Include="Avatars\5.jpg" />
-    <Content Include="Avatars\6.jpg" />
-    <Content Include="Avatars\7.jpg" />
-    <Content Include="Avatars\8.jpg" />
-    <Content Include="Avatars\9.jpg" />
+    <EmbeddedResource Include="Avatars\0.jpg" />
+    <EmbeddedResource Include="Avatars\1.jpg" />
+    <EmbeddedResource Include="Avatars\10.jpg" />
+    <EmbeddedResource Include="Avatars\2.jpg" />
+    <EmbeddedResource Include="Avatars\3.jpg" />
+    <EmbeddedResource Include="Avatars\4.jpg" />
+    <EmbeddedResource Include="Avatars\5.jpg" />
+    <EmbeddedResource Include="Avatars\6.jpg" />
+    <EmbeddedResource Include="Avatars\7.jpg" />
+    <EmbeddedResource Include="Avatars\8.jpg" />
+    <EmbeddedResource Include="Avatars\9.jpg" />
   </ItemGroup>
   <ItemGroup>
     <TargetPlatform Include="Windows, Version=8.1" />

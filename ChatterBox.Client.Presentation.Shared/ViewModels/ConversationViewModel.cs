@@ -197,7 +197,7 @@ namespace ChatterBox.Client.Presentation.Shared.ViewModels
             set { SetProperty(ref _name, value); }
         }
 
-        public ImageSource OwnProfileSource { get; } = new BitmapImage(new Uri(AvatarLink.For(SignalingStatus.Avatar)));
+        public ImageSource OwnProfileSource { get; } = new BitmapImage(new Uri(AvatarLink.EmbeddedLinkFor(SignalingStatus.Avatar)));
 
         public ImageSource ProfileSource
         {

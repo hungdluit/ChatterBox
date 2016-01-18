@@ -43,7 +43,7 @@ namespace ChatterBox.Client.Universal.Background.Voip
                 var voipCallCoordinatorCc = VoipCallCoordinator.GetDefault();
 
                 VoipCall = voipCallCoordinatorCc.RequestNewIncomingCall(message.FromUserId, message.FromName, message.FromName,
-                    new Uri(AvatarLink.For(message.FromAvatar), UriKind.RelativeOrAbsolute),
+                    AvatarLink.CallCoordinatorUriFor(message.FromAvatar),
                     "ChatterBox Universal",
                     null,
                     "",

@@ -90,7 +90,7 @@ namespace ChatterBox.Client.Common.Signaling
             {
                 ToastNotificationService.ShowPresenceNotification(
                     peer.PeerData.Name,
-                    AvatarLink.For(peer.PeerData.Avatar),
+                    AvatarLink.EmbeddedLinkFor(peer.PeerData.Avatar),
                     peer.PeerData.IsOnline);
             }
             _foregroundChannel?.OnSignaledPeerDataUpdated();
@@ -130,7 +130,7 @@ namespace ChatterBox.Client.Common.Signaling
                 (message.SentDateTimeUtc.Subtract(DateTimeOffset.UtcNow).TotalMinutes < 10))
             {
                 ToastNotificationService.ShowInstantMessageNotification(message.FromName,
-                    message.FromUserId, AvatarLink.For(message.FromAvatar), message.Payload);
+                    message.FromUserId, AvatarLink.EmbeddedLinkFor(message.FromAvatar), message.Payload);
             }
             _foregroundChannel?.OnSignaledRelayMessagesUpdated();
 
