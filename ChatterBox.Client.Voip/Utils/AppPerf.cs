@@ -6,8 +6,8 @@ namespace ChatterBox.Client.Voip.Utils
 {
     internal static class MEMData
     {
-    // Todo: added by ling, WINDOWS_PHONE_APP is not available for vs2015 when build win10 for arm
-    // check USE_WIN10_PHONE_DLL (defined by us) until vs2015 fix this
+    // WINDOWS_PHONE_APP is not available for vs2015 when build win10 for arm.
+    // Check USE_WIN10_PHONE_DLL (defined by us) until vs2015 fix this.
 #if WINDOWS_PHONE_APP || USE_WIN10_PHONE_DLL
         [DllImport("api-ms-win-core-sysinfo-l1-2-0.dll", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = true)]
         private static extern IntPtr GetCurrentProcess();
