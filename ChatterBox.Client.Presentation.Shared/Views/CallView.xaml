@@ -65,10 +65,10 @@
             <Button Command="{Binding SwitchMicCommand}" Style="{StaticResource Button.Conversation.Call.Audio.Unmute}"
                     Visibility="{Binding IsMicEnabled, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
 
-            <Button Command="{Binding SwitchVideo}" Style="{StaticResource Button.Conversation.Call.Video.Disable}"
+            <Button Command="{Binding SwitchVideoCommand}" Style="{StaticResource Button.Conversation.Call.Video.Disable}"
                     Visibility="{Binding IsVideoEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <!--<Button Command="{Binding SwitchVideo}" Style="{StaticResource Button.Conversation.Call.Video.Enable}"
-                    Visibility="{Binding IsVideoEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />-->
+            <Button Command="{Binding SwitchVideoCommand}" Style="{StaticResource Button.Conversation.Call.Video.Enable}"
+                    Visibility="{Binding IsVideoEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
         </StackPanel>
         <MediaElement Name="SoundPlayElement" Grid.Row="2" />
     </Grid>
